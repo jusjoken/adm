@@ -26,11 +26,11 @@ public class util {
         
         if (!MenuListLoaded) {
             
-            MenuList[0] = new MenuItem("MenuItem1", "Menu Item 1", "DoNothing", "LaunchMenuItem1");
-            MenuList[1] = new MenuItem("MenuItem2", "Menu Item 2", "DoNothing", "LaunchMenuItem2");
-            MenuList[2] = new MenuItem("MenuItem3", "Menu Item 3", "DoNothing", "LaunchMenuItem3");
-            MenuList[3] = new MenuItem("MenuItem4", "Menu 4 SubMenu", "xMenuItem4");
-            MenuList[4] = new MenuItem("DetailedSetup", "Detailed Setup", "ExecuteWidget", "OPUS4A-174758");
+            MenuList[0] = new MenuItem("MenuItem1", "Menu Item 1", "DoNothing", "LaunchMenuItem1", null);
+            MenuList[1] = new MenuItem("MenuItem2", "Menu Item 2", "DoNothing", "LaunchMenuItem2", null);
+            MenuList[2] = new MenuItem("MenuItem3", "Menu Item 3", "DoNothing", "LaunchMenuItem3", "gBackgroundImage");
+            MenuList[3] = new MenuItem("MenuItem4", "Menu 4 SubMenu", "xMenuItem4", "gBackgroundImage");
+            MenuList[4] = new MenuItem("DetailedSetup", "Detailed Setup", "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage");
 
             MenuListLoaded = true;
 

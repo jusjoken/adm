@@ -17,33 +17,37 @@ public class MenuItem {
     public String SubMenu = "";
     public String Action = "";
     public String ActionType = "";
+    public String BGImageFile = "";
     public static ArrayList<String> ButtonTextList = new ArrayList<String>();
     public static ArrayList<String> SubMenuList = new ArrayList<String>();
     public static ArrayList<String> ActionList = new ArrayList<String>();
     public static ArrayList<String> ActionTypeList = new ArrayList<String>();
+    public static ArrayList<String> BGImageFileList = new ArrayList<String>();
 
     
-    public MenuItem(String bName, String bButtonText, String bSubMenu, String bActionType, String bAction){
+    public MenuItem(String bName, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile){
         Name = bName;
         ButtonText = bButtonText;
         SubMenu = bSubMenu;
         ActionType = bActionType;
         Action = bAction;
+        BGImageFile = bBGImageFile;
         ButtonTextList.add(ButtonText);
         SubMenuList.add(SubMenu);
         ActionTypeList.add(ActionType);
         ActionList.add(Action);
+        BGImageFileList.add(BGImageFile);
         
     }
             
     //use this contructor for Action Item type items - based on ActionType
-    public MenuItem(String bName, String bButtonText, String bActionType, String bAction){
-        this(bName,bButtonText,null,bActionType,bAction);
+    public MenuItem(String bName, String bButtonText, String bActionType, String bAction, String bBGImageFile){
+        this(bName,bButtonText,null,bActionType,bAction,bBGImageFile);
     }
     
     //use this contructor for SubMenu type items
-    public MenuItem(String bName, String bButtonText, String bSubMenu){
-        this(bName,bButtonText,bSubMenu,null,null);
+    public MenuItem(String bName, String bButtonText, String bSubMenu, String bBGImageFile){
+        this(bName,bButtonText,bSubMenu,null,null,bBGImageFile);
     }
     
     public static String GetMenuItemButtonText(int Item){
@@ -64,6 +68,10 @@ public class MenuItem {
 
     public static String GetMenuItemActionType(int Item){
         return ActionTypeList.get(Item);
+    }
+
+    public static String GetMenuItemBGImageFile(int Item){
+        return BGImageFileList.get(Item);
     }
 
     public static int GetMenuItemCount(){
