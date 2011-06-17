@@ -26,11 +26,11 @@ public class util {
         
         if (!MenuListLoaded) {
             
-            MenuList[0] = new MenuItem("MenuItem1", "Menu Item 1", "DoNothing", "LaunchMenuItem1", null);
-            MenuList[1] = new MenuItem("MenuItem2", "Menu Item 2", "DoNothing", "LaunchMenuItem2", null);
-            MenuList[2] = new MenuItem("MenuItem3", "Menu Item 3", "DoNothing", "LaunchMenuItem3", "gBackgroundImage");
-            MenuList[3] = new MenuItem("MenuItem4", "Menu 4 SubMenu", "xMenuItem4", "gBackgroundImage");
-            MenuList[4] = new MenuItem("DetailedSetup", "Detailed Setup", "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage");
+            MenuList[0] = new MenuItem("xTopMenu", "xItemTV", "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage");
+            MenuList[1] = new MenuItem("xTopMenu", "xItemMusic", "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "C:\\Program Files\\SageTV\\SageTV\\STVs\\SageTV7\\Themes\\Standard\\MusicBackground.jpg");
+            MenuList[2] = new MenuItem("xTopMenu", "xItemPhotos", "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage");
+            MenuList[3] = new MenuItem("xTopMenu", "xItemVideos", "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage");
+            MenuList[4] = new MenuItem("xTopMenu", "DetailedSetup", "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage");
 
             MenuListLoaded = true;
 
@@ -41,18 +41,18 @@ public class util {
     }
     
     
-    public static MenuItem GetMenuItem(int Item){
-        return MenuList[Item];
-    }
-            
-    public static String GetMenuItemButtonText(int Item){
-        //return MenuList[Item].ButtonText;
-        return MenuItem.ButtonTextList.get(Item);
-    }
-
-    public static ArrayList<String> GetMenuItemButtonTextList(){
-        return MenuItem.ButtonTextList;
-    }
+//    public static MenuItem GetMenuItem(int Item){
+//        return MenuList[Item];
+//    }
+//            
+//    public static String GetMenuItemButtonText(int Item){
+//        //return MenuList[Item].ButtonText;
+//        return MenuItem.ButtonTextList.get(Item);
+//    }
+//
+//    public static ArrayList<String> GetMenuItemButtonTextList(){
+//        return MenuItem.ButtonTextList;
+//    }
     
     public static void ExecuteWidget(String WidgetSymbol){
         UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
