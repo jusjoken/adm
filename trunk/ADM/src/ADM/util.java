@@ -9,7 +9,6 @@ package ADM;
  * @author jusjoken
  */
 
-import java.util.ArrayList;
 import sagex.UIContext;
 import java.lang.reflect.InvocationTargetException;
 
@@ -20,7 +19,7 @@ public class util {
     
     public static Boolean MenuListLoaded = false;
     
-    public static MenuItem[] MenuList = new MenuItem[5];
+    public static MenuItem[] MenuList = new MenuItem[6];
 
     public static void LoadMenuList(){
         
@@ -28,9 +27,10 @@ public class util {
             
             MenuList[0] = new MenuItem("xTopMenu", "xItemTV", "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage");
             MenuList[1] = new MenuItem("xTopMenu", "xItemMusic", "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "C:\\Program Files\\SageTV\\SageTV\\STVs\\SageTV7\\Themes\\Standard\\MusicBackground.jpg");
-            MenuList[2] = new MenuItem("xTopMenu", "xItemPhotos", "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage");
-            MenuList[3] = new MenuItem("xTopMenu", "xItemVideos", "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage");
-            MenuList[4] = new MenuItem("xTopMenu", "DetailedSetup", "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage");
+            MenuList[2] = new MenuItem("xItemMusic", "xItemMusic2", "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "C:\\Program Files\\SageTV\\SageTV\\STVs\\SageTV7\\Themes\\Standard\\MusicBackground.jpg");
+            MenuList[3] = new MenuItem("xTopMenu", "xItemPhotos", "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage");
+            MenuList[4] = new MenuItem("xTopMenu", "xItemVideos", "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage");
+            MenuList[5] = new MenuItem("xTopMenu", "xDetailedSetup", "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage");
 
             MenuListLoaded = true;
 
@@ -39,20 +39,6 @@ public class util {
         }
 
     }
-    
-    
-//    public static MenuItem GetMenuItem(int Item){
-//        return MenuList[Item];
-//    }
-//            
-//    public static String GetMenuItemButtonText(int Item){
-//        //return MenuList[Item].ButtonText;
-//        return MenuItem.ButtonTextList.get(Item);
-//    }
-//
-//    public static ArrayList<String> GetMenuItemButtonTextList(){
-//        return MenuItem.ButtonTextList;
-//    }
     
     public static void ExecuteWidget(String WidgetSymbol){
         UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());

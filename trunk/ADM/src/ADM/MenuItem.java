@@ -10,7 +10,12 @@ package ADM;
  */
 
 import java.util.ArrayList;
-import java.lang.reflect.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import sagex.UIContext;
 
 
@@ -22,6 +27,7 @@ public class MenuItem {
     public String Action = "";
     public String ActionType = "";
     public String BGImageFile = "";
+    public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
     public static ArrayList<String> ParentList = new ArrayList<String>();
     public static ArrayList<String> NameList = new ArrayList<String>();
     public static ArrayList<String> ButtonTextList = new ArrayList<String>();
@@ -53,53 +59,56 @@ public class MenuItem {
         ActionTypeList.add(ActionType);
         ActionList.add(Action);
         BGImageFileList.add(BGImageFile);
+        MenuItemList.put(this.Name, this);
         
     }
-            
-    //use this contructor for Action Item type items - based on ActionType
-//    public MenuItem(String bName, String bButtonText, String bActionType, String bAction, String bBGImageFile){
-//        this(bName,bButtonText,null,bActionType,bAction,bBGImageFile);
-//    }
-//    
-//    //use this contructor for SubMenu type items
-//    public MenuItem(String bName, String bButtonText, String bSubMenu, String bBGImageFile){
-//        this(bName,bButtonText,bSubMenu,null,null,bBGImageFile);
-//    }
-//    
-    public static String GetMenuItemParent(int Item){
-        return ParentList.get(Item);
-    }
-
-    public static String GetMenuItemName(int Item){
-        return NameList.get(Item);
-    }
-
-    public static String GetMenuItemButtonText(int Item){
-        return ButtonTextList.get(Item);
-    }
-
-    public static ArrayList<String> GetMenuItemButtonTextList(){
-        return ButtonTextList;
+    
+    //returns the full list of ALL menu items regardless of parent
+    public static Set<String> GetMenuItemNameList(){
+        return MenuItemList.keySet();
     }
     
-    public static String GetMenuItemSubMenu(int Item){
-        return SubMenuList.get(Item);
+    //returns only menu items for a specific parent
+    public static Set<String> GetMenuItemNameList(String Parent){
+        Set<String> bParentList = new LinkedHashSet<String>();
+        
+        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
+        while (itr.hasNext()) {
+            Entry<String,MenuItem> entry = itr.next();
+            if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
+                bParentList.add(entry.getValue().Name);
+            }
+        }         
+        
+        return bParentList;
+    }
+    
+    public static String GetMenuItemParent(String Name){
+        return MenuItemList.get(Name).Parent;
     }
 
-    public static String GetMenuItemAction(int Item){
-        return ActionList.get(Item);
+    public static String GetMenuItemButtonText(String Name){
+        return MenuItemList.get(Name).ButtonText;
     }
 
-    public static String GetMenuItemActionType(int Item){
-        return ActionTypeList.get(Item);
+    public static String GetMenuItemSubMenu(String Name){
+        return MenuItemList.get(Name).SubMenu;
     }
 
-    public static String GetMenuItemBGImageFile(int Item){
-        return BGImageFileList.get(Item);
+    public static String GetMenuItemAction(String Name){
+        return MenuItemList.get(Name).Action;
+    }
+
+    public static String GetMenuItemActionType(String Name){
+        return MenuItemList.get(Name).ActionType;
+    }
+
+    public static String GetMenuItemBGImageFile(String Name){
+        return MenuItemList.get(Name).BGImageFile;
     }
 
     public static int GetMenuItemCount(){
-        return ButtonTextList.size();
+        return MenuItemList.size();
     }
     
     
