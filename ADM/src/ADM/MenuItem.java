@@ -20,6 +20,7 @@ import sagex.UIContext;
 
 
 public class MenuItem {
+    public static final String SagePropertyLocation = "ADM/menuitem/";
     public String Parent = "";
     public String Name = "";
     public String ButtonText = "";
@@ -27,16 +28,9 @@ public class MenuItem {
     public String Action = "";
     public String ActionType = "";
     public String BGImageFile = "";
+    public String BGImageFilePath = "";
     public Boolean IsDefault = false;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
-//    public static ArrayList<String> ParentList = new ArrayList<String>();
-//    public static ArrayList<String> NameList = new ArrayList<String>();
-//    public static ArrayList<String> ButtonTextList = new ArrayList<String>();
-//    public static ArrayList<String> SubMenuList = new ArrayList<String>();
-//    public static ArrayList<String> ActionList = new ArrayList<String>();
-//    public static ArrayList<String> ActionTypeList = new ArrayList<String>();
-//    public static ArrayList<String> BGImageFileList = new ArrayList<String>();
-
     
     public MenuItem(String bParent, String bName, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault){
         Parent = bParent;
@@ -49,18 +43,19 @@ public class MenuItem {
         if (bBGImageFile.contains("\\")){
             //a path to the image file is being used
             BGImageFile = bBGImageFile;
+            BGImageFilePath = bBGImageFile;
         }else{
-            //expect a Global Variable from the theme
-            BGImageFile = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), bBGImageFile).toString();
+            //check for null
+            if (bBGImageFile==null){
+                BGImageFile = bBGImageFile;
+                BGImageFilePath = bBGImageFile;
+            }else{
+                //expect a Global Variable from the theme
+                BGImageFile = bBGImageFile;
+                BGImageFilePath = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), bBGImageFile).toString();
+            }
         }
         IsDefault = bIsDefault;
-//        ParentList.add(Parent);
-//        NameList.add(Name);
-//        ButtonTextList.add(ButtonText);
-//        SubMenuList.add(SubMenu);
-//        ActionTypeList.add(ActionType);
-//        ActionList.add(Action);
-//        BGImageFileList.add(BGImageFile);
         MenuItemList.put(this.Name, this);
         
     }
@@ -106,6 +101,10 @@ public class MenuItem {
         return MenuItemList.get(Name).ActionType;
     }
 
+    public static String GetMenuItemBGImageFilePath(String Name){
+        return MenuItemList.get(Name).BGImageFilePath;
+    }
+
     public static String GetMenuItemBGImageFile(String Name){
         return MenuItemList.get(Name).BGImageFile;
     }
@@ -116,6 +115,28 @@ public class MenuItem {
 
     public static int GetMenuItemCount(){
         return MenuItemList.size();
+    }
+    
+    //saves all MenuItems to Sage properties
+    public static void SaveMenuItemsToSage(){
+        String PropLocation = "";
+        
+        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
+        while (itr.hasNext()) {
+            Entry<String,MenuItem> entry = itr.next();
+            PropLocation = SagePropertyLocation + entry.getValue().Name;
+            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().Action);
+            sagex.api.Configuration.SetProperty(PropLocation + "/ActionType", entry.getValue().ActionType);
+            sagex.api.Configuration.SetProperty(PropLocation + "/BGImageFile", entry.getValue().BGImageFile);
+            sagex.api.Configuration.SetProperty(PropLocation + "/ButtonText", entry.getValue().ButtonText);
+            sagex.api.Configuration.SetProperty(PropLocation + "/Name", entry.getValue().Name);
+            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().Parent);
+            sagex.api.Configuration.SetProperty(PropLocation + "/SubMenu", entry.getValue().SubMenu);
+            sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", entry.getValue().IsDefault.toString());
+        }         
+        System.out.println("JUSJOKEN: SaveMenuItemsToSage: saved " + MenuItemList.size() + " MenuItems");
+        
+        return;
     }
     
     
