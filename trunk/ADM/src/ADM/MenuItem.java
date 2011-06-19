@@ -27,17 +27,18 @@ public class MenuItem {
     public String Action = "";
     public String ActionType = "";
     public String BGImageFile = "";
+    public Boolean IsDefault = false;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
-    public static ArrayList<String> ParentList = new ArrayList<String>();
-    public static ArrayList<String> NameList = new ArrayList<String>();
-    public static ArrayList<String> ButtonTextList = new ArrayList<String>();
-    public static ArrayList<String> SubMenuList = new ArrayList<String>();
-    public static ArrayList<String> ActionList = new ArrayList<String>();
-    public static ArrayList<String> ActionTypeList = new ArrayList<String>();
-    public static ArrayList<String> BGImageFileList = new ArrayList<String>();
+//    public static ArrayList<String> ParentList = new ArrayList<String>();
+//    public static ArrayList<String> NameList = new ArrayList<String>();
+//    public static ArrayList<String> ButtonTextList = new ArrayList<String>();
+//    public static ArrayList<String> SubMenuList = new ArrayList<String>();
+//    public static ArrayList<String> ActionList = new ArrayList<String>();
+//    public static ArrayList<String> ActionTypeList = new ArrayList<String>();
+//    public static ArrayList<String> BGImageFileList = new ArrayList<String>();
 
     
-    public MenuItem(String bParent, String bName, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile){
+    public MenuItem(String bParent, String bName, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
@@ -52,13 +53,14 @@ public class MenuItem {
             //expect a Global Variable from the theme
             BGImageFile = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), bBGImageFile).toString();
         }
-        ParentList.add(Parent);
-        NameList.add(Name);
-        ButtonTextList.add(ButtonText);
-        SubMenuList.add(SubMenu);
-        ActionTypeList.add(ActionType);
-        ActionList.add(Action);
-        BGImageFileList.add(BGImageFile);
+        IsDefault = bIsDefault;
+//        ParentList.add(Parent);
+//        NameList.add(Name);
+//        ButtonTextList.add(ButtonText);
+//        SubMenuList.add(SubMenu);
+//        ActionTypeList.add(ActionType);
+//        ActionList.add(Action);
+//        BGImageFileList.add(BGImageFile);
         MenuItemList.put(this.Name, this);
         
     }
@@ -79,6 +81,7 @@ public class MenuItem {
                 bParentList.add(entry.getValue().Name);
             }
         }         
+        System.out.println("JUSJOKEN: GetMenuItemNameList for '" + Parent + "' :" + bParentList);
         
         return bParentList;
     }
@@ -105,6 +108,10 @@ public class MenuItem {
 
     public static String GetMenuItemBGImageFile(String Name){
         return MenuItemList.get(Name).BGImageFile;
+    }
+
+    public static Boolean GetMenuItemIsDefault(String Name){
+        return MenuItemList.get(Name).IsDefault;
     }
 
     public static int GetMenuItemCount(){
