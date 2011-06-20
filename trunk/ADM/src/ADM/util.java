@@ -9,16 +9,20 @@ package ADM;
  * @author jusjoken
  */
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import sagex.UIContext;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
+import java.util.Properties;
 
 public class util {
 
     public static String Version = "0.13";
-    public static final String SagePropertyLocation = "ADM/menuitem/";
+    private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
+    private static final String SagePropertyLocation = "ADM/menuitem/";
     public static Boolean MenuListLoaded = false;
     public static MenuItem[] MenuList = new MenuItem[8];
 
@@ -115,6 +119,61 @@ public class util {
         tObject = new MenuItem("xItemTest", "xItemTestSub3", "Test 1 - 3", "xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false);
         tObject = new MenuItem("xItemTest", "xItemTestSub4", "Test 1 - 4", null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false);
         
+    }
+
+    public static void ExportMenuItems(String ExportFile){
+        String PropLocation = "";
+        String ExportFilePath = sagex.api.Utility.GetWorkingDirectory() + "\\" + ExportFile;
+        System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
+        
+        //iterate through all the MenuItems and save to a Property Collection
+        Properties MenuItemProps = new Properties();
+
+        Iterator<Entry<String,MenuItem>> itr = MenuItem.MenuItemList.entrySet().iterator(); 
+        while (itr.hasNext()) {
+            Entry<String,MenuItem> entry = itr.next();
+            PropLocation = SagePropertyLocation + entry.getValue().getName();
+            if (entry.getValue().getAction()!=null){
+                MenuItemProps.setProperty(PropLocation + "/Action",entry.getValue().getAction());
+            }
+            if (entry.getValue().getActionType()!=null){
+                MenuItemProps.setProperty(PropLocation + "/ActionType", entry.getValue().getActionType());
+            }
+            if (entry.getValue().getBGImageFile()!=null){
+                MenuItemProps.setProperty(PropLocation + "/BGImageFile", entry.getValue().getBGImageFile());
+            }
+            if (entry.getValue().getButtonText()!=null){
+                MenuItemProps.setProperty(PropLocation + "/ButtonText", entry.getValue().getButtonText());
+            }
+            MenuItemProps.setProperty(PropLocation + "/Name", entry.getValue().getName());
+            if (entry.getValue().getParent()!=null){
+                MenuItemProps.setProperty(PropLocation + "/Parent", entry.getValue().getParent());
+            }
+            if (entry.getValue().getSubMenu()!=null){
+                MenuItemProps.setProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
+            }
+            MenuItemProps.setProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
+            System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
+        }         
+
+        //if the export file exists then delete it before exporting
+        
+        //write the properties to the properties file
+        try {
+            FileOutputStream out = new FileOutputStream(ExportFilePath);
+            try {
+                MenuItemProps.store(out, PropertyComment);
+                out.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: error exporting menus " + util.class.getName() + ex);
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: error exporting menus " + util.class.getName() + ex);
+        }
+
+        System.out.println("ADM: ExportMenuItems: exported " + MenuItem.MenuItemList.size() + " MenuItems");
+        
+        return;
     }
     
     public static void ExecuteWidget(String WidgetSymbol){
