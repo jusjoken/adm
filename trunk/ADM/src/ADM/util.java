@@ -9,6 +9,7 @@ package ADM;
  * @author jusjoken
  */
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,12 +18,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 public class util {
 
     public static String Version = "0.14";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
+    private static final String PropertyBackupFile = "ADMbackup.properties";
+    private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     public static Boolean MenuListLoaded = false;
     public static MenuItem[] MenuList = new MenuItem[8];
 
@@ -90,7 +94,7 @@ public class util {
                 NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
                 NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
                 System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
-        }
+            }
 
         }else{
             //load a default Menu here.  Load a Diamond Menu if Diamond if active
@@ -121,9 +125,57 @@ public class util {
         
     }
 
+    public static void ImportMenuItems(String ImportPath){
+
+        Properties MenuItemProps = new Properties();
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(ImportPath);
+            try {
+                MenuItemProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: error inporting menus " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: error inporting menus " + util.class.getName() + ex);
+            return;
+        }
+        
+        //backup existing MenuItems before processing the import
+        ExportMenuItems(PropertyBackupFile);
+        
+        if (MenuItemProps.size()>0){
+            //clear the existing MenuItems from the list
+            MenuItem.MenuItemList.clear();
+            
+            //load MenuItems
+            for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
+
+//                PropLocation = SagePropertyLocation + tMenuItemName;
+//                MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+//                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
+//                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", null));
+//                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
+//                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", "<Not defined>"));
+//                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
+//                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
+//                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
+//                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
+//                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+            }
+
+        }
+        
+        
+        
+    }
+    
     public static void ExportMenuItems(String ExportFile){
         String PropLocation = "";
-        String ExportFilePath = sagex.api.Utility.GetWorkingDirectory() + "\\" + ExportFile;
+        String ExportFilePath = ADMLocation + "\\" + ExportFile;
         System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
         
         //iterate through all the MenuItems and save to a Property Collection
@@ -201,6 +253,9 @@ public class util {
         return Version;
     }
     
+    public static String GetADMLocation() {
+        return ADMLocation;
+    }
 
     
 }
