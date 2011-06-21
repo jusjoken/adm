@@ -10,12 +10,15 @@ package ADM;
  */
 
 //import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import sagex.UIContext;
 
 
@@ -30,6 +33,8 @@ public class MenuItem {
     private String BGImageFile = "";
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
+    private Integer SortKey = 0;
+    private static Integer SortKeyCounter = 0;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
 
     public MenuItem(String bName){
@@ -42,11 +47,12 @@ public class MenuItem {
         Action = null;
         SetBGImageFileandPath(null);
         IsDefault = false;
+        SortKey = 0;
         AddMenuItemtoList(this);
         
     }
     
-    public MenuItem(String bParent, String bName, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault){
+    public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
@@ -55,6 +61,7 @@ public class MenuItem {
         Action = bAction;
         SetBGImageFileandPath(bBGImageFile);
         IsDefault = bIsDefault;
+        SortKey = bSortKey;
         AddMenuItemtoList(this);
         //MenuItemList.put(this.Name, this);
         
@@ -140,6 +147,19 @@ public class MenuItem {
         this.Parent = Parent;
     }
 
+    public Integer getSortKey() {
+        return SortKey;
+    }
+
+    public void setSortKey(String SortKey) {
+        try {
+            this.SortKey = Integer.valueOf(SortKey);
+        } catch (NumberFormatException ex) {
+            System.out.println("ADM: setSortKey: error converting '" + SortKey + "' " + util.class.getName() + ex);
+            this.SortKey = SortKeyCounter++;
+        }
+    }
+
     public String getSubMenu() {
         return SubMenu;
     }
@@ -178,19 +198,23 @@ public class MenuItem {
     }
     
     //returns only menu items for a specific parent
-    public static Set<String> GetMenuItemNameList(String Parent){
-        Set<String> bParentList = new LinkedHashSet<String>();
+    public static Collection<String> GetMenuItemNameList(String Parent){
+        SortedMap<Integer,String> bParentList = new TreeMap<Integer,String>();
+        Collection<String> bSortedNames = new LinkedHashSet<String>();
         
         Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
         while (itr.hasNext()) {
             Entry<String,MenuItem> entry = itr.next();
             if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
-                bParentList.add(entry.getValue().Name);
+                //bParentList.add(entry.getValue().Name);
+                bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
             }
         }         
-        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' :" + bParentList);
+        bSortedNames = bParentList.values();
+        System.out.println("ADM: GetMenuItemNameList for 2 '" + Parent + "' :" + bParentList);
+        System.out.println("ADM: GetMenuItemNameList for 3 '" + Parent + "' :" + bSortedNames);
         
-        return bParentList;
+        return bSortedNames;
     }
     
     public static String GetMenuItemParent(String Name){
@@ -199,6 +223,10 @@ public class MenuItem {
 
     public static String GetMenuItemButtonText(String Name){
         return MenuItemList.get(Name).ButtonText;
+    }
+
+    public static Integer GetMenuItemSortKey(String Name){
+        return MenuItemList.get(Name).SortKey;
     }
 
     public static String GetMenuItemSubMenu(String Name){
@@ -229,26 +257,5 @@ public class MenuItem {
         return MenuItemList.size();
     }
     
-//    //saves all MenuItems to Sage properties
-//    public static void SaveMenuItemsToSage(){
-//        String PropLocation = "";
-//        
-//        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
-//        while (itr.hasNext()) {
-//            Entry<String,MenuItem> entry = itr.next();
-//            PropLocation = SagePropertyLocation + entry.getValue().Name;
-//            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().Action);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/ActionType", entry.getValue().ActionType);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/BGImageFile", entry.getValue().BGImageFile);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/ButtonText", entry.getValue().ButtonText);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/Name", entry.getValue().Name);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().Parent);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/SubMenu", entry.getValue().SubMenu);
-//            sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", entry.getValue().IsDefault.toString());
-//        }         
-//        System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuItemList.size() + " MenuItems");
-//        
-//        return;
-//    }
-    
+   
 }
