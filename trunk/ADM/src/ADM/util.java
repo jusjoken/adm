@@ -9,20 +9,16 @@ package ADM;
  * @author jusjoken
  */
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import sagex.UIContext;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
+import java.io.*;
 
 public class util {
 
-    public static String Version = "0.14";
+    public static String Version = "0.15";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -34,6 +30,17 @@ public class util {
         
         if (!MenuListLoaded) {
 
+            //ensure the ADM file location exists
+            try{
+                boolean success = (new File(ADMLocation)).mkdirs();
+                if (success) {
+                    System.out.println("ADM: LoadMenuList - Directories created for '" + ADMLocation + "'");
+                   }
+
+                }catch (Exception ex){//Catch exception if any
+                    System.out.println("ADM: LoadMenuList - error creating '" + ADMLocation + "'" + ex.getMessage());
+                }
+            
             LoadMenuItemsFromSage();
            
             MenuListLoaded = true;
@@ -91,6 +98,7 @@ public class util {
                 NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", "<Not defined>"));
                 NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
                 NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
+                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
                 NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
                 NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
                 System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
@@ -112,21 +120,26 @@ public class util {
         //use the following until the Load from properties is coded.
         Object tObject;
 
-        tObject = new MenuItem("xTopMenu", "xItemTV", "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemMusic", "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemTestTop", "Test 1", "xItemTest", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub1", "Test 1 - 1", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub2", "Test 1 - 2", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true);
-        tObject = new MenuItem("xTopMenu", "xItemPhotos", "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xDetailedSetup", "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemVideos", "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub3", "Test 1 - 3", "xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub4", "Test 1 - 4", null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", "xItemTest", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false);
+        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false);
+        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true);
+        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", "xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false);
+        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false);
         
     }
 
     public static void ImportMenuItems(String ImportPath){
 
+        if (ImportPath==null){
+            System.out.println("ADM: ImportMenuItems: null ImportPath passed.");
+            return;
+        }
+        
         Properties MenuItemProps = new Properties();
         
         //read the properties from the properties file
@@ -136,11 +149,11 @@ public class util {
                 MenuItemProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: error inporting menus " + util.class.getName() + ex);
+                System.out.println("ADM: ImportMenuItems: error inporting menus " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: error inporting menus " + util.class.getName() + ex);
+            System.out.println("ADM: ImportMenuItems: error inporting menus " + util.class.getName() + ex);
             return;
         }
         
@@ -148,24 +161,19 @@ public class util {
         ExportMenuItems(PropertyBackupFile);
         
         if (MenuItemProps.size()>0){
-            //clear the existing MenuItems from the list
-            MenuItem.MenuItemList.clear();
+            //clean up existing MenuItems from the SageTV properties file before writing the new ones
+            sagex.api.Configuration.RemovePropertyAndChildren(SagePropertyLocation);
             
-            //load MenuItems
+            //load MenuItems from the properties file and write to the Sage properties
             for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
 
-//                PropLocation = SagePropertyLocation + tMenuItemName;
-//                MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-//                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
-//                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", null));
-//                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
-//                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", "<Not defined>"));
-//                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
-//                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
-//                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
-//                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
-//                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+                sagex.api.Configuration.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
+                
+                System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
             }
+            
+            //now load the properties from the Sage properties file
+            LoadMenuItemsFromSage();
 
         }
         
@@ -201,6 +209,9 @@ public class util {
             if (entry.getValue().getParent()!=null){
                 MenuItemProps.setProperty(PropLocation + "/Parent", entry.getValue().getParent());
             }
+            if (entry.getValue().getSortKey()!=null){
+                MenuItemProps.setProperty(PropLocation + "/SortKey", entry.getValue().getSortKey().toString());
+            }
             if (entry.getValue().getSubMenu()!=null){
                 MenuItemProps.setProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
             }
@@ -217,10 +228,10 @@ public class util {
                 MenuItemProps.store(out, PropertyComment);
                 out.close();
             } catch (IOException ex) {
-                System.out.println("ADM: error exporting menus " + util.class.getName() + ex);
+                System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: error exporting menus " + util.class.getName() + ex);
+            System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
         }
 
         System.out.println("ADM: ExportMenuItems: exported " + MenuItem.MenuItemList.size() + " MenuItems");
@@ -240,7 +251,7 @@ public class util {
         try {
             sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
         } catch (InvocationTargetException ex) {
-            System.out.println("ADM: error executing widget" + util.class.getName() + ex);
+            System.out.println("ADM: ExecuteWidget: error executing widget" + util.class.getName() + ex);
         }
             
             //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
