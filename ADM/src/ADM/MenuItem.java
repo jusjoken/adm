@@ -250,6 +250,7 @@ public class MenuItem {
     }
 
     public static Boolean GetMenuItemIsDefault(String Name){
+        
         return MenuItemList.get(Name).IsDefault;
     }
 
