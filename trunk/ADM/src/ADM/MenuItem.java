@@ -33,6 +33,7 @@ public class MenuItem {
     private String BGImageFile = "";
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
+    private Boolean IsActive = true;
     private Integer SortKey = 0;
     private static Integer SortKeyCounter = 0;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
@@ -47,12 +48,13 @@ public class MenuItem {
         Action = null;
         SetBGImageFileandPath(null);
         IsDefault = false;
+        IsActive = true;
         SortKey = 0;
         AddMenuItemtoList(this);
         
     }
     
-    public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault){
+    public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
@@ -61,6 +63,7 @@ public class MenuItem {
         Action = bAction;
         SetBGImageFileandPath(bBGImageFile);
         IsDefault = bIsDefault;
+        IsActive = bIsActive;
         SortKey = bSortKey;
         AddMenuItemtoList(this);
         //MenuItemList.put(this.Name, this);
@@ -120,6 +123,22 @@ public class MenuItem {
             this.IsDefault = true;
         }else{
             this.IsDefault = false;
+        }
+    }
+
+    public Boolean getIsActive() {
+        return IsActive;
+    }
+
+    public void setIsActive(Boolean IsActive) {
+        this.IsActive = IsActive;
+    }
+
+    public void setIsActive(String IsActive) {
+        if ("true".equals(IsActive)){
+            this.IsActive = true;
+        }else{
+            this.IsActive = false;
         }
     }
 
@@ -197,7 +216,7 @@ public class MenuItem {
         return MenuItemList.keySet();
     }
     
-    //returns only menu items for a specific parent
+    //returns only menu items for a specific parent that are active
     public static Collection<String> GetMenuItemNameList(String Parent){
         SortedMap<Integer,String> bParentList = new TreeMap<Integer,String>();
         Collection<String> bSortedNames = new LinkedHashSet<String>();
@@ -205,14 +224,16 @@ public class MenuItem {
         Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
         while (itr.hasNext()) {
             Entry<String,MenuItem> entry = itr.next();
+            //check for the correct parent
             if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
-                //bParentList.add(entry.getValue().Name);
-                bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
+                //only select Active MenuItems
+                if (entry.getValue().IsActive==true){
+                    bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
+                }
             }
         }         
         bSortedNames = bParentList.values();
-        System.out.println("ADM: GetMenuItemNameList for 2 '" + Parent + "' :" + bParentList);
-        System.out.println("ADM: GetMenuItemNameList for 3 '" + Parent + "' :" + bSortedNames);
+        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' :" + bSortedNames);
         
         return bSortedNames;
     }
@@ -250,13 +271,43 @@ public class MenuItem {
     }
 
     public static Boolean GetMenuItemIsDefault(String Name){
-        
         return MenuItemList.get(Name).IsDefault;
+    }
+
+    public static Boolean GetMenuItemIsActive(String Name){
+        return MenuItemList.get(Name).IsActive;
     }
 
     public static int GetMenuItemCount(){
         return MenuItemList.size();
     }
     
-   
+//    public static int GetMenuItemCount(String Parent){
+//        SortedMap<Integer,String> bParentList = new TreeMap<Integer,String>();
+//        Collection<String> bSortedNames = new LinkedHashSet<String>();
+//        
+//        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
+//        while (itr.hasNext()) {
+//            Entry<String,MenuItem> entry = itr.next();
+//            //check for the correct parent
+//            if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
+//                //only select Active MenuItems
+//                if (entry.getValue().IsActive){
+//                    bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
+//                }
+//            }
+//        }         
+//        bSortedNames = bParentList.values();
+//        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bSortedNames.size());
+//        
+//        return bSortedNames.size();
+//    }
+
+    //Get the count of MenuItems for a parent that are active
+    public static int GetMenuItemCount(String Parent){
+        Collection<String> bSortedNames = GetMenuItemNameList(Parent);
+        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bSortedNames.size());
+        return bSortedNames.size();
+    }
+    
 }
