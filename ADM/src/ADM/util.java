@@ -18,7 +18,7 @@ import java.io.*;
 
 public class util {
 
-    public static String Version = "0.16";
+    public static String Version = "0.17";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -69,8 +69,10 @@ public class util {
             sagex.api.Configuration.SetProperty(PropLocation + "/ButtonText", entry.getValue().getButtonText());
             sagex.api.Configuration.SetProperty(PropLocation + "/Name", entry.getValue().getName());
             sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().getParent());
+            sagex.api.Configuration.SetProperty(PropLocation + "/SortKey", entry.getValue().getSortKey().toString());
             sagex.api.Configuration.SetProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
             sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
+            sagex.api.Configuration.SetProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
             System.out.println("ADM: SaveMenuItemsToSage: saved - '" + entry.getValue().getName() + "'");
         }         
         System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuItem.MenuItemList.size() + " MenuItems");
@@ -101,6 +103,7 @@ public class util {
                 NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
                 NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
                 NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
+                NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
                 System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
             }
 
@@ -120,16 +123,16 @@ public class util {
         //use the following until the Load from properties is coded.
         Object tObject;
 
-        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", "xItemTest", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false);
-        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true);
-        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", "xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false);
-        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false);
+        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", "xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false,true);
+        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", "xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false,true);
+        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
+        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", "xItemTest", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
+        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", "xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false,true);
+        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup", null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false,true);
+        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false,true);
+        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", "xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true,true);
+        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", "xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false,true);
+        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false,true);
         
     }
 
@@ -216,6 +219,7 @@ public class util {
                 MenuItemProps.setProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
             }
             MenuItemProps.setProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
+            MenuItemProps.setProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
             System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
         }         
 
