@@ -282,6 +282,78 @@ public class MenuItem {
         return FinalList;
     }
     
+    public static Integer GetMenuItemLevel(String Name){
+        if (MenuItemList.get(Name).Parent.equals(TopMenu)){
+            System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
+            return 1;
+        }else{
+            //find a MenuItem whose SubMenu equals this Parent
+            Collection<String> TempList = GetMenuItemNameList();
+            for (String TempItem : TempList){
+                if (MenuItemList.get(TempItem).SubMenu.equals(MenuItemList.get(Name).Parent)){
+                    if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
+                        System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Name + "'");
+                        return 2;
+                    }else{
+                        System.out.println("ADM: GetMenuItemLevel: level - 3 returned for '" + Name + "'");
+                        return 3;
+                    }
+                }
+            }
+        }
+        System.out.println("ADM: GetMenuItemLevel: failed to find level - 0 returned for '" + Name + "'");
+        return 0;
+    }
+
+    //get a '/' delimitted path for the menu item
+    public static String GetMenuItemFullPath(String Name){
+        return GetMenuItemButtonTextFormatted(Name,null);
+    }
+
+    public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
+        String FullName = "";
+        if (MenuItemList.get(Name).Parent.equals(TopMenu)){
+            FullName = MenuItemList.get(Name).ButtonText;
+            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 1 for '" + Name + "' Path = '" + FullName + "'");
+            return FullName;
+        }else{
+            //find a MenuItem whose SubMenu equals this Parent
+            Collection<String> TempList = GetMenuItemNameList();
+            for (String TempItem : TempList){
+                if (MenuItemList.get(Name).Parent.equals(MenuItemList.get(TempItem).SubMenu)){
+                    if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
+                        FullName = MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
+                        if (PrefixPadding==null){
+                            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
+                            return FullName;
+                        }else{
+                            FullName = PrefixPadding + MenuItemList.get(Name).ButtonText;
+                            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
+                            return FullName;
+                        }
+                    }else{
+                        for (String TempItem2 : TempList){
+                            if (MenuItemList.get(TempItem).Parent.equals(MenuItemList.get(TempItem2).SubMenu)){
+                                FullName = MenuItemList.get(TempItem2).ButtonText + " / " + MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
+                                if (PrefixPadding==null){
+                                    System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
+                                    return FullName;
+                                }else{
+                                    FullName = PrefixPadding + PrefixPadding + MenuItemList.get(Name).ButtonText;
+                                    System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
+                                    return FullName;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("ADM: GetMenuItemButtonTextFormatted: failed to find level - 0 returned for '" + Name + "'");
+        return MenuItemList.get(Name).ButtonText;
+    }
+
     public static String GetMenuItemParent(String Name){
         return MenuItemList.get(Name).Parent;
     }
@@ -322,31 +394,14 @@ public class MenuItem {
         return MenuItemList.get(Name).IsActive;
     }
 
+    public static void SetMenuItemIsActive(String Name, Boolean Setting){
+        MenuItemList.get(Name).IsActive = Setting;
+    }
+
     public static int GetMenuItemCount(){
         return GetMenuItemCount(null);
     }
     
-//    public static int GetMenuItemCount(String Parent){
-//        SortedMap<Integer,String> bParentList = new TreeMap<Integer,String>();
-//        Collection<String> bSortedNames = new LinkedHashSet<String>();
-//        
-//        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
-//        while (itr.hasNext()) {
-//            Entry<String,MenuItem> entry = itr.next();
-//            //check for the correct parent
-//            if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
-//                //only select Active MenuItems
-//                if (entry.getValue().IsActive){
-//                    bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
-//                }
-//            }
-//        }         
-//        bSortedNames = bParentList.values();
-//        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bSortedNames.size());
-//        
-//        return bSortedNames.size();
-//    }
-
     //Get the count of MenuItems for a parent that are active
     public static int GetMenuItemCount(String Parent){
         Collection<String> bSortedNames = GetMenuItemNameList(Parent);
@@ -358,11 +413,16 @@ public class MenuItem {
         if (Name1==null||Name2==null){
             System.out.println("ADM: SwapSortKey: null values passed: Name1 = '" + Name1 + "' Name2 = '" + Name2 + "'");
         }else{
-            Integer SortKey1 = MenuItemList.get(Name1).SortKey;
-            Integer SortKey2 = MenuItemList.get(Name2).SortKey;
-            MenuItemList.get(Name2).SortKey = SortKey1;
-            MenuItemList.get(Name1).SortKey = SortKey2;
-            System.out.println("ADM: SwapSortKey BEFORE '" + Name1 + "' = " + SortKey1 + "' for '" + Name2 + "' = " + SortKey2 + " - AFTER '" + Name1 + "' = " + MenuItemList.get(Name1).SortKey + "' for '" + Name2 + "' = " + MenuItemList.get(Name2).SortKey);
+            //validate that the Parent is the same for the 2 MenuItems
+            if (MenuItemList.get(Name1).Parent.equals(MenuItemList.get(Name2).Parent)){
+                Integer SortKey1 = MenuItemList.get(Name1).SortKey;
+                Integer SortKey2 = MenuItemList.get(Name2).SortKey;
+                MenuItemList.get(Name2).SortKey = SortKey1;
+                MenuItemList.get(Name1).SortKey = SortKey2;
+                System.out.println("ADM: SwapSortKey BEFORE '" + Name1 + "' = " + SortKey1 + "' for '" + Name2 + "' = " + SortKey2 + "' - AFTER '" + Name1 + "' = " + MenuItemList.get(Name1).SortKey + "' for '" + Name2 + "' = " + MenuItemList.get(Name2).SortKey);
+            }else{
+                System.out.println("ADM: SwapSortKey: Parent missmatch. Parents: '" + Name1 + "' = " + MenuItemList.get(Name1).Parent + "' and '" + Name2 + "' = " + MenuItemList.get(Name2).Parent + "'");
+            }
         }
     }
 }
