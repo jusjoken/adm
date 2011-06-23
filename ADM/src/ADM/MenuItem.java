@@ -212,8 +212,8 @@ public class MenuItem {
     }
     
     //returns the full list of ALL menu items regardless of parent
-    public static Set<String> GetMenuItemNameList(){
-        return MenuItemList.keySet();
+    public static Collection<String> GetMenuItemNameList(){
+        return GetMenuItemNameList(null);
     }
     
     //returns only menu items for a specific parent that are active
@@ -230,6 +230,8 @@ public class MenuItem {
                 if (entry.getValue().IsActive==true){
                     bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
                 }
+            }else if (Parent == null){
+                bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
             }
         }         
         bSortedNames = bParentList.values();
@@ -279,7 +281,7 @@ public class MenuItem {
     }
 
     public static int GetMenuItemCount(){
-        return MenuItemList.size();
+        return GetMenuItemCount(null);
     }
     
 //    public static int GetMenuItemCount(String Parent){
@@ -310,4 +312,14 @@ public class MenuItem {
         return bSortedNames.size();
     }
     
+    public static void SwapSortKey(String Name1, String Name2){
+        System.out.println("ADM: SwapSortKey for '" + Name1 + "' and '" + Name2 + "'");
+        Integer SortKey1 = MenuItemList.get(Name1).SortKey;
+        Integer SortKey2 = MenuItemList.get(Name2).SortKey;
+        System.out.println("ADM: SwapSortKey SortKey1 '" + SortKey1 + "' and '" + SortKey2 + "'");
+        MenuItemList.get(Name2).SortKey = SortKey2;
+        System.out.println("ADM: SwapSortKey - swapped 1");
+        MenuItemList.get(Name1).SortKey = SortKey1;
+        System.out.println("ADM: SwapSortKey - swapped 2");
+    }
 }
