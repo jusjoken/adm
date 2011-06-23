@@ -24,6 +24,7 @@ import sagex.UIContext;
 
 public class MenuItem {
     public static final String SagePropertyLocation = "ADM/menuitem/";
+    public static final String TopMenu = "xTopMenu";
     private String Parent = "";
     private String Name = "";
     private String ButtonText = "";
@@ -218,6 +219,11 @@ public class MenuItem {
     
     //returns only menu items for a specific parent that are active
     public static Collection<String> GetMenuItemNameList(String Parent){
+        return GetMenuItemNameList(Parent, Boolean.FALSE);
+    }
+    
+    //returns menu items for a specific parent
+    public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
         SortedMap<Integer,String> bParentList = new TreeMap<Integer,String>();
         Collection<String> bSortedNames = new LinkedHashSet<String>();
         
@@ -227,7 +233,7 @@ public class MenuItem {
             //check for the correct parent
             if (entry.getValue().Parent == null ? Parent == null : entry.getValue().Parent.equals(Parent)){
                 //only select Active MenuItems
-                if (entry.getValue().IsActive==true){
+                if (entry.getValue().IsActive==true || IncludeInactive==true){
                     bParentList.put(entry.getValue().SortKey,entry.getValue().Name);
                 }
             }else if (Parent == null){
@@ -235,9 +241,45 @@ public class MenuItem {
             }
         }         
         bSortedNames = bParentList.values();
-        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' :" + bSortedNames);
-        
+        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bSortedNames);
+
         return bSortedNames;
+    }
+    
+    //returns only menu items for a specific parent that are active
+    public static Collection<String> GetMenuItemSortedList(Boolean Grouped){
+        //first get all Top Level Menu Items
+        Collection<String> TopMenus = GetMenuItemNameList(TopMenu,Boolean.TRUE);
+        
+        Collection<String> FinalList = new LinkedHashSet<String>();
+        if (Grouped){
+            FinalList.addAll(TopMenus);
+        }
+        
+        //find all SubMenus and get those menus. 
+        //If Grouped then append to the full list otherwise insert them in order
+        for (String MenuName : TopMenus){
+            if (!Grouped){
+                FinalList.add(MenuName);
+            }
+            if (MenuItemList.get(MenuName).SubMenu!=null) {
+                Collection<String> SubMenusLevel2 = GetMenuItemNameList(MenuItemList.get(MenuName).SubMenu,Boolean.TRUE);
+                if (Grouped){
+                    FinalList.addAll(SubMenusLevel2);
+                }
+                for (String MenuNameLevel2 : SubMenusLevel2){
+                    if (!Grouped){
+                        FinalList.add(MenuNameLevel2);
+                    }
+                    if (MenuItemList.get(MenuNameLevel2).SubMenu!=null) {
+                        Collection<String> SubMenusLevel3 = GetMenuItemNameList(MenuItemList.get(MenuNameLevel2).SubMenu,Boolean.TRUE);
+                        FinalList.addAll(SubMenusLevel3);
+                    }
+                }
+           }
+        }
+        System.out.println("ADM: GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
+        return FinalList;
     }
     
     public static String GetMenuItemParent(String Name){
@@ -313,13 +355,14 @@ public class MenuItem {
     }
     
     public static void SwapSortKey(String Name1, String Name2){
-        System.out.println("ADM: SwapSortKey for '" + Name1 + "' and '" + Name2 + "'");
-        Integer SortKey1 = MenuItemList.get(Name1).SortKey;
-        Integer SortKey2 = MenuItemList.get(Name2).SortKey;
-        System.out.println("ADM: SwapSortKey SortKey1 '" + SortKey1 + "' and '" + SortKey2 + "'");
-        MenuItemList.get(Name2).SortKey = SortKey2;
-        System.out.println("ADM: SwapSortKey - swapped 1");
-        MenuItemList.get(Name1).SortKey = SortKey1;
-        System.out.println("ADM: SwapSortKey - swapped 2");
+        if (Name1==null||Name2==null){
+            System.out.println("ADM: SwapSortKey: null values passed: Name1 = '" + Name1 + "' Name2 = '" + Name2 + "'");
+        }else{
+            Integer SortKey1 = MenuItemList.get(Name1).SortKey;
+            Integer SortKey2 = MenuItemList.get(Name2).SortKey;
+            MenuItemList.get(Name2).SortKey = SortKey1;
+            MenuItemList.get(Name1).SortKey = SortKey2;
+            System.out.println("ADM: SwapSortKey BEFORE '" + Name1 + "' = " + SortKey1 + "' for '" + Name2 + "' = " + SortKey2 + " - AFTER '" + Name1 + "' = " + MenuItemList.get(Name1).SortKey + "' for '" + Name2 + "' = " + MenuItemList.get(Name2).SortKey);
+        }
     }
 }
