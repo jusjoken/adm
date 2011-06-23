@@ -15,10 +15,11 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.io.*;
+import java.util.Collection;
 
 public class util {
 
-    public static String Version = "0.18";
+    public static String Version = "0.19";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -262,6 +263,21 @@ public class util {
             
         }
                
+    }
+    
+    public static String GetElement(Collection<String> List, Integer element){
+        System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
+        Integer counter = 0;
+        for (String CurElement:List){
+            counter++;
+            System.out.println("ADM: GetElement: checking element '" + counter + "' = '" + CurElement + "'");
+            if (counter.equals(element)){
+                System.out.println("ADM: GetElement: found '" + CurElement + "'");
+                return CurElement;
+            }
+        }
+        System.out.println("ADM: GetElement: not found.");
+        return null;
     }
     
     public static String GetVersion() {
