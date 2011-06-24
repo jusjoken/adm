@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -35,6 +34,7 @@ public class MenuItem {
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
     private Boolean IsActive = true;
+    private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
     private static Integer SortKeyCounter = 0;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
@@ -50,16 +50,18 @@ public class MenuItem {
         SetBGImageFileandPath(null);
         IsDefault = false;
         IsActive = true;
+        HasSubMenu = false;
         SortKey = 0;
         AddMenuItemtoList(this);
         
     }
     
-    public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
+    public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, Boolean bHasSubMenu, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
         SubMenu = bSubMenu;
+        HasSubMenu = bHasSubMenu;
         ActionType = bActionType;
         Action = bAction;
         SetBGImageFileandPath(bBGImageFile);
@@ -67,7 +69,6 @@ public class MenuItem {
         IsActive = bIsActive;
         SortKey = bSortKey;
         AddMenuItemtoList(this);
-        //MenuItemList.put(this.Name, this);
         
     }
 
@@ -143,6 +144,22 @@ public class MenuItem {
         }
     }
 
+    public Boolean getHasSubMenu() {
+        return HasSubMenu;
+    }
+
+    public void setHasSubMenu(Boolean HasSubMenu) {
+        this.HasSubMenu = HasSubMenu;
+    }
+
+    public void setHasSubMenu(String HasSubMenu) {
+        if ("true".equals(HasSubMenu)){
+            this.HasSubMenu = true;
+        }else{
+            this.HasSubMenu = false;
+        }
+    }
+
     public static Map<String, MenuItem> getMenuItemList() {
         return MenuItemList;
     }
@@ -180,8 +197,18 @@ public class MenuItem {
         }
     }
 
+    //the SubMenu field is only filled in if using a built in Sage SubMenu
+    // otherwise, the Name of the MenuItem is returned if the MenuItem has a SubMenu
     public String getSubMenu() {
-        return SubMenu;
+        if (SubMenu==null){
+            if (HasSubMenu){
+                return Name;
+            }else{
+                return SubMenu;
+            }
+        }else{
+            return SubMenu;
+        }
     }
 
     public void setSubMenu(String SubMenu) {
@@ -262,8 +289,8 @@ public class MenuItem {
             if (!Grouped){
                 FinalList.add(MenuName);
             }
-            if (MenuItemList.get(MenuName).SubMenu!=null) {
-                Collection<String> SubMenusLevel2 = GetMenuItemNameList(MenuItemList.get(MenuName).SubMenu,Boolean.TRUE);
+            if (MenuItemList.get(MenuName).HasSubMenu) {
+                Collection<String> SubMenusLevel2 = GetMenuItemNameList(MenuItemList.get(MenuName).getSubMenu(),Boolean.TRUE);
                 if (Grouped){
                     FinalList.addAll(SubMenusLevel2);
                 }
@@ -271,8 +298,8 @@ public class MenuItem {
                     if (!Grouped){
                         FinalList.add(MenuNameLevel2);
                     }
-                    if (MenuItemList.get(MenuNameLevel2).SubMenu!=null) {
-                        Collection<String> SubMenusLevel3 = GetMenuItemNameList(MenuItemList.get(MenuNameLevel2).SubMenu,Boolean.TRUE);
+                    if (MenuItemList.get(MenuNameLevel2).HasSubMenu) {
+                        Collection<String> SubMenusLevel3 = GetMenuItemNameList(MenuItemList.get(MenuNameLevel2).getSubMenu(),Boolean.TRUE);
                         FinalList.addAll(SubMenusLevel3);
                     }
                 }
@@ -287,10 +314,10 @@ public class MenuItem {
             System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
             return 1;
         }else{
-            //find a MenuItem whose SubMenu equals this Parent
+            //find a MenuItem whose Name equals this Parent
             Collection<String> TempList = GetMenuItemNameList();
             for (String TempItem : TempList){
-                if (MenuItemList.get(TempItem).SubMenu.equals(MenuItemList.get(Name).Parent)){
+                if (MenuItemList.get(TempItem).Name.equals(MenuItemList.get(Name).Parent)){
                     if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
                         System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Name + "'");
                         return 2;
@@ -320,7 +347,7 @@ public class MenuItem {
             //find a MenuItem whose SubMenu equals this Parent
             Collection<String> TempList = GetMenuItemNameList();
             for (String TempItem : TempList){
-                if (MenuItemList.get(Name).Parent.equals(MenuItemList.get(TempItem).SubMenu)){
+                if (MenuItemList.get(Name).Parent.equals(MenuItemList.get(TempItem).Name)){
                     if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
                         FullName = MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
                         if (PrefixPadding==null){
@@ -333,7 +360,7 @@ public class MenuItem {
                         }
                     }else{
                         for (String TempItem2 : TempList){
-                            if (MenuItemList.get(TempItem).Parent.equals(MenuItemList.get(TempItem2).SubMenu)){
+                            if (MenuItemList.get(TempItem).Parent.equals(MenuItemList.get(TempItem2).Name)){
                                 FullName = MenuItemList.get(TempItem2).ButtonText + " / " + MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
                                 if (PrefixPadding==null){
                                     System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
@@ -355,39 +382,70 @@ public class MenuItem {
     }
 
     public static String GetMenuItemParent(String Name){
-        return MenuItemList.get(Name).Parent;
+        return MenuItemList.get(Name).getParent();
+    }
+
+    public static void SetMenuItemParent(String Name, String Setting){
+        SaveMenuItemtoSage(Name, "Parent", Setting);
+        MenuItemList.get(Name).setParent(Setting);
     }
 
     public static String GetMenuItemButtonText(String Name){
-        return MenuItemList.get(Name).ButtonText;
+        return MenuItemList.get(Name).getButtonText();
+    }
+
+    public static void SetMenuItemButtonText(String Name, String Setting){
+        MenuItemList.get(Name).setButtonText(Setting);
+        SaveMenuItemtoSage(Name, "ButtonText", Setting);
     }
 
     public static Integer GetMenuItemSortKey(String Name){
-        return MenuItemList.get(Name).SortKey;
+        return MenuItemList.get(Name).getSortKey();
     }
 
     public static String GetMenuItemSubMenu(String Name){
-        return MenuItemList.get(Name).SubMenu;
+        return MenuItemList.get(Name).getSubMenu();
+    }
+
+    public static void SetMenuItemSubMenu(String Name, String Setting){
+        MenuItemList.get(Name).setSubMenu(Setting);
+        SaveMenuItemtoSage(Name, "SubMenu", Setting);
     }
 
     public static String GetMenuItemAction(String Name){
-        return MenuItemList.get(Name).Action;
+        return MenuItemList.get(Name).getAction();
+    }
+
+    public static void SetMenuItemAction(String Name, String Setting){
+        MenuItemList.get(Name).setAction(Setting);
+        SaveMenuItemtoSage(Name, "Action", Setting);
     }
 
     public static String GetMenuItemActionType(String Name){
-        return MenuItemList.get(Name).ActionType;
+        return MenuItemList.get(Name).getActionType();
     }
 
-    public static String GetMenuItemBGImageFilePath(String Name){
-        return MenuItemList.get(Name).BGImageFilePath;
+    public static void SetMenuItemActionType(String Name, String Setting){
+        MenuItemList.get(Name).setActionType(Setting);
+        SaveMenuItemtoSage(Name, "ActionType", Setting);
     }
 
     public static String GetMenuItemBGImageFile(String Name){
-        return MenuItemList.get(Name).BGImageFile;
+        return MenuItemList.get(Name).getBGImageFile();
+    }
+
+    public static void SetMenuItemBGImageFile(String Name, String Setting){
+        MenuItemList.get(Name).setBGImageFile(Setting);
+        SaveMenuItemtoSage(Name, "BGImageFile", Setting);
     }
 
     public static Boolean GetMenuItemIsDefault(String Name){
-        return MenuItemList.get(Name).IsDefault;
+        return MenuItemList.get(Name).getIsDefault();
+    }
+
+    public static void SetMenuItemIsDefault(String Name, Boolean Setting){
+        MenuItemList.get(Name).setIsDefault(Setting);
+        SaveMenuItemtoSage(Name, "IsDefault", Setting.toString());
     }
 
     public static Boolean GetMenuItemIsActive(String Name){
@@ -395,9 +453,15 @@ public class MenuItem {
     }
 
     public static void SetMenuItemIsActive(String Name, Boolean Setting){
-        MenuItemList.get(Name).IsActive = Setting;
+        MenuItemList.get(Name).setIsActive(Setting);
+        SaveMenuItemtoSage(Name, "IsActive", Setting.toString());
     }
 
+    private static void SaveMenuItemtoSage(String Name, String PropType, String Setting){
+        String PropLocation = SagePropertyLocation + Name;
+        sagex.api.Configuration.SetProperty(PropLocation + "/" + PropType, Setting);
+    }
+    
     public static int GetMenuItemCount(){
         return GetMenuItemCount(null);
     }
