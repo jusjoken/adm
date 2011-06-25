@@ -479,10 +479,12 @@ public class MenuItem {
         }else{
             //validate that the Parent is the same for the 2 MenuItems
             if (MenuItemList.get(Name1).Parent.equals(MenuItemList.get(Name2).Parent)){
-                Integer SortKey1 = MenuItemList.get(Name1).SortKey;
-                Integer SortKey2 = MenuItemList.get(Name2).SortKey;
-                MenuItemList.get(Name2).SortKey = SortKey1;
-                MenuItemList.get(Name1).SortKey = SortKey2;
+                Integer SortKey1 = MenuItemList.get(Name1).getSortKey();
+                Integer SortKey2 = MenuItemList.get(Name2).getSortKey();
+                MenuItemList.get(Name2).setSortKey(SortKey1.toString());
+                SaveMenuItemtoSage(Name1, "SortKey", SortKey1.toString());
+                MenuItemList.get(Name1).setSortKey(SortKey2.toString());
+                SaveMenuItemtoSage(Name2, "SortKey", SortKey2.toString());
                 System.out.println("ADM: SwapSortKey BEFORE '" + Name1 + "' = " + SortKey1 + "' for '" + Name2 + "' = " + SortKey2 + "' - AFTER '" + Name1 + "' = " + MenuItemList.get(Name1).SortKey + "' for '" + Name2 + "' = " + MenuItemList.get(Name2).SortKey);
             }else{
                 System.out.println("ADM: SwapSortKey: Parent missmatch. Parents: '" + Name1 + "' = " + MenuItemList.get(Name1).Parent + "' and '" + Name2 + "' = " + MenuItemList.get(Name2).Parent + "'");

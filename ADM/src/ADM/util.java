@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public class util {
 
-    public static String Version = "0.21";
+    public static String Version = "0.22";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
