@@ -304,7 +304,6 @@ public class util {
     
     public static String GetEditOptionButtonText(String Option, String Name){
         String ButtonText = "Invalid option passed";
-        System.out.println("ADM: GetEditOptionButtonText BEFORE '" + ButtonText + "' for '" + Option + "' for MenuItem = '" + Name + "'");
         String MenuName = MenuItem.GetMenuItemButtonText(Name);
         if("admEditMenuItem".equals(Option)){
             ButtonText = "Edit '" + MenuName + "'";
