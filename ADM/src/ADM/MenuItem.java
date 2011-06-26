@@ -162,7 +162,11 @@ public class MenuItem {
     }
 
     public static String GetMenuItemButtonText(String Name){
-        return MenuItemList.get(Name).getButtonText();
+        if (Name.equals(TopMenu)){
+            return "Top Level";
+        }else{
+            return MenuItemList.get(Name).getButtonText();
+        }
     }
 
     public static void SetMenuItemButtonText(String Name, String Setting){
@@ -313,8 +317,18 @@ public class MenuItem {
     }
 
     public static void SetMenuItemParent(String Name, String Setting){
+        String OldParent = MenuItemList.get(Name).getParent();
         SaveMenuItemtoSage(Name, "Parent", Setting);
         MenuItemList.get(Name).setParent(Setting);
+        
+        //check the new parent and set it's SubMenu properly
+        MenuItemList.get(Setting).setSubMenu(null);
+        MenuItemList.get(Setting).setHasSubMenu(Boolean.TRUE);
+
+        //make sure the old and new SubMenus have a single default item
+        ValidateSubMenuDefault(OldParent);
+        ValidateSubMenuDefault(Setting);
+        System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + Setting + "'");
     }
 
     public Integer getSortKey() {
@@ -380,6 +394,35 @@ public class MenuItem {
         SaveMenuItemtoSage(Name, "SubMenu", Setting);
     }
 
+    public static void ValidateSubMenuDefault(String bParent){
+        Collection<String> SubMenuItems = GetMenuItemNameList(bParent,Boolean.TRUE);
+        Boolean FoundDefault = false;
+        String FirstItem = null;
+        
+        if (SubMenuItems.size()>0){
+            for (String SubMenuItem : SubMenuItems){
+                if (FirstItem==null){
+                    FirstItem = MenuItemList.get(SubMenuItem).getName();
+                }
+                if (MenuItemList.get(SubMenuItem).getIsDefault()){
+                    if (FoundDefault){
+                        MenuItemList.get(SubMenuItem).setIsDefault(Boolean.FALSE);
+                    }else{
+                        FoundDefault = Boolean.TRUE;
+                    }
+                }
+            }
+            if (!FoundDefault){
+                //no default found so set the first item as the default
+                MenuItemList.get(FirstItem).setIsDefault(Boolean.TRUE);
+            }
+        }else{
+            //no subMenu items so make sure this parent's SubMenu settings are correct
+            MenuItemList.get(bParent).setSubMenu(null);
+            MenuItemList.get(bParent).setHasSubMenu(Boolean.FALSE);
+        }
+    }
+    
     final void AddMenuItemtoList(MenuItem NewMenuItem){
         MenuItemList.put(NewMenuItem.Name, NewMenuItem);
     }
@@ -454,6 +497,20 @@ public class MenuItem {
         return FinalList;
     }
 
+    public static Collection<String> GetMenuItemParentList(){
+        Collection<String> FullSortedList = GetMenuItemNameList(null,Boolean.TRUE);
+        Collection<String> ValidParentList = new LinkedHashSet<String>();
+        //Add Top Level as a valid parent
+        ValidParentList.add(TopMenu);
+        for (String TempName : FullSortedList){
+            if (MenuItemList.get(TempName).Level<3){
+                ValidParentList.add(TempName);
+            }
+        }
+        System.out.println("ADM: GetMenuItemParentList: '" + ValidParentList + "'");
+        return ValidParentList;
+    }
+    
     //get a '/' delimitted path for the menu item
     public static String GetMenuItemFullPath(String Name){
         return GetMenuItemButtonTextFormatted(Name,null);
