@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.io.*;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 public class util {
 
@@ -116,6 +117,9 @@ public class util {
             LoadMenuItemDefaults();
         }
         System.out.println("ADM: LoadMenuItemsFromSage: loaded " + MenuItem.MenuItemList.size() + " MenuItems");
+        
+        //now that the menus are loaded - set a level for each menu item and store it
+        MenuItem.SetMenuItemLevels();
         
         return;
     }
@@ -281,6 +285,40 @@ public class util {
         }
         System.out.println("ADM: GetElement: not found.");
         return null;
+    }
+    
+    //Create/Edit MenuItems Dialog Options
+    public static Collection<String> GetEditOptionsList(String Name){
+        Collection<String> EditOptions = new LinkedHashSet<String>();
+        //Determine valid Edit Options for the passed in MenuItem Name
+        EditOptions.add("admEditMenuItem"); //Edit current Menu Item
+        EditOptions.add("admAddMenuItem"); //Add current Menu Item below
+        if (MenuItem.GetMenuItemLevel(Name)<3){
+            EditOptions.add("admAddSubMenuItem"); //Add SubMenu to current Menu Item
+        }
+        EditOptions.add("admDeleteMenuItem"); //Delete current Menu Item
+        EditOptions.add("admCloseEdit"); //Close the Edit Menu
+        System.out.println("ADM: GetEditOptionsList - Loaded list for '" + Name + "' :" + EditOptions);
+        return EditOptions;
+    }
+    
+    public static String GetEditOptionButtonText(String Option, String Name){
+        String ButtonText = "Invalid option passed";
+        System.out.println("ADM: GetEditOptionButtonText BEFORE '" + ButtonText + "' for '" + Option + "' for MenuItem = '" + Name + "'");
+        String MenuName = MenuItem.GetMenuItemButtonText(Name);
+        if("admEditMenuItem".equals(Option)){
+            ButtonText = "Edit '" + MenuName + "'";
+        }else if("admAddMenuItem".equals(Option)){
+            ButtonText = "Add Menu Item below '" + MenuName + "'";
+        }else if("admAddSubMenuItem".equals(Option)){
+            ButtonText = "Add Submenu Item below '" + MenuName + "'";
+        }else if("admDeleteMenuItem".equals(Option)){
+            ButtonText = "Delete '" + MenuName + "'";
+        }else if("admCloseEdit".equals(Option)){
+            ButtonText = "Close";
+        }
+        System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "' for MenuItem = '" + Name + "'");
+        return ButtonText;
     }
     
     public static String GetVersion() {
