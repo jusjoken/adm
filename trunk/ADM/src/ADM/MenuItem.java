@@ -48,7 +48,8 @@ public class MenuItem {
         SubMenu = null;
         ActionType = null;
         Action = null;
-        SetBGImageFileandPath(null);
+        BGImageFile = null;
+        BGImageFilePath = null;
         IsDefault = false;
         IsActive = true;
         HasSubMenu = false;

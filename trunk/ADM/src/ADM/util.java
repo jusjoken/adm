@@ -25,6 +25,7 @@ public class util {
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
+    private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
     public static Boolean MenuListLoaded = false;
     public static MenuItem[] MenuList = new MenuItem[8];
 
@@ -124,30 +125,47 @@ public class util {
         return;
     }
     
-    private static void LoadMenuItemDefaults(){
+    public static void LoadMenuItemDefaults(){
         //load default MenuItems from one or more default .properties file
+        String DefaultPropFile = "ADMDefault.properties";
+        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
+        String DiamondPluginID = "DiamondSTVi";
+        String DiamondWidgetSymbol = "AOSCS-65";
+        String DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFile;
         
-        //use the following until the Load from properties is coded.
-        Object tObject;
-
-        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", true,"xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false,true);
-        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", true,"xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false,true);
-        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", true, "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
-        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", true, null, "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
-        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", true,"xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false,true);
-        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup",false, null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false,true);
-        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false,true);
-        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true,true);
-        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", true,"xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false,true);
-        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", false, null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false,true);
+        // check to see if the Diamond Plugin is installed
+        UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
+        Object[] FoundWidget = new Object[1];
+        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, DiamondWidgetSymbol);
+        if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
+            //load the Diamond default
+            DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFileDiamond;
+        }
+        ImportMenuItems(DefaultsFullPath);
+        System.out.println("ADM: LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
+        
+        
+//        //use the following until the Load from properties is coded.
+//        Object tObject;
+//
+//        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", true,"xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false,true);
+//        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", true,"xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false,true);
+//        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", true, "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
+//        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", true, null, "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
+//        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", true,"xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false,true);
+//        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup",false, null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false,true);
+//        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false,true);
+//        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true,true);
+//        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", true,"xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false,true);
+//        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", false, null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false,true);
         
     }
 
-    public static void ImportMenuItems(String ImportPath){
+    public static Boolean ImportMenuItems(String ImportPath){
 
         if (ImportPath==null){
             System.out.println("ADM: ImportMenuItems: null ImportPath passed.");
-            return;
+            return false;
         }
         
         Properties MenuItemProps = new Properties();
@@ -159,12 +177,12 @@ public class util {
                 MenuItemProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: ImportMenuItems: error inporting menus " + util.class.getName() + ex);
-                return;
+                System.out.println("ADM: ImportMenuItems: IO exception inporting menus " + util.class.getName() + ex);
+                return false;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: ImportMenuItems: error inporting menus " + util.class.getName() + ex);
-            return;
+            System.out.println("ADM: ImportMenuItems: file not found inporting menus " + util.class.getName() + ex);
+            return false;
         }
         
         //backup existing MenuItems before processing the import
@@ -186,9 +204,8 @@ public class util {
             LoadMenuItemsFromSage();
 
         }
-        
-        
-        
+        System.out.println("ADM: ImportMenuItems: completed for '" + ImportPath + "'");
+        return true;
     }
     
     public static void ExportMenuItems(String ExportFile){
