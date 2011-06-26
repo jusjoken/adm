@@ -36,6 +36,7 @@ public class MenuItem {
     private Boolean IsActive = true;
     private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
+    private Integer Level = 0;
     private static Integer SortKeyCounter = 0;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
 
@@ -90,6 +91,10 @@ public class MenuItem {
 
     public String getBGImageFile() {
         return BGImageFile;
+    }
+
+    public String getBGImageFilePath() {
+        return BGImageFilePath;
     }
 
     public void setBGImageFile(String BGImageFile) {
@@ -166,6 +171,14 @@ public class MenuItem {
 
     public static void setMenuItemList(Map<String, MenuItem> MenuItemList) {
         MenuItem.MenuItemList = MenuItemList;
+    }
+
+    public void setLevel(Integer Level){
+        this.Level = Level;
+    }
+    
+    public Integer getLevel() {
+        return Level;
     }
 
     public String getName() {
@@ -308,8 +321,21 @@ public class MenuItem {
         System.out.println("ADM: GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
         return FinalList;
     }
-    
+
+    //set the level field for all MenuItems
+    public static void SetMenuItemLevels(){
+        Collection<String> AllMenus = GetMenuItemSortedList(Boolean.TRUE);
+        for (String Item : AllMenus){
+            MenuItemList.get(Item).setLevel(GetMenuItemLevelInternal(Item));
+        }
+        System.out.println("ADM: SetMenuItemLevels: complete");
+    }
+
     public static Integer GetMenuItemLevel(String Name){
+        return MenuItemList.get(Name).getLevel();
+    }
+    
+    private static Integer GetMenuItemLevelInternal(String Name){
         if (MenuItemList.get(Name).Parent.equals(TopMenu)){
             System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
             return 1;
@@ -407,6 +433,10 @@ public class MenuItem {
         return MenuItemList.get(Name).getSubMenu();
     }
 
+    public static Boolean GetMenuItemHasSubMenu(String Name){
+        return MenuItemList.get(Name).getHasSubMenu();
+    }
+
     public static void SetMenuItemSubMenu(String Name, String Setting){
         MenuItemList.get(Name).setSubMenu(Setting);
         SaveMenuItemtoSage(Name, "SubMenu", Setting);
@@ -432,6 +462,10 @@ public class MenuItem {
 
     public static String GetMenuItemBGImageFile(String Name){
         return MenuItemList.get(Name).getBGImageFile();
+    }
+
+    public static String GetMenuItemBGImageFilePath(String Name){
+        return MenuItemList.get(Name).getBGImageFilePath();
     }
 
     public static void SetMenuItemBGImageFile(String Name, String Setting){
