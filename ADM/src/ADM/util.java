@@ -17,14 +17,13 @@ import java.util.Properties;
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Random;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class util {
 
-    public static String Version = "0.23";
+    public static String Version = "0.24";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     private static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -32,6 +31,8 @@ public class util {
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String OptionNotFound = "Option not Found";
+    private static final char[] symbols = new char[36];
+    private static final Random random = new Random();
     public static Boolean MenuListLoaded = false;
     public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties StandardActionProps = new Properties();
@@ -57,6 +58,13 @@ public class util {
             //also load the standard actions list - only needs loaded at startup
             LoadStandardActionList();
            
+            //generate symbols to be used for new MenuItem names
+            for (int idx = 0; idx < 10; ++idx)
+                symbols[idx] = (char) ('0' + idx);
+            for (int idx = 10; idx < 36; ++idx)
+                symbols[idx] = (char) ('a' + idx - 10);
+            
+            
             MenuListLoaded = true;
 
             System.out.println("ADM: LoadMenuList - Loaded menu list:" + MenuItem.GetMenuItemNameList());
@@ -93,6 +101,32 @@ public class util {
         System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuItem.MenuItemList.size() + " MenuItems");
         
         return;
+    }
+    
+    public static void DeleteMenuItem(String Name){
+        
+    }
+    
+    public static String NewMenuItem(String Parent, Integer SortKey, Integer Level){
+        String tMenuItemName = GetNewMenuItemName();
+
+        //Create a new MenuItem with defaults
+        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+        MenuItem.SetMenuItemAction(tMenuItemName,null);
+        MenuItem.SetMenuItemActionType(tMenuItemName,null);
+        MenuItem.SetMenuItemBGImageFile(tMenuItemName,null);
+        MenuItem.SetMenuItemButtonText(tMenuItemName,"<Not defined>");
+        MenuItem.SetMenuItemName(tMenuItemName);
+        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
+        MenuItem.SetMenuItemSortKey(tMenuItemName,SortKey);
+        MenuItem.SetMenuItemSubMenu(tMenuItemName,null);
+        MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
+        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
+        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+        MenuItem.SetMenuItemLevel(tMenuItemName,Level);
+        
+        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "'");
+        return tMenuItemName;
     }
     
     public static void LoadMenuItemsFromSage(){
@@ -409,6 +443,24 @@ public class util {
     public static String GetADMLocation() {
         return ADMLocation;
     }
-
     
+    public static String GetNewMenuItemName(){
+        Boolean UniqueName = Boolean.FALSE;
+        String NewName = null;
+        while (!UniqueName){
+            NewName = GenerateRandomadmName();
+            //check to see that the name is unique from other existing MenuItemNames
+            UniqueName = !MenuItem.MenuItemList.containsKey(NewName);
+        }
+        return NewName;
+    }
+
+    private static String GenerateRandomadmName(){
+        char[] buf = new char[10];
+        for (int idx = 0; idx < buf.length; ++idx)
+            buf[idx] = symbols[random.nextInt(symbols.length)];
+        return "adm" + new String(buf);
+    }
+
+  
 }

@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import sage.bs;
 import sagex.UIContext;
 
 
@@ -42,7 +43,7 @@ public class MenuItem {
 
     public MenuItem(String bName){
         //create a MenuItem with just default values
-        Parent = "xTopMenu";
+        Parent = TopMenu;
         Name = bName;
         ButtonText = "<Not defined>";
         SubMenu = null;
@@ -55,7 +56,6 @@ public class MenuItem {
         HasSubMenu = false;
         SortKey = 0;
         AddMenuItemtoList(this);
-        
     }
     
     public MenuItem(String bParent, String bName, Integer bSortKey, String bButtonText, Boolean bHasSubMenu, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
@@ -194,6 +194,11 @@ public class MenuItem {
         return MenuItemList.get(Name).getHasSubMenu();
     }
 
+    public static void SetMenuItemHasSubMenu(String Name, Boolean Setting){
+        MenuItemList.get(Name).setHasSubMenu(Setting);
+        SaveMenuItemtoSage(Name, "HasSubMenu", Setting.toString());
+    }
+
     public Boolean getIsActive() {
         return IsActive;
     }
@@ -256,6 +261,10 @@ public class MenuItem {
         return MenuItemList.get(Name).getLevel();
     }
     
+    public static void SetMenuItemLevel(String Name, Integer Setting){
+        MenuItemList.get(Name).setLevel(Setting);
+    }
+
     private static Integer GetMenuItemLevelInternal(String Name){
         if (MenuItemList.get(Name).Parent.equals(TopMenu)){
             System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
@@ -304,6 +313,10 @@ public class MenuItem {
         this.Name = Name;
     }
 
+    public static void SetMenuItemName(String Name){
+        SaveMenuItemtoSage(Name, "Name", Name);
+    }
+
     public String getParent() {
         return Parent;
     }
@@ -321,14 +334,18 @@ public class MenuItem {
         SaveMenuItemtoSage(Name, "Parent", Setting);
         MenuItemList.get(Name).setParent(Setting);
         
-        //check the new parent and set it's SubMenu properly
-        MenuItemList.get(Setting).setSubMenu(null);
-        MenuItemList.get(Setting).setHasSubMenu(Boolean.TRUE);
+        if (OldParent.equals(Setting) || OldParent==null){
+            System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "'");
+        }else{
+            //check the new parent and set it's SubMenu properly
+            MenuItemList.get(Setting).setSubMenu(null);
+            MenuItemList.get(Setting).setHasSubMenu(Boolean.TRUE);
 
-        //make sure the old and new SubMenus have a single default item
-        ValidateSubMenuDefault(OldParent);
-        ValidateSubMenuDefault(Setting);
-        System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + Setting + "'");
+            //make sure the old and new SubMenus have a single default item
+            ValidateSubMenuDefault(OldParent);
+            ValidateSubMenuDefault(Setting);
+            System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + Setting + "'");
+        }
     }
 
     public Integer getSortKey() {
@@ -336,14 +353,61 @@ public class MenuItem {
     }
 
     public void setSortKey(String SortKey) {
+        Integer tSortKey = 0;
         try {
-            this.SortKey = Integer.valueOf(SortKey);
+            tSortKey = Integer.valueOf(SortKey);
         } catch (NumberFormatException ex) {
             System.out.println("ADM: setSortKey: error converting '" + SortKey + "' " + util.class.getName() + ex);
-            this.SortKey = SortKeyCounter++;
+            tSortKey = SortKeyCounter++;
         }
+        //check if this SortKey is in use - if so then insert it after
+        InsertSortKey(tSortKey);
+        this.SortKey = tSortKey;
     }
 
+    public static Integer GetMenuItemSortKey(String Name){
+        return MenuItemList.get(Name).getSortKey();
+    }
+
+    public static void SetMenuItemSortKey(String Name, Integer Setting){
+        SaveMenuItemtoSage(Name, "SortKey", Setting.toString());
+        MenuItemList.get(Name).setSortKey(Setting.toString());
+    }
+
+    //Prepares for an insert of a MenuItem at a specific SortKey location by making that SortKey available
+    private static void InsertSortKey(Integer bSortKey){
+        SortedMap<Integer,String> SortedKeyList = new TreeMap<Integer,String>();
+        
+        //build the sorted list by SortKey
+        Iterator<Entry<String,MenuItem>> itr = MenuItemList.entrySet().iterator(); 
+        while (itr.hasNext()) {
+            Entry<String,MenuItem> entry = itr.next();
+            SortedKeyList.put(entry.getValue().SortKey,entry.getValue().Name);
+        }
+        System.out.println("ADM: InsertSortKey MenuItems ='" + MenuItemList.size() + "' SortedItems = '" + SortedKeyList.size() + "'");
+
+        //if the sortKey is not in use then we are done
+        if (!SortedKeyList.containsKey(bSortKey)){
+            System.out.println("ADM: InsertSortKey for '" + bSortKey + "' : not found");
+            return;
+        }
+
+        //increase the SortKey from bSortKey to the end (or a missing key)
+        for(int i=bSortKey; i<SortedKeyList.lastKey()+1; i++){
+            if (SortedKeyList.containsKey(i)){
+                Integer NextSortKey = i + 1;
+                MenuItemList.get(SortedKeyList.get(i)).SortKey = NextSortKey;
+                SaveMenuItemtoSage(SortedKeyList.get(i), "SortKey", NextSortKey.toString());
+                System.out.println("ADM: InsertSortKey changed '" + SortedKeyList.get(i) + "' from '" + i + "' to '" + (i+1) + "'");
+            }else{
+                //the SortKey was not found so we are done
+                break;
+            }
+        }
+        System.out.println("ADM: InsertSortKey for '" + bSortKey + "' : insertion point created");
+
+    }
+    
     public static void SwapSortKey(String Name1, String Name2){
         if (Name1==null||Name2==null){
             System.out.println("ADM: SwapSortKey: null values passed: Name1 = '" + Name1 + "' Name2 = '" + Name2 + "'");
@@ -363,10 +427,6 @@ public class MenuItem {
         }
     }
     
-    public static Integer GetMenuItemSortKey(String Name){
-        return MenuItemList.get(Name).getSortKey();
-    }
-
     //the SubMenu field is only filled in if using a built in Sage SubMenu
     // otherwise, the Name of the MenuItem is returned if the MenuItem has a SubMenu
     public String getSubMenu() {
