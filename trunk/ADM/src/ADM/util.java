@@ -104,7 +104,24 @@ public class util {
     }
     
     public static void DeleteMenuItem(String Name){
+        //do all the deletes first
+        DeleteMenuItemChildren(Name);
+        //rebuild any lists
+        SaveMenuItemsToSage();
+        LoadMenuItemsFromSage();
+        System.out.println("ADM: DeleteMenuItem: deleted '" + Name + "' and reloaded Menus");
+    }
+    
+    public static void DeleteMenuItemChildren(String Name){
         
+        //find all submenus if any and delete them first
+        Collection<String> Children = MenuItem.GetMenuItemNameList(Name, Boolean.TRUE);
+        for (String Child:Children){
+            DeleteMenuItemChildren(Child);
+        }
+        //delete this item
+        MenuItem.MenuItemList.remove(Name);
+        System.out.println("ADM: DeleteMenuItemChildren: deleted '" + Name + "' and '" + Children.size() + "' Children");
     }
     
     public static String NewMenuItem(String Parent, Integer SortKey, Integer Level){
@@ -125,7 +142,7 @@ public class util {
         MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         MenuItem.SetMenuItemLevel(tMenuItemName,Level);
         
-        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "'");
+        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "' SortKey = '" + SortKey + "' Level = '" + Level + "'");
         return tMenuItemName;
     }
     

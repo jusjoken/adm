@@ -335,11 +335,11 @@ public class MenuItem {
         MenuItemList.get(Name).setParent(Setting);
         
         if (OldParent.equals(Setting) || OldParent==null){
-            System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "'");
+            System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "' OldParent = '" + OldParent + "'");
         }else{
             //check the new parent and set it's SubMenu properly
-            MenuItemList.get(Setting).setSubMenu(null);
-            MenuItemList.get(Setting).setHasSubMenu(Boolean.TRUE);
+            SetMenuItemSubMenu(Setting,null);
+            SetMenuItemHasSubMenu(Setting, Boolean.TRUE);
 
             //make sure the old and new SubMenus have a single default item
             ValidateSubMenuDefault(OldParent);
