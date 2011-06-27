@@ -17,6 +17,10 @@ import java.util.Properties;
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class util {
 
@@ -26,8 +30,12 @@ public class util {
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
+    private static final String StandardActionListFile = "ADMStandardActions.properties";
+    private static final String OptionNotFound = "Option not Found";
     public static Boolean MenuListLoaded = false;
     public static MenuItem[] MenuList = new MenuItem[8];
+    public static Properties StandardActionProps = new Properties();
+    public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
 
     public static void LoadMenuList(){
         
@@ -45,6 +53,9 @@ public class util {
                 }
             
             LoadMenuItemsFromSage();
+            
+            //also load the standard actions list - only needs loaded at startup
+            LoadStandardActionList();
            
             MenuListLoaded = true;
 
@@ -194,7 +205,6 @@ public class util {
             
             //load MenuItems from the properties file and write to the Sage properties
             for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
-
                 sagex.api.Configuration.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
                 
                 System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
@@ -319,24 +329,79 @@ public class util {
         return EditOptions;
     }
     
-    public static String GetEditOptionButtonText(String Option, String Name){
-        String ButtonText = "Invalid option passed";
-        String MenuName = MenuItem.GetMenuItemButtonText(Name);
+    public static String GetEditOptionButtonText(String Option){
+        String ButtonText = OptionNotFound;
         if("admEditMenuItem".equals(Option)){
-            ButtonText = "Edit '" + MenuName + "'";
+            ButtonText = "Edit";
         }else if("admAddMenuItem".equals(Option)){
-            ButtonText = "Add Menu Item below '" + MenuName + "'";
+            ButtonText = "Add Menu Item below";
         }else if("admAddSubMenuItem".equals(Option)){
-            ButtonText = "Add Submenu Item below '" + MenuName + "'";
+            ButtonText = "Add Submenu Item below";
         }else if("admDeleteMenuItem".equals(Option)){
-            ButtonText = "Delete '" + MenuName + "'";
+            ButtonText = "Delete";
         }else if("admCloseEdit".equals(Option)){
             ButtonText = "Close";
         }
-        System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "' for MenuItem = '" + Name + "'");
+        System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
     }
     
+    public static String GetActionTypeButtonText(String Option){
+        String ButtonText = OptionNotFound;
+        if("ExecuteWidget".equals(Option)){
+            ButtonText = "Execute Widget by Symbol";
+        }else if("DoNothing".equals(Option)){
+            ButtonText = "None";
+        }else if("ExecuteStandardMenuAction".equals(Option)){
+            ButtonText = "Execute Standard Sage Menu Action";
+        }
+        System.out.println("ADM: GetActionTypeButtonText returned '" + ButtonText + "' for '" + Option + "'");
+        return ButtonText;
+    }
+    
+    public static void LoadStandardActionList(){
+        String StandardActionPropsPath = ADMDefaultsLocation + "\\" + StandardActionListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(StandardActionPropsPath);
+            try {
+                StandardActionProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
+            return;
+        }
+
+        //sort the keys into value order
+        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list
+        for (String ActionItem : StandardActionProps.stringPropertyNames()){
+            ActionValuesList.put(StandardActionProps.getProperty(ActionItem),ActionItem);
+        }
+
+        //build a list of keys in the order of the values
+        for (String ActionValue : ActionValuesList.keySet()){
+            StandardActionKeys.add(ActionValuesList.get(ActionValue));
+        }
+        
+        System.out.println("ADM: LoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
+        return;
+    }
+
+    public static String GetStandardActionButtonText(String Option){
+        return StandardActionProps.getProperty(Option, OptionNotFound);
+    }
+
+    public static Collection<String> GetStandardActionList(){
+        return StandardActionKeys;
+    }
+            
     public static String GetVersion() {
         return Version;
     }
