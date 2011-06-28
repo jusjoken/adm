@@ -35,24 +35,24 @@ public class util {
     public static final String ButtonTextDefault = "<Not defined>";
     private static final char[] symbols = new char[36];
     private static final Random random = new Random();
-    public static Boolean MenuListLoaded = false;
+    public static Boolean ADMInitComplete = false;
     public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
 
-    public static void LoadMenuList(){
+    public static void InitADM(){
         
-        if (!MenuListLoaded) {
+        if (!ADMInitComplete) {
 
             //ensure the ADM file location exists
             try{
                 boolean success = (new File(ADMLocation)).mkdirs();
                 if (success) {
-                    System.out.println("ADM: LoadMenuList - Directories created for '" + ADMLocation + "'");
+                    System.out.println("ADM: InitADM - Directories created for '" + ADMLocation + "'");
                    }
 
                 }catch (Exception ex){//Catch exception if any
-                    System.out.println("ADM: LoadMenuList - error creating '" + ADMLocation + "'" + ex.getMessage());
+                    System.out.println("ADM: InitADM - error creating '" + ADMLocation + "'" + ex.getMessage());
                 }
             
             LoadMenuItemsFromSage();
@@ -67,9 +67,9 @@ public class util {
                 symbols[idx] = (char) ('a' + idx - 10);
             
             
-            MenuListLoaded = true;
+            ADMInitComplete = true;
 
-            System.out.println("ADM: LoadMenuList - Loaded menu list:" + MenuItem.GetMenuItemNameList());
+            System.out.println("ADM: InitADM - initialization complete.");
 
         }
 
@@ -108,6 +108,8 @@ public class util {
     public static void DeleteMenuItem(String Name){
         //do all the deletes first
         DeleteMenuItemChildren(Name);
+        //Make sure there is still one default Menu Item
+        MenuItem.ValidateSubMenuDefault(MenuItem.GetMenuItemParent(Name));
         //rebuild any lists
         SaveMenuItemsToSage();
         LoadMenuItemsFromSage();
@@ -249,8 +251,10 @@ public class util {
             return false;
         }
         
-        //backup existing MenuItems before processing the import
-        ExportMenuItems(PropertyBackupFile);
+        //backup existing MenuItems before processing the import if any exist
+        if (MenuItem.MenuItemList.size()>0){
+            ExportMenuItems(PropertyBackupFile);
+        }
         
         if (MenuItemProps.size()>0){
             //clean up existing MenuItems from the SageTV properties file before writing the new ones
