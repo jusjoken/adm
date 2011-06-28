@@ -23,7 +23,6 @@ import sagex.UIContext;
 
 
 public class MenuItem {
-    public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String TopMenu = "xTopMenu";
     private String Parent = "";
     private String Name = "";
@@ -45,9 +44,9 @@ public class MenuItem {
         //create a MenuItem with just default values
         Parent = TopMenu;
         Name = bName;
-        ButtonText = "<Not defined>";
+        ButtonText = util.ButtonTextDefault;
         SubMenu = null;
-        ActionType = null;
+        ActionType = util.ActionTypeDefault;
         Action = null;
         BGImageFile = null;
         BGImageFilePath = null;
@@ -621,7 +620,7 @@ public class MenuItem {
     }
 
     private static void SaveMenuItemtoSage(String Name, String PropType, String Setting){
-        String PropLocation = SagePropertyLocation + Name;
+        String PropLocation = util.SagePropertyLocation + Name;
         sagex.api.Configuration.SetProperty(PropLocation + "/" + PropType, Setting);
     }
     

@@ -23,14 +23,16 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.24";
+    public static String Version = "0.25";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
-    private static final String SagePropertyLocation = "ADM/menuitem/";
+    public static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String OptionNotFound = "Option not Found";
+    public static final String ActionTypeDefault = "DoNothing";
+    public static final String ButtonTextDefault = "<Not defined>";
     private static final char[] symbols = new char[36];
     private static final Random random = new Random();
     public static Boolean MenuListLoaded = false;
@@ -130,9 +132,9 @@ public class util {
         //Create a new MenuItem with defaults
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         MenuItem.SetMenuItemAction(tMenuItemName,null);
-        MenuItem.SetMenuItemActionType(tMenuItemName,null);
+        MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeDefault);
         MenuItem.SetMenuItemBGImageFile(tMenuItemName,null);
-        MenuItem.SetMenuItemButtonText(tMenuItemName,"<Not defined>");
+        MenuItem.SetMenuItemButtonText(tMenuItemName,ButtonTextDefault);
         MenuItem.SetMenuItemName(tMenuItemName);
         MenuItem.SetMenuItemParent(tMenuItemName,Parent);
         MenuItem.SetMenuItemSortKey(tMenuItemName,SortKey);
@@ -161,9 +163,9 @@ public class util {
                 PropLocation = SagePropertyLocation + tMenuItemName;
                 MenuItem NewMenuItem = new MenuItem(tMenuItemName);
                 NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
-                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", null));
+                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", ActionTypeDefault));
                 NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
-                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", "<Not defined>"));
+                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", ButtonTextDefault));
                 NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
                 NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
                 NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
@@ -401,7 +403,7 @@ public class util {
         String ButtonText = OptionNotFound;
         if("ExecuteWidget".equals(Option)){
             ButtonText = "Execute Widget by Symbol";
-        }else if("DoNothing".equals(Option)){
+        }else if(ActionTypeDefault.equals(Option)){
             ButtonText = "None";
         }else if("ExecuteStandardMenuAction".equals(Option)){
             ButtonText = "Execute Standard Sage Menu Action";
