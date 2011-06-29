@@ -252,12 +252,15 @@ public class MenuItem {
     }
 
     public static void SetMenuItemIsDefault(String Name, Boolean Setting){
-        if (Setting){
+        System.out.println("ADM: SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
+        if (Setting==Boolean.TRUE){
+            System.out.println("ADM: SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
             //first clear existing Default settings for Menu Items with the same parent 
             ClearSubMenuDefaults(MenuItemList.get(Name).GetMenuItemParent(Name));
             MenuItemList.get(Name).setIsDefault(Setting);
             SaveMenuItemtoSage(Name, "IsDefault", Setting.toString());
         }else{
+            System.out.println("ADM: SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
             MenuItemList.get(Name).setIsDefault(Setting);
             SaveMenuItemtoSage(Name, "IsDefault", Setting.toString());
             //ensure at least 1 item remaining is a default
@@ -482,7 +485,9 @@ public class MenuItem {
                 }
                 if (MenuItemList.get(SubMenuItem).getIsDefault()){
                     if (FoundDefault){
-                        MenuItemList.get(SubMenuItem).SetMenuItemIsDefault(SubMenuItem, Boolean.FALSE);
+                    //Save setting
+                        MenuItemList.get(SubMenuItem).setIsDefault(Boolean.FALSE);
+                        SaveMenuItemtoSage(SubMenuItem, "IsDefault", Boolean.FALSE.toString());
                     }else{
                         FoundDefault = Boolean.TRUE;
                     }
@@ -491,7 +496,8 @@ public class MenuItem {
             if (!FoundDefault){
                 //no default found so set the first item as the default
                 System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + FirstItem + "'");
-                MenuItemList.get(FirstItem).SetMenuItemIsDefault(FirstItem, Boolean.TRUE);
+                MenuItemList.get(FirstItem).setIsDefault(Boolean.TRUE);
+                SaveMenuItemtoSage(FirstItem, "IsDefault", Boolean.TRUE.toString());
             }else {
                 System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : Default already set");
             }
@@ -510,10 +516,13 @@ public class MenuItem {
         if (SubMenuItems.size()>0){
             for (String SubMenuItem : SubMenuItems){
                 if (MenuItemList.get(SubMenuItem).getIsDefault()){
-                    MenuItemList.get(SubMenuItem).SetMenuItemIsDefault(SubMenuItem, Boolean.FALSE);
+                    //Save setting
+                    MenuItemList.get(SubMenuItem).setIsDefault(Boolean.FALSE);
+                    SaveMenuItemtoSage(SubMenuItem, "IsDefault", Boolean.FALSE.toString());
                 }
             }
         }
+        System.out.println("ADM: ClearSubMenuDefaults for '" + bParent + "' '" + SubMenuItems.size() + "' cleared");
     }
     
     final void AddMenuItemtoList(MenuItem NewMenuItem){

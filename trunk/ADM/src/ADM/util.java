@@ -106,10 +106,12 @@ public class util {
     }
     
     public static void DeleteMenuItem(String Name){
+        //store the parent for later cleanup
+        String OldParent = MenuItem.GetMenuItemParent(Name);
         //do all the deletes first
         DeleteMenuItemChildren(Name);
         //Make sure there is still one default Menu Item
-        MenuItem.ValidateSubMenuDefault(MenuItem.GetMenuItemParent(Name));
+        MenuItem.ValidateSubMenuDefault(OldParent);
         //rebuild any lists
         SaveMenuItemsToSage();
         LoadMenuItemsFromSage();
