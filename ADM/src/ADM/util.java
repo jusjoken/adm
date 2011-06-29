@@ -23,22 +23,32 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.25";
+    public static String Version = "0.26";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
-    private static final String OptionNotFound = "Option not Found";
+    private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
+    private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
+    private static final String SageSubMenusLevelDListFile = "ADMSageSubMenusD.properties";
+    public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
     public static final String ButtonTextDefault = "<Not defined>";
+    public static final String SortStyleDefault = "xNaturalOrder";
     private static final char[] symbols = new char[36];
     private static final Random random = new Random();
     public static Boolean ADMInitComplete = false;
     public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
+    public static Properties SageSubMenusLevel1Props = new Properties();
+    public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
+    public static Properties SageSubMenusLevel2Props = new Properties();
+    public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
+    public static Properties SageSubMenusLevelDProps = new Properties();
+    public static Collection<String> SageSubMenusLevelDKeys = new LinkedHashSet<String>();
 
     public static void InitADM(){
         
@@ -59,6 +69,12 @@ public class util {
             
             //also load the standard actions list - only needs loaded at startup
             LoadStandardActionList();
+            //also load SubMenu lists for levels 1 and 2 and Diamond
+            LoadSubMenuListLevel1();
+            LoadSubMenuListLevel2();
+            if (IsDiamond()){
+                LoadSubMenuListLevelD();
+            }
            
             //generate symbols to be used for new MenuItem names
             for (int idx = 0; idx < 10; ++idx)
@@ -192,21 +208,28 @@ public class util {
         
         return;
     }
-    
-    public static void LoadMenuItemDefaults(){
-        //load default MenuItems from one or more default .properties file
-        String DefaultPropFile = "ADMDefault.properties";
-        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
+
+    private static Boolean IsDiamond(){
         String DiamondPluginID = "DiamondSTVi";
         String DiamondWidgetSymbol = "AOSCS-65";
-        String DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFile;
-        
         // check to see if the Diamond Plugin is installed
         UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
         Object[] FoundWidget = new Object[1];
         FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, DiamondWidgetSymbol);
         if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
-            //load the Diamond default
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+    
+    public static void LoadMenuItemDefaults(){
+        //load default MenuItems from one or more default .properties file
+        String DefaultPropFile = "ADMDefault.properties";
+        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
+        String DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFile;
+        
+        // check to see if the Diamond Plugin is installed
+        if (IsDiamond()){
             DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFileDiamond;
         }
         ImportMenuItems(DefaultsFullPath);
@@ -418,6 +441,111 @@ public class util {
         return ButtonText;
     }
     
+    public static void LoadSubMenuListLevel1(){
+        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevel1ListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(SubMenuPropsPath);
+            try {
+                SageSubMenusLevel1Props.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadSubMenuListLevel1: IO exception loading standard actions " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadSubMenuListLevel1: file not found loading standard actions " + util.class.getName() + ex);
+            return;
+        }
+
+        //sort the keys into value order
+        SortedMap<String,String> SageSubMenusList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list
+        for (String SageSubMenusItem : SageSubMenusLevel1Props.stringPropertyNames()){
+            SageSubMenusList.put(SageSubMenusLevel1Props.getProperty(SageSubMenusItem),SageSubMenusItem);
+        }
+
+        //build a list of keys in the order of the values
+        for (String SageSubMenusValue : SageSubMenusList.keySet()){
+            SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
+        }
+        
+        System.out.println("ADM: LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
+        return;
+    }
+
+    public static void LoadSubMenuListLevel2(){
+        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevel2ListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(SubMenuPropsPath);
+            try {
+                SageSubMenusLevel2Props.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadSubMenuListLevel2: IO exception loading standard actions " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadSubMenuListLevel2: file not found loading standard actions " + util.class.getName() + ex);
+            return;
+        }
+
+        //sort the keys into value order
+        SortedMap<String,String> SageSubMenusList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list
+        for (String SageSubMenusItem : SageSubMenusLevel2Props.stringPropertyNames()){
+            SageSubMenusList.put(SageSubMenusLevel2Props.getProperty(SageSubMenusItem),SageSubMenusItem);
+        }
+
+        //build a list of keys in the order of the values
+        for (String SageSubMenusValue : SageSubMenusList.keySet()){
+            SageSubMenusLevel2Keys.add(SageSubMenusList.get(SageSubMenusValue));
+        }
+        
+        System.out.println("ADM: LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
+        return;
+    }
+
+    public static void LoadSubMenuListLevelD(){
+        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevelDListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(SubMenuPropsPath);
+            try {
+                SageSubMenusLevelDProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadSubMenuListLevelD: IO exception loading standard actions " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadSubMenuListLevelD: file not found loading standard actions " + util.class.getName() + ex);
+            return;
+        }
+        //sort the keys into value order
+        SortedMap<String,String> SageSubMenusList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list and add the Diamond value to the level 1 props
+        for (String SageSubMenusItem : SageSubMenusLevelDProps.stringPropertyNames()){
+            SageSubMenusList.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
+            SageSubMenusLevel1Props.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
+        }
+
+        //add the Diamond values to the level 1 list
+        for (String SageSubMenusValue : SageSubMenusList.keySet()){
+            SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
+        }
+        
+        System.out.println("ADM: LoadSubMenuListLevelD: completed for '" + SubMenuPropsPath + "'");
+        return;
+    }
+
     public static void LoadStandardActionList(){
         String StandardActionPropsPath = ADMDefaultsLocation + "\\" + StandardActionListFile;
         
@@ -459,6 +587,22 @@ public class util {
 
     public static Collection<String> GetStandardActionList(){
         return StandardActionKeys;
+    }
+            
+    public static String GetSubMenuListButtonText(String Option, Integer Level){
+        if (Level==1){
+            return SageSubMenusLevel1Props.getProperty(Option, OptionNotFound);
+        }else{
+            return SageSubMenusLevel2Props.getProperty(Option, OptionNotFound);
+        }
+    }
+
+    public static Collection<String> GetSubMenuList(Integer Level){
+        if (Level==1){
+            return SageSubMenusLevel1Keys;
+        }else{
+            return SageSubMenusLevel2Keys;
+        }
     }
             
     public static String GetVersion() {

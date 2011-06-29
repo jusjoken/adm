@@ -226,6 +226,39 @@ public class MenuItem {
         return MenuItemList.get(Name).IsActive;
     }
 
+    public static String GetMenuItemIsActiveIncludingParentFormatted(String Name){
+        if (!MenuItemList.get(Name).IsActive){
+            return "No";
+        }else if (GetMenuItemIsActiveIncludingParent(Name)){
+            return "Yes";
+        }
+        // in this case this item is active BUT the parent is not
+        return "Yes (but Parent is not Active)";
+    }
+    
+    public static Boolean GetMenuItemIsActiveIncludingParent(String Name){
+        //if this item is inactive then return FALSE
+        if (!MenuItemList.get(Name).IsActive){
+            return Boolean.FALSE;
+        }else{
+            //if the level is 1 then just return the item setting
+            if (MenuItemList.get(Name).Level==1){
+                return MenuItemList.get(Name).IsActive;
+            }else if (MenuItemList.get(Name).Level==2){
+                //for level 2 just return the parents setting
+                return MenuItemList.get(MenuItemList.get(Name).Parent).IsActive;
+            }else{
+                //for level 3 check the level 2 parent
+                if (!MenuItemList.get(MenuItemList.get(Name).Parent).IsActive){
+                    return Boolean.FALSE;
+                }else{
+                    //now just return the level 1 parent setting
+                    return MenuItemList.get(MenuItemList.get(MenuItemList.get(Name).Parent).Parent).IsActive;
+                }
+            }
+        }
+    }
+
     public static void SetMenuItemIsActive(String Name, Boolean Setting){
         MenuItemList.get(Name).setIsActive(Setting);
         SaveMenuItemtoSage(Name, "IsActive", Setting.toString());
@@ -468,6 +501,14 @@ public class MenuItem {
         return MenuItemList.get(Name).getSubMenu();
     }
 
+    public static String GetMenuItemSubMenuButtonText(String Name){
+        String TempText = util.GetSubMenuListButtonText(MenuItemList.get(Name).getSubMenu(), GetMenuItemLevel(Name));
+        if (TempText.equals(util.OptionNotFound)){
+            return "Linked ADM Menu Items";
+        }
+        return TempText;
+    }
+
     public static void SetMenuItemSubMenu(String Name, String Setting){
         MenuItemList.get(Name).setSubMenu(Setting);
         SaveMenuItemtoSage(Name, "SubMenu", Setting);
@@ -613,11 +654,32 @@ public class MenuItem {
         return ValidParentList;
     }
     
-    //get a '/' delimitted path for the menu item
-    public static String GetMenuItemFullPath(String Name){
-        return GetMenuItemButtonTextFormatted(Name,null);
+    //get the specific format based on the Sort style
+    public static String GetMenuItemButtonTextbyStyle(String Name, String SortStyle){
+        String SubMenuText = MenuItemList.get(Name).GetMenuItemSubMenu(Name);
+        if (SubMenuText!=null){
+            if (SubMenuText==Name){
+                SubMenuText = "";
+            }else{
+                SubMenuText = " <" + util.GetSubMenuListButtonText(SubMenuText, MenuItemList.get(Name).GetMenuItemLevel(Name)) + ">";
+            }
+        }else{
+            SubMenuText = "";
+        }
+        if (SortStyle.equals(util.SortStyleDefault)){
+            //return a prefix padded string
+            return GetMenuItemButtonTextFormatted(Name,"     ") + SubMenuText;
+        }else{
+            //return a / delimited path
+            return GetMenuItemButtonTextFormatted(Name,null);
+        }
     }
 
+//    //get a '/' delimitted path for the menu item
+//    public static String GetMenuItemFullPath(String Name){
+//        return GetMenuItemButtonTextFormatted(Name,null);
+//    }
+//
     public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
         String FullName = "";
         if (MenuItemList.get(Name).Parent.equals(TopMenu)){
