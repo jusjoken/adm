@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.26";
+    public static String Version = "0.27";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -33,6 +33,7 @@ public class util {
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
     private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
     private static final String SageSubMenusLevelDListFile = "ADMSageSubMenusD.properties";
+    public static final String ListNone = "<None>";
     public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
     public static final String ButtonTextDefault = "<Not defined>";
@@ -391,9 +392,7 @@ public class util {
             System.out.println("ADM: LaunchVideoBrowser - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
         }else{
             //set the current folder as a Global Context 
-            //sagex.api.Global.AddGlobalContext(MyUIContext, "LastVideoFolder", FoldertoLaunch);
             sagex.api.Global.AddGlobalContext(MyUIContext, "gCurrentVideoBrowserFolder", FoldertoLaunch);
-            //sagex.api.Global.AddGlobalContext(MyUIContext, "LastCurFolder", FoldertoLaunch);
             
             System.out.println("ADM: LaunchVideoBrowser - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
 
@@ -402,7 +401,7 @@ public class util {
             } catch (InvocationTargetException ex) {
                 System.out.println("ADM: LaunchVideoBrowser: error executing widget" + util.class.getName() + ex);
             }
-            
+
             //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
             
         }
@@ -502,6 +501,10 @@ public class util {
             SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
         }
         
+        //Add in a -None- option to the list
+        SageSubMenusLevel1Props.put(ListNone,ListNone);
+        SageSubMenusLevel1Keys.add(ListNone);
+        
         System.out.println("ADM: LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
         return;
     }
@@ -536,6 +539,10 @@ public class util {
         for (String SageSubMenusValue : SageSubMenusList.keySet()){
             SageSubMenusLevel2Keys.add(SageSubMenusList.get(SageSubMenusValue));
         }
+        
+        //Add in a -None- option to the list
+        SageSubMenusLevel2Props.put(ListNone,ListNone);
+        SageSubMenusLevel2Keys.add(ListNone);
         
         System.out.println("ADM: LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
         return;
@@ -620,10 +627,14 @@ public class util {
     }
             
     public static String GetSubMenuListButtonText(String Option, Integer Level){
+        System.out.println("ADM: GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
+        if (Option==null){
+            return ListNone;
+        }
         if (Level==1){
-            return SageSubMenusLevel1Props.getProperty(Option, OptionNotFound);
+            return SageSubMenusLevel1Props.getProperty(Option, ListNone);
         }else{
-            return SageSubMenusLevel2Props.getProperty(Option, OptionNotFound);
+            return SageSubMenusLevel2Props.getProperty(Option, ListNone);
         }
     }
 
