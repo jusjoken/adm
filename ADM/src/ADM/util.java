@@ -381,6 +381,34 @@ public class util {
                
     }
     
+    public static void LaunchVideoBrowser(String FoldertoLaunch){
+        System.out.println("ADM: LaunchVideoBrowser - for Folder = '" + FoldertoLaunch + "'");
+        String WidgetSymbol = "OPUS4A-174637";
+        UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
+        Object[] passvalue = new Object[1];
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
+        if (passvalue[0]==null){
+            System.out.println("ADM: LaunchVideoBrowser - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+        }else{
+            //set the current folder as a Global Context 
+            //sagex.api.Global.AddGlobalContext(MyUIContext, "LastVideoFolder", FoldertoLaunch);
+            sagex.api.Global.AddGlobalContext(MyUIContext, "gCurrentVideoBrowserFolder", FoldertoLaunch);
+            //sagex.api.Global.AddGlobalContext(MyUIContext, "LastCurFolder", FoldertoLaunch);
+            
+            System.out.println("ADM: LaunchVideoBrowser - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
+
+            try {
+                sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
+            } catch (InvocationTargetException ex) {
+                System.out.println("ADM: LaunchVideoBrowser: error executing widget" + util.class.getName() + ex);
+            }
+            
+            //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
+            
+        }
+               
+    }
+    
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
@@ -436,6 +464,8 @@ public class util {
             ButtonText = "None";
         }else if("ExecuteStandardMenuAction".equals(Option)){
             ButtonText = "Execute Standard Sage Menu Action";
+        }else if("ExecuteBrowseVideoFolder".equals(Option)){
+            ButtonText = "Video Browser with specific Folder";
         }
         System.out.println("ADM: GetActionTypeButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;

@@ -82,6 +82,7 @@ public class MenuItem {
     }
 
     public static String GetMenuItemAction(String Name){
+        System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuItemList.get(Name).getAction() + "'");
         return MenuItemList.get(Name).getAction();
     }
 
