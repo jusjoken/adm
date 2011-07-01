@@ -23,7 +23,6 @@ import sagex.UIContext;
 
 
 public class MenuItem {
-    public static final String TopMenu = "xTopMenu";
     private String Parent = "";
     private String Name = "";
     private String ButtonText = "";
@@ -42,7 +41,7 @@ public class MenuItem {
 
     public MenuItem(String bName){
         //create a MenuItem with just default values
-        Parent = TopMenu;
+        Parent = util.TopMenu;
         Name = bName;
         ButtonText = util.ButtonTextDefault;
         SubMenu = null;
@@ -82,7 +81,7 @@ public class MenuItem {
     }
 
     public static String GetMenuItemAction(String Name){
-        System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuItemList.get(Name).getAction() + "'");
+        //System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuItemList.get(Name).getAction() + "'");
         return MenuItemList.get(Name).getAction();
     }
 
@@ -129,17 +128,17 @@ public class MenuItem {
     private void SetBGImageFileandPath(String bBGImageFile){
         //see if using a GlobalVariable from a Theme or a path to an image file
         if (bBGImageFile==null){
-            System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
+            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
             BGImageFile = bBGImageFile;
             BGImageFilePath = bBGImageFile;
         }else if (bBGImageFile.contains("\\")){
             //a path to the image file is being used
-            System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - path found");
+            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - path found");
             BGImageFile = bBGImageFile;
             BGImageFilePath = bBGImageFile;
         }else{
             //expect a Global Variable from the theme
-            System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
+            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
             BGImageFile = bBGImageFile;
             BGImageFilePath = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), bBGImageFile).toString();
         }
@@ -168,7 +167,7 @@ public class MenuItem {
     }
 
     public static String GetMenuItemButtonText(String Name){
-        if (Name.equals(TopMenu)){
+        if (Name.equals(util.TopMenu)){
             return "Top Level";
         }else{
             return MenuItemList.get(Name).getButtonText();
@@ -300,15 +299,15 @@ public class MenuItem {
     }
 
     public static void SetMenuItemIsDefault(String Name, Boolean Setting){
-        System.out.println("ADM: SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
+        //System.out.println("ADM: SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
         if (Setting==Boolean.TRUE){
-            System.out.println("ADM: SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
+            //System.out.println("ADM: SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
             //first clear existing Default settings for Menu Items with the same parent 
             ClearSubMenuDefaults(MenuItemList.get(Name).GetMenuItemParent(Name));
             MenuItemList.get(Name).setIsDefault(Setting);
             SaveMenuItemtoSage(Name, "IsDefault", Setting.toString());
         }else{
-            System.out.println("ADM: SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
+            //System.out.println("ADM: SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
             MenuItemList.get(Name).setIsDefault(Setting);
             SaveMenuItemtoSage(Name, "IsDefault", Setting.toString());
             //ensure at least 1 item remaining is a default
@@ -333,19 +332,19 @@ public class MenuItem {
     }
 
     private static Integer GetMenuItemLevelInternal(String Name){
-        if (MenuItemList.get(Name).Parent.equals(TopMenu)){
-            System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
+        if (MenuItemList.get(Name).Parent.equals(util.TopMenu)){
+            //System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
             return 1;
         }else{
             //find a MenuItem whose Name equals this Parent
             Collection<String> TempList = GetMenuItemNameList();
             for (String TempItem : TempList){
                 if (MenuItemList.get(TempItem).Name.equals(MenuItemList.get(Name).Parent)){
-                    if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
-                        System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Name + "'");
+                    if (MenuItemList.get(TempItem).Parent.equals(util.TopMenu)){
+                        //System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Name + "'");
                         return 2;
                     }else{
-                        System.out.println("ADM: GetMenuItemLevel: level - 3 returned for '" + Name + "'");
+                        //System.out.println("ADM: GetMenuItemLevel: level - 3 returned for '" + Name + "'");
                         return 3;
                     }
                 }
@@ -398,24 +397,18 @@ public class MenuItem {
 
     public static void SetMenuItemParent(String Name, String Setting){
         String OldParent = MenuItemList.get(Name).getParent();
-        System.out.println("ADM: SetMenuItemParent: 1 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
         SaveMenuItemtoSage(Name, "Parent", Setting);
         MenuItemList.get(Name).setParent(Setting);
-        System.out.println("ADM: SetMenuItemParent: 2 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
         
         if (OldParent.equals(Setting) || OldParent==null){
             System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "' OldParent = '" + OldParent + "'");
         }else{
             //check the new parent and set it's SubMenu properly
-            System.out.println("ADM: SetMenuItemParent: 3 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
             SetMenuItemSubMenu(Setting,util.ListNone);
-            System.out.println("ADM: SetMenuItemParent: 4 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
             SetMenuItemHasSubMenu(Setting, Boolean.TRUE);
 
             //make sure the old and new SubMenus have a single default item
-            System.out.println("ADM: SetMenuItemParent: 5 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
             ValidateSubMenuDefault(OldParent);
-            System.out.println("ADM: SetMenuItemParent: 6 Name = '" + Name + "' Setting = '" + Setting + "' OldParent = '" + OldParent + "'");
             ValidateSubMenuDefault(Setting);
             System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + Setting + "'");
         }
@@ -532,9 +525,8 @@ public class MenuItem {
     }
 
     public static void SetMenuItemSubMenu(String Name, String Setting){
-        System.out.println("ADM: SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
+        //System.out.println("ADM: SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
         if (Setting.equals(util.ListNone) || Setting==null){
-            System.out.println("ADM: SetMenuItemSubMenu 1 for '" + Name + "' Setting = '" + Setting + "'");
             //set the SubMenu field
             MenuItemList.get(Name).setSubMenu(null);
             SaveMenuItemtoSage(Name, "SubMenu", null);
@@ -542,7 +534,6 @@ public class MenuItem {
             MenuItemList.get(Name).setHasSubMenu(Boolean.FALSE);
             SaveMenuItemtoSage(Name, "HasSubMenu", Boolean.FALSE.toString());
         }else{
-            System.out.println("ADM: SetMenuItemSubMenu 2 for '" + Name + "' Setting = '" + Setting + "'");
             //set the SubMenu field
             MenuItemList.get(Name).setSubMenu(Setting);
             SaveMenuItemtoSage(Name, "SubMenu", Setting);
@@ -645,7 +636,7 @@ public class MenuItem {
     //returns only menu items for a specific parent that are active
     public static Collection<String> GetMenuItemSortedList(Boolean Grouped){
         //first get all Top Level Menu Items
-        Collection<String> TopMenus = GetMenuItemNameList(TopMenu,Boolean.TRUE);
+        Collection<String> TopMenus = GetMenuItemNameList(util.TopMenu,Boolean.TRUE);
         
         Collection<String> FinalList = new LinkedHashSet<String>();
         if (Grouped){
@@ -682,7 +673,7 @@ public class MenuItem {
         Collection<String> FullSortedList = GetMenuItemNameList(null,Boolean.TRUE);
         Collection<String> ValidParentList = new LinkedHashSet<String>();
         //Add Top Level as a valid parent
-        ValidParentList.add(TopMenu);
+        ValidParentList.add(util.TopMenu);
         for (String TempName : FullSortedList){
             if (MenuItemList.get(TempName).Level<3){
                 ValidParentList.add(TempName);
@@ -696,10 +687,10 @@ public class MenuItem {
     public static String GetMenuItemButtonTextbyStyle(String Name, String SortStyle){
         String SubMenuText = MenuItemList.get(Name).GetMenuItemSubMenu(Name);
         if (SubMenuText!=null){
-            if (SubMenuText==Name){
+            if (SubMenuText.equals(Name)){
                 SubMenuText = "";
             }else{
-                SubMenuText = " <" + util.GetSubMenuListButtonText(SubMenuText, MenuItemList.get(Name).GetMenuItemLevel(Name)) + ">";
+                SubMenuText = " <" + util.GetSubMenuListButtonText(SubMenuText, MenuItemList.get(Name).GetMenuItemLevel(Name),Boolean.TRUE) + ">";
             }
         }else{
             SubMenuText = "";
@@ -713,7 +704,7 @@ public class MenuItem {
             return GetMenuItemButtonTextFormatted(Name,"     ") + DefaultIndicator + SubMenuText;
         }else{
             //return a / delimited path
-            return GetMenuItemButtonTextFormatted(Name,null) + DefaultIndicator;
+            return GetMenuItemButtonTextFormatted(Name,null) + DefaultIndicator + SubMenuText;
         }
     }
 
@@ -724,23 +715,23 @@ public class MenuItem {
 //
     public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
         String FullName = "";
-        if (MenuItemList.get(Name).Parent.equals(TopMenu)){
+        if (MenuItemList.get(Name).Parent.equals(util.TopMenu)){
             FullName = MenuItemList.get(Name).ButtonText;
-            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 1 for '" + Name + "' Path = '" + FullName + "'");
+            //System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 1 for '" + Name + "' Path = '" + FullName + "'");
             return FullName;
         }else{
             //find a MenuItem whose SubMenu equals this Parent
             Collection<String> TempList = GetMenuItemNameList();
             for (String TempItem : TempList){
                 if (MenuItemList.get(Name).Parent.equals(MenuItemList.get(TempItem).Name)){
-                    if (MenuItemList.get(TempItem).Parent.equals(TopMenu)){
+                    if (MenuItemList.get(TempItem).Parent.equals(util.TopMenu)){
                         FullName = MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
                         if (PrefixPadding==null){
-                            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
+                            //System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
                             return FullName;
                         }else{
                             FullName = PrefixPadding + MenuItemList.get(Name).ButtonText;
-                            System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
+                            //System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 2 for '" + Name + "' Path = '" + FullName + "'");
                             return FullName;
                         }
                     }else{
@@ -748,11 +739,11 @@ public class MenuItem {
                             if (MenuItemList.get(TempItem).Parent.equals(MenuItemList.get(TempItem2).Name)){
                                 FullName = MenuItemList.get(TempItem2).ButtonText + " / " + MenuItemList.get(TempItem).ButtonText + " / " + MenuItemList.get(Name).ButtonText ;
                                 if (PrefixPadding==null){
-                                    System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
+                                    //System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
                                     return FullName;
                                 }else{
                                     FullName = PrefixPadding + PrefixPadding + MenuItemList.get(Name).ButtonText;
-                                    System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
+                                    //System.out.println("ADM: GetMenuItemButtonTextFormatted: level - 3 for '" + Name + "' Path = '" + FullName + "'");
                                     return FullName;
                                 }
                             }
