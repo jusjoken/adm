@@ -127,7 +127,7 @@ public class MenuItem {
 
     private void SetBGImageFileandPath(String bBGImageFile){
         //see if using a GlobalVariable from a Theme or a path to an image file
-        if (bBGImageFile==null){
+        if (bBGImageFile==null || bBGImageFile.equals("")){
             //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
             BGImageFile = bBGImageFile;
             BGImageFilePath = bBGImageFile;
