@@ -582,7 +582,7 @@ public class MenuItem {
             }
         }else{
             //no subMenu items so make sure this parent's SubMenu settings are correct
-            MenuItemList.get(bParent).SetMenuItemSubMenu(bParent, null);
+            MenuItemList.get(bParent).SetMenuItemSubMenu(bParent, util.ListNone);
             MenuItemList.get(bParent).SetMenuItemHasSubMenu(bParent, Boolean.FALSE);
             System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
         }
