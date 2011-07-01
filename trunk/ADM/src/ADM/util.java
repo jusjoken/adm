@@ -23,9 +23,12 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.28";
+    public static String Version = "0.29";
+    private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SagePropertyLocation = "ADM/menuitem/";
+    public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
+    public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
@@ -76,6 +79,9 @@ public class util {
             if (IsDiamond()){
                 LoadSubMenuListLevelD();
             }
+            //Add in a -None- option to the list
+            SageSubMenusLevel1Keys.add(ListNone);
+            SageSubMenusLevel2Keys.add(ListNone);
            
             //generate symbols to be used for new MenuItem names
             for (int idx = 0; idx < 10; ++idx)
@@ -115,7 +121,7 @@ public class util {
             sagex.api.Configuration.SetProperty(PropLocation + "/HasSubMenu", entry.getValue().getHasSubMenu().toString());
             sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
             sagex.api.Configuration.SetProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
-            System.out.println("ADM: SaveMenuItemsToSage: saved - '" + entry.getValue().getName() + "'");
+            //System.out.println("ADM: SaveMenuItemsToSage: saved - '" + entry.getValue().getName() + "'");
         }         
         System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuItem.MenuItemList.size() + " MenuItems");
         
@@ -145,6 +151,26 @@ public class util {
         //delete this item
         MenuItem.MenuItemList.remove(Name);
         System.out.println("ADM: DeleteMenuItemChildren: deleted '" + Name + "' and '" + Children.size() + "' Children");
+    }
+    
+    public static void DeleteAllMenuItems(){
+
+        //backup existing MenuItems before deleting
+        if (MenuItem.MenuItemList.size()>0){
+            ExportMenuItems(PropertyBackupFile);
+        }
+        
+        //clean up existing MenuItems from the SageTV properties file
+        sagex.api.Configuration.RemovePropertyAndChildren(SagePropertyLocation);
+        MenuItem.MenuItemList.clear();
+        
+        //Create 1 new MenuItem at the TopMenu level
+        NewMenuItem(TopMenu, 1, 1) ;
+
+        //now load the properties from the Sage properties file
+        LoadMenuItemsFromSage();
+
+        System.out.println("ADM: DeleteAllMenuItems: completed");
     }
     
     public static String NewMenuItem(String Parent, Integer SortKey, Integer Level){
@@ -194,7 +220,7 @@ public class util {
                 NewMenuItem.setHasSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
                 NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
                 NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
-                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+                //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
             }
 
         }else{
@@ -228,12 +254,32 @@ public class util {
         String DefaultPropFile = "ADMDefault.properties";
         String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
         String DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFile;
+        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
+        String DiamondMenuVideos = "admSageTVVideos";
+        String DiamondMenuMovies = "admDiamondMovies";
+        
         
         // check to see if the Diamond Plugin is installed
         if (IsDiamond()){
             DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFileDiamond;
         }
         ImportMenuItems(DefaultsFullPath);
+        
+        //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
+        if (IsDiamond()){
+            //admSageTVVideos
+            if ("true".equals(sagex.api.Configuration.GetProperty(DiamondVideoMenuCheckProp, "false"))){
+                //show the Videos Menu
+                MenuItem.SetMenuItemIsActive(DiamondMenuMovies, Boolean.TRUE);
+                MenuItem.SetMenuItemIsActive(DiamondMenuVideos, Boolean.FALSE);
+            }else{
+                //show the Movies Menu
+                MenuItem.SetMenuItemIsActive(DiamondMenuMovies, Boolean.FALSE);
+                MenuItem.SetMenuItemIsActive(DiamondMenuVideos, Boolean.TRUE);
+            }
+            
+        }
+        
         System.out.println("ADM: LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
         
         
@@ -290,7 +336,7 @@ public class util {
             for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
                 sagex.api.Configuration.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
                 
-                System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
+                //System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
             }
             
             //now load the properties from the Sage properties file
@@ -304,7 +350,7 @@ public class util {
     public static void ExportMenuItems(String ExportFile){
         String PropLocation = "";
         String ExportFilePath = ADMLocation + "\\" + ExportFile;
-        System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
+        //System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
         
         //iterate through all the MenuItems and save to a Property Collection
         Properties MenuItemProps = new Properties();
@@ -338,7 +384,7 @@ public class util {
             MenuItemProps.setProperty(PropLocation + "/HasSubMenu", entry.getValue().getHasSubMenu().toString());
             MenuItemProps.setProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
             MenuItemProps.setProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
-            System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
+            //System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
         }         
 
         //if the export file exists then delete it before exporting
@@ -362,7 +408,6 @@ public class util {
     }
     
     public static void ExecuteWidget(String WidgetSymbol){
-        UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
         if (passvalue[0]==null){
@@ -382,10 +427,36 @@ public class util {
                
     }
     
+    public static Boolean IsWidgetValid(String WidgetSymbol){
+        Object[] passvalue = new Object[1];
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
+        if (passvalue[0]==null){
+            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            return Boolean.FALSE;
+        }else{
+            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
+            return Boolean.TRUE;
+        }
+               
+    }
+    
+    public static String GetWidgetName(String WidgetSymbol){
+        Object[] passvalue = new Object[1];
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
+        if (passvalue[0]==null){
+            System.out.println("ADM: GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            return null;
+        }else{
+            String WidgetName = sagex.api.WidgetAPI.GetWidgetName(MyUIContext, WidgetSymbol);
+            System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
+            return WidgetName;
+        }
+               
+    }
+    
     public static void LaunchVideoBrowser(String FoldertoLaunch){
         System.out.println("ADM: LaunchVideoBrowser - for Folder = '" + FoldertoLaunch + "'");
         String WidgetSymbol = "OPUS4A-174637";
-        UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
         if (passvalue[0]==null){
@@ -503,7 +574,6 @@ public class util {
         
         //Add in a -None- option to the list
         SageSubMenusLevel1Props.put(ListNone,ListNone);
-        SageSubMenusLevel1Keys.add(ListNone);
         
         System.out.println("ADM: LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
         return;
@@ -542,7 +612,6 @@ public class util {
         
         //Add in a -None- option to the list
         SageSubMenusLevel2Props.put(ListNone,ListNone);
-        SageSubMenusLevel2Keys.add(ListNone);
         
         System.out.println("ADM: LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
         return;
@@ -571,7 +640,7 @@ public class util {
         //Add all the Values to a sorted list and add the Diamond value to the level 1 props
         for (String SageSubMenusItem : SageSubMenusLevelDProps.stringPropertyNames()){
             SageSubMenusList.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
-            SageSubMenusLevel1Props.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
+            //SageSubMenusLevel1Props.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
         }
 
         //add the Diamond values to the level 1 list
@@ -619,7 +688,12 @@ public class util {
     }
 
     public static String GetStandardActionButtonText(String Option){
-        return StandardActionProps.getProperty(Option, OptionNotFound);
+        //determine if using Advanced options
+        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
+            return StandardActionProps.getProperty(Option, OptionNotFound) + " (" + Option + ")";
+        }else{
+            return StandardActionProps.getProperty(Option, OptionNotFound);
+        }
     }
 
     public static Collection<String> GetStandardActionList(){
@@ -627,14 +701,30 @@ public class util {
     }
             
     public static String GetSubMenuListButtonText(String Option, Integer Level){
+        return GetSubMenuListButtonText(Option, Level, Boolean.FALSE);
+    }
+    
+    public static String GetSubMenuListButtonText(String Option, Integer Level, Boolean SkipAdvanced){
         System.out.println("ADM: GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
-        if (Option==null){
+        if (Option==null || Option.equals(ListNone)){
             return ListNone;
         }
+        String RetVal = "";
         if (Level==1){
-            return SageSubMenusLevel1Props.getProperty(Option, ListNone);
+            RetVal = SageSubMenusLevel1Props.getProperty(Option, ListNone);
+            if (IsDiamond() && RetVal.equals(ListNone)){
+                //check the D props too
+                RetVal = SageSubMenusLevelDProps.getProperty(Option, ListNone);
+            }
         }else{
-            return SageSubMenusLevel2Props.getProperty(Option, ListNone);
+            RetVal = SageSubMenusLevel2Props.getProperty(Option, ListNone);
+        }
+
+        //determine if using Advanced options
+        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false")) && !SkipAdvanced){
+            return RetVal + " (" + Option + ")";
+        }else{
+            return RetVal;
         }
     }
 
