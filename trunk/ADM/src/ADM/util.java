@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.27";
+    public static String Version = "0.28";
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -159,7 +159,7 @@ public class util {
         MenuItem.SetMenuItemName(tMenuItemName);
         MenuItem.SetMenuItemParent(tMenuItemName,Parent);
         MenuItem.SetMenuItemSortKey(tMenuItemName,SortKey);
-        MenuItem.SetMenuItemSubMenu(tMenuItemName,null);
+        MenuItem.SetMenuItemSubMenu(tMenuItemName,ListNone);
         MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
         MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
         MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
