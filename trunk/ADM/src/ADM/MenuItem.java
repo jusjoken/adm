@@ -450,11 +450,11 @@ public class MenuItem {
             Entry<String,MenuItem> entry = itr.next();
             SortedKeyList.put(entry.getValue().SortKey,entry.getValue().Name);
         }
-        System.out.println("ADM: InsertSortKey MenuItems ='" + MenuItemList.size() + "' SortedItems = '" + SortedKeyList.size() + "'");
+        //System.out.println("ADM: InsertSortKey MenuItems ='" + MenuItemList.size() + "' SortedItems = '" + SortedKeyList.size() + "'");
 
         //if the sortKey is not in use then we are done
         if (!SortedKeyList.containsKey(bSortKey)){
-            System.out.println("ADM: InsertSortKey for '" + bSortKey + "' : not found");
+            //System.out.println("ADM: InsertSortKey for '" + bSortKey + "' : not found");
             return;
         }
 
@@ -593,6 +593,38 @@ public class MenuItem {
             }
         }
         System.out.println("ADM: ClearSubMenuDefaults for '" + bParent + "' '" + SubMenuItems.size() + "' cleared");
+    }
+    
+    public static String GetSubMenuDefault(String bParent){
+        Collection<String> SubMenuItems = GetMenuItemNameList(bParent,Boolean.TRUE);
+        
+        if (SubMenuItems.size()>0){
+            for (String SubMenuItem : SubMenuItems){
+                if (MenuItemList.get(SubMenuItem).getIsDefault()){
+                    //return this item as the default
+                    System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' Default = '" + SubMenuItem + "'");
+                    return SubMenuItem;
+                }
+            }
+        }
+        System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' - none found");
+        return "";
+    }
+    
+    public static Boolean IsSubMenuItem(String bParent, String Item){
+        Collection<String> SubMenuItems = GetMenuItemNameList(bParent,Boolean.TRUE);
+        
+        if (SubMenuItems.size()>0){
+            for (String SubMenuItem : SubMenuItems){
+                if (SubMenuItem.equals(Item)){
+                    //return this item as the default
+                    System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+                    return Boolean.TRUE;
+                }
+            }
+        }
+        System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
+        return Boolean.FALSE;
     }
     
     final void AddMenuItemtoList(MenuItem NewMenuItem){
@@ -769,7 +801,7 @@ public class MenuItem {
     //Get the count of MenuItems for a parent that are active
     public static int GetMenuItemCount(String Parent){
         Collection<String> bSortedNames = GetMenuItemNameList(Parent);
-        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bSortedNames.size());
+        System.out.println("ADM: GetMenuItemCount for '" + GetMenuItemButtonText(Parent) + "' :" + bSortedNames.size());
         return bSortedNames.size();
     }
     
