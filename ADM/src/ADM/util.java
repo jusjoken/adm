@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.io.*;
+import java.lang.Float;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Random;
@@ -23,10 +24,11 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.29";
+    public static String Version = "0.30";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SagePropertyLocation = "ADM/menuitem/";
+    public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -47,6 +49,7 @@ public class util {
     public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
+    public static Collection<String> SageSubMenusKeys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel1Props = new Properties();
     public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel2Props = new Properties();
@@ -82,7 +85,10 @@ public class util {
             //Add in a -None- option to the list
             SageSubMenusLevel1Keys.add(ListNone);
             SageSubMenusLevel2Keys.add(ListNone);
-           
+
+            //clean up existing focus items
+            sagex.api.Configuration.RemovePropertyAndChildren(SageFocusPropertyLocation);
+        
             //generate symbols to be used for new MenuItem names
             for (int idx = 0; idx < 10; ++idx)
                 symbols[idx] = (char) ('0' + idx);
@@ -570,6 +576,7 @@ public class util {
         //build a list of keys in the order of the values
         for (String SageSubMenusValue : SageSubMenusList.keySet()){
             SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
+            SageSubMenusKeys.add(SageSubMenusList.get(SageSubMenusValue));
         }
         
         //Add in a -None- option to the list
@@ -608,6 +615,7 @@ public class util {
         //build a list of keys in the order of the values
         for (String SageSubMenusValue : SageSubMenusList.keySet()){
             SageSubMenusLevel2Keys.add(SageSubMenusList.get(SageSubMenusValue));
+            SageSubMenusKeys.add(SageSubMenusList.get(SageSubMenusValue));
         }
         
         //Add in a -None- option to the list
@@ -646,6 +654,7 @@ public class util {
         //add the Diamond values to the level 1 list
         for (String SageSubMenusValue : SageSubMenusList.keySet()){
             SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
+            SageSubMenusKeys.add(SageSubMenusList.get(SageSubMenusValue));
         }
         
         System.out.println("ADM: LoadSubMenuListLevelD: completed for '" + SubMenuPropsPath + "'");
@@ -699,7 +708,35 @@ public class util {
     public static Collection<String> GetStandardActionList(){
         return StandardActionKeys;
     }
-            
+
+    public static Boolean IsSageSubMenu(String SubMenu){
+        return SageSubMenusKeys.contains(SubMenu);
+    }
+    
+    //Save the current item that is focused for later retrieval
+    public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
+        System.out.println("ADM: SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
+        sagex.api.Configuration.SetProperty(SageFocusPropertyLocation + SubMenu, FocusItem);
+    }
+
+    public static String GetLastFocusForSubMenu(String SubMenu){
+        String LastFocus = sagex.api.Configuration.GetProperty(SageFocusPropertyLocation + SubMenu,OptionNotFound);
+        if (LastFocus.equals(OptionNotFound)){
+            //return the DefaultMenuItem for this SubMenu
+            System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
+            return MenuItem.GetSubMenuDefault(SubMenu);
+        }else{
+            //check that the focus item stored in Sage is still valid
+            if (MenuItem.IsSubMenuItem(SubMenu, LastFocus)){
+                System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
+                return LastFocus;
+            }else{
+                System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
+                return MenuItem.GetSubMenuDefault(SubMenu);
+            }
+        }
+    }
+    
     public static String GetSubMenuListButtonText(String Option, Integer Level){
         return GetSubMenuListButtonText(Option, Level, Boolean.FALSE);
     }
@@ -762,5 +799,16 @@ public class util {
         return "adm" + new String(buf);
     }
 
+    public static Float[] GetMenuInsets(){
+        Float[] Insets = new Float[]{0f,0f,0f,0f};
+        Float[] DiamondInsets = new Float[]{0f,0f,0.015f,0f};
+        if (IsDiamond()){
+            System.out.println("ADM: GetMenuInsets: Diamond");
+            return DiamondInsets;
+        }else{
+            System.out.println("ADM: GetMenuInsets:");
+            return Insets;
+        }
+    }
   
 }
