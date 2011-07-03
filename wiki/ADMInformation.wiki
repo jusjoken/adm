@@ -28,8 +28,16 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === Enable - Disable ADM ===
   * EXPLAIN HERE
 
-=== List by: Menu Structure or Grouped ===
-  * EXPLAIN HERE
+=== List by: Menu Structure or Menus Grouped ===
+  * Menu Structure
+    * Lists all menus in the natural order they appear in SageTV
+    * Sort Order cannot be changed in this list view
+  * Menus Grouped
+    * Lists all menus Grouped with other menu items at the same level with the same Parent
+    * Sort Order within a menu group can be changed
+      * Press RIGHT when on a Menu Item
+      * Press UP/DOWN to move the item within the Menu Group
+      * Press LEFT to exit the move function
 
 === Delete All Menu Items ===
   * EXPLAIN HERE
