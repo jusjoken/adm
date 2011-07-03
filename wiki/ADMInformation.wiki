@@ -25,6 +25,62 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG] _click to view_
 
+=== Enable - Disable ADM ===
+  * EXPLAIN HERE
+
+=== List by: Menu Structure or Grouped ===
+  * EXPLAIN HERE
+
+=== Delete All Menu Items ===
+  * EXPLAIN HERE
+
+=== Export ===
+  * EXPLAIN HERE
+
+=== Import ===
+  * EXPLAIN HERE
+
+=== Load Default Menus ===
+  * EXPLAIN HERE
+
+=== Basic - Advanced Options ===
+  * EXPLAIN HERE
+
+=== Clear All ADM Settings ===
+  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
+  * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
+  * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  * Loads the Default Menus (see above)
+  * Enables ADM
+  * Disables Advanced Options
+
+=== Editing current Menu Items ===
+  * Display Name
+    * 
+  * Parent
+    *
+  * Action Type
+    *
+  * Action
+    *
+  * Sage Submenu
+    *
+  * Default Menu Item
+    *
+  * Background Image
+    *
+  * Show Menu Item
+    *
+
+=== Creating new Menu Items ===
+  * EXPLAIN HERE
+
+=== Creating new Submenu Items ===
+  * EXPLAIN HERE
+
+=== Deleting Menu Items ===
+  * EXPLAIN HERE
+
 == Plugin Compatibilities ==
 === General ===
   * any Plugin that modifies the Main Menus or their submenus may have issues and should be tested
@@ -68,14 +124,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 ==Troubleshooting==
   * Loading Default Menus
     * go to the ADM Manager
+    * select Load Default Menus
+    * for more info [#Default_Menus]
   * Clear All ADM Settings
-    * If all else fails
-    * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
-    * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
-    * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
-    * Loads the Default Menus (see above)
-    * Enables ADM
-    * Disables Advanced Options
+    * If all else fails then look here to [#Clear_All_ADM_Settings]
   * Where are the Imports/Exports
     * sageroot\userdata\ADM
     * sageroot is different depending on where it is installed. It is it's working folder for the application. Same location where the sage.properties and sageclient.properties are.
