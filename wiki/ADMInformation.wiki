@@ -42,7 +42,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG] _click to view_
 
 === Enable - Disable ADM ===
-  * EXPLAIN HERE
+  * If Enabled then SageTV will use the menu items that you built using ADM Manager
+  * If Disabled then SageTV will use the built in menus available in SageTV
+  * note:see the [#Troubleshooting] section for more info on using this feature
 
 === List by: Menu Structure or Menus Grouped ===
   * Menu Structure
@@ -164,6 +166,14 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       
   
 ==Troubleshooting==
+  * Disable ADM
+    * if you need temporary access to any standard SageTV menu you may not have included in your custom menu then do this...
+      * Press Options from the Main Menu
+      * Select ADM Manager
+      * Select the button marked "ADM is Enabled"
+      * Now ADM is Disabled
+      * Press HOME and the Sage Standard menus will be shown
+      * Follow these steps to re-enable ADM when you are done
   * Loading Default Menus
     * go to the ADM Manager
     * select Load Default Menus
