@@ -25,6 +25,19 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG] _click to view_
 
+== Plugin Compatibilities ==
+=== General ===
+  * any Plugin that modifies the Main Menus or their submenus may have issues and should be tested
+  * I can add notes here for any reported issues, workarounds or succeses
+  * If you need temporary access to a Menu that is missing then you can go to the ADM Manager and Disable ADM and the function should operate normally with the standard SageTV Menus
+  
+=== Diamond ===
+  * see [#Diamond Notes]
+=== MyTV ===
+  * Should work with ADM disabled
+  * ADM Enabled
+    * Add a custom Submenu (2nd level menu) and specify the MyTV submenu as it's Sage Submenu
+    * The Auto Open function will not work yet (perhaps in a future release)
 
 == Diamond Notes ==
   * This plugin has been designed to work combined with Diamond if it is installed
