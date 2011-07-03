@@ -17,7 +17,23 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   
   * available as a "UI Mod" plugin under SageTV version 7+ called "ADM - Another Dynamic Menu"
   * works with Standard SageTV as well as with Diamond (see Diamond section below)
+  * ADM Manager is always available from the Main Menu Options menu
+  * How it works
+    * on initial load ADM will load either a Standard Sage menu item list or a Diamond list if Diamond is detected
+    * ADM uses the Standard SageTV "Menu System" to display a dynamic list of user customizable Menu Items
+    * the menu Look and Feel is not ADM's - as it uses this from SageTV
+    * you can add, delete, hide any Menu Item or even start from scratch (Delete ALL) and build an entire new custom Menu
+    * if you "mess up" you can always load the default menus and start again
+    * the menu items are saved in the Sage .properties file but can be Exported and Imported from other clients
   
+
+== !ToDo List ==
+  * Check this list out if you are "wondering" if a new feature is planned for ADM
+    * Launch specific Diamond Movie Custom flow - not yet available
+    * Launch specific Diamond Custom TV view - not yet available
+      * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
+    * Launch an external program is being considered
+    * Background Image - offer an option to select a specifc file to display (rather than only Themed Images)
 
 == ADM Manager ==
 
@@ -52,7 +68,11 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * EXPLAIN HERE
 
 === Basic - Advanced Options ===
-  * EXPLAIN HERE
+  * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
+  * Advanced Options Mode
+    * lets you see the Widget Symbols and internal Menu Names on lists while in ADM Manager
+    * offers one extra Action that lets you type in a Widget Symbol (which it validates) rather than picking from the internal lists
+    * adds a "Clear All ADM Settings" option.  See [#Clear_All_ADM_Settings]
 
 === Clear All ADM Settings ===
   * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
@@ -66,19 +86,33 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Display Name
     * 
   * Parent
-    *
-  * Action Type
-    *
+    * Moves the Menu Item to another Parent by selecting from a list
+    
+  * Action Types
+    * Execute Standard Sage Menu Action
+      *
+    * Execute Widget by Symbol (Advanced mode only)
+      *
+    * Video Browser with specific Folder
+      *
+      
   * Action
     *
   * Sage Submenu
     *
   * Default Menu Item
-    *
+    * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
+    * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
+    * there must be 1 and only 1 default and ADM will enfore this
   * Background Image
-    *
+    * Only valid for Level 1 menus (Top menu in SageTV)
+    * Select from a list of Themed images 
+    * this function may expand to offer selecting a specific file
   * Show Menu Item
-    *
+    * Hides or Shows the Menu Item in SageTV
+    * the item will always show in ADM Manager but will be in a "greyed" text
+    * Children of this menu item will also show "greyed" out if their parent is not "Shown"
+    * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
 
 === Creating new Menu Items ===
   * EXPLAIN HERE
@@ -123,10 +157,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager using the Show Menu Item property.
   * Hide Main Menu Items
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
+  * Background Images
+    * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
   * Future !ToDos to support Diamond
-    * Launch specific Diamond Movie Custom flow - not yet available
-    * Launch specific Diamond Custom TV view - not yet available
-      * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
+    * Check out the [#ToDo_List]
       
   
 ==Troubleshooting==
