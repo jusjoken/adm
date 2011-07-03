@@ -32,7 +32,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * If you need temporary access to a Menu that is missing then you can go to the ADM Manager and Disable ADM and the function should operate normally with the standard SageTV Menus
   
 === Diamond ===
-  * see [#Diamond Notes]
+  * see [#Diamond_Notes]
 === MyTV ===
   * Should work with ADM disabled
   * ADM Enabled
