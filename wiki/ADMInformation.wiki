@@ -70,9 +70,12 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * go to the ADM Manager
   * Clear All ADM Settings
     * If all else fails
+    * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
     * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
     * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
     * Loads the Default Menus (see above)
+    * Enables ADM
+    * Disables Advanced Options
   * Where are the Imports/Exports
     * sageroot\userdata\ADM
     * sageroot is different depending on where it is installed. It is it's working folder for the application. Same location where the sage.properties and sageclient.properties are.
