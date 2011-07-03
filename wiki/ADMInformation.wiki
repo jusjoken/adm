@@ -1,13 +1,33 @@
-#summary One-sentence summary of this page.
-
+#summary Information on the use of the ADM SageTV Mod
 = Introduction =
 
-Add your content here.
+Check here for basic information about Another Dynamic Menu (ADM) and how to use various functions.
 
+Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
+
+<wiki:toc max_depth="3" />
+
+[http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.PNG http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.PNG] _click to view_
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Getting Started ==
+
+  * Works with SageTV 7.1.9 
+  
+  * available as a "UI Mod" plugin under SageTV version 7+ called "ADM - Another Dynamic Menu"
+  * works with Standard SageTV as well as with Diamond (see Diamond section below)
+  
+
+== ADM Manager ==
+
+=== Launching the ADM Manager ===
+
+[http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.PNG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.PNG] _click to view_
+
+  
+==Troubleshooting==
+  * Loading Default Menus
+    * go to the ADM Manager
+
+ 
