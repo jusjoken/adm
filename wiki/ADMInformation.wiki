@@ -45,7 +45,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager using the Show Menu Item property.
   * Hide Main Menu Items
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
-  * Future ToDos to support Diamond
+  * Future !ToDos to support Diamond
     * Launch specific Diamond Movie Custom flow - not yet available
     * Launch specific Diamond Custom TV view - not yet available
       * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
