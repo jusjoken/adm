@@ -31,6 +31,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Compatible with Diamond version 3.30
 
 === Diamond Specific Functions ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG] _Movies_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG] _Videos_ || _click to view_ ||
   * Default Menu
     * A Diamond Specific menu will oad on initial run (newly installed) and when Load Default Menus is selected
     * This menu will have 2 unique menus at the Top Level
@@ -39,6 +40,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * Videos - configured to launch the Sage Videos built in menu that Diamond customizes
     * ADM will detect which of these 2 menus you have enabled in Diamond and set the opposite to be not Shown
     * You can manually edit either or both of the menus by setting the Show Menu Item property. you can show both if you want.
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Default Menu_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos-ppc.JPG] _Show-Hide_ || _click to view_ ||
   * Replace videos with Diamond Movies
     * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager using the Show Menu Item property.
   * Hide Main Menu Items
