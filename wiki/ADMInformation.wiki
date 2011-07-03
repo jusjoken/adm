@@ -35,6 +35,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * see [#Diamond_Notes]
 === MyTV ===
   * Should work with ADM disabled
+  * Tested with Diamond MyTV
   * ADM Enabled
     * Add a custom Submenu (2nd level menu) and specify the MyTV submenu as it's Sage Submenu
     * The Auto Open function will not work yet (perhaps in a future release)
@@ -67,5 +68,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 ==Troubleshooting==
   * Loading Default Menus
     * go to the ADM Manager
-
+  * Clear All ADM Settings
+    * If all else fails
+    * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
+    * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+    * Loads the Default Menus (see above)
+  * Where are the Imports/Exports
+    * sageroot\userdata\ADM
+    * sageroot is different depending on where it is installed. It is it's working folder for the application. Same location where the sage.properties and sageclient.properties are.
+    
  
