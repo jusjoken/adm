@@ -145,6 +145,10 @@ public class MenuItem {
         
     }
     
+    public static String GetMenuItemBGImageFileButtonText(String Name){
+        return util.GetSageBGVariablesButtonText(MenuItemList.get(Name).getBGImageFile());
+    }
+    
     public static String GetMenuItemBGImageFile(String Name){
         return MenuItemList.get(Name).getBGImageFile();
     }
@@ -154,8 +158,13 @@ public class MenuItem {
     }
 
     public static void SetMenuItemBGImageFile(String Name, String Setting){
-        MenuItemList.get(Name).setBGImageFile(Setting);
-        SaveMenuItemtoSage(Name, "BGImageFile", Setting);
+        if (Setting.equals(util.ListNone) || Setting==null){
+            MenuItemList.get(Name).setBGImageFile(null);
+            SaveMenuItemtoSage(Name, "BGImageFile", null);
+        }else{
+            MenuItemList.get(Name).setBGImageFile(Setting);
+            SaveMenuItemtoSage(Name, "BGImageFile", Setting);
+        }
     }
 
     public String getButtonText() {
@@ -331,34 +340,31 @@ public class MenuItem {
         MenuItemList.get(Name).setLevel(Setting);
     }
 
-    private static Integer GetMenuItemLevelInternal(String Name){
-        if (MenuItemList.get(Name).Parent.equals(util.TopMenu)){
-            //System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Name + "'");
-            return 1;
-        }else{
-            //find a MenuItem whose Name equals this Parent
-            Collection<String> TempList = GetMenuItemNameList();
-            for (String TempItem : TempList){
-                if (MenuItemList.get(TempItem).Name.equals(MenuItemList.get(Name).Parent)){
-                    if (MenuItemList.get(TempItem).Parent.equals(util.TopMenu)){
-                        //System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Name + "'");
-                        return 2;
-                    }else{
-                        //System.out.println("ADM: GetMenuItemLevel: level - 3 returned for '" + Name + "'");
-                        return 3;
+    //set the level field for all MenuItems
+    public static void SetMenuItemLevels(){
+        Collection<String> TempList = GetMenuItemNameList();
+        Collection<String> AllMenus = GetMenuItemSortedList(Boolean.TRUE);
+        for (String Item : AllMenus){
+            
+            if (MenuItemList.get(Item).Parent.equals(util.TopMenu)){
+                //System.out.println("ADM: GetMenuItemLevel: level - 1 returned for '" + Item + "'");
+                MenuItemList.get(Item).setLevel(1);
+            }else{
+                //find a MenuItem whose Name equals this Parent
+                for (String TempItem : TempList){
+                    if (MenuItemList.get(TempItem).Name.equals(MenuItemList.get(Item).Parent)){
+                        if (MenuItemList.get(TempItem).Parent.equals(util.TopMenu)){
+                            //System.out.println("ADM: GetMenuItemLevel: level - 2 returned for '" + Item + "'");
+                            MenuItemList.get(Item).setLevel(2);
+                            break;
+                        }else{
+                            //System.out.println("ADM: GetMenuItemLevel: level - 3 returned for '" + Item + "'");
+                            MenuItemList.get(Item).setLevel(3);
+                            break;
+                        }
                     }
                 }
             }
-        }
-        System.out.println("ADM: GetMenuItemLevel: failed to find level - 0 returned for '" + Name + "'");
-        return 0;
-    }
-
-    //set the level field for all MenuItems
-    public static void SetMenuItemLevels(){
-        Collection<String> AllMenus = GetMenuItemSortedList(Boolean.TRUE);
-        for (String Item : AllMenus){
-            MenuItemList.get(Item).setLevel(GetMenuItemLevelInternal(Item));
         }
         System.out.println("ADM: SetMenuItemLevels: complete");
     }

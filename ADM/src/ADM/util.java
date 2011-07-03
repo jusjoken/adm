@@ -24,9 +24,10 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.30";
+    public static String Version = "0.31";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
+    public static final String SageADMBasePropertyLocation = "ADM/";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
@@ -35,9 +36,9 @@ public class util {
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
+    private static final String SageBGVariablesListFile = "ADMSageBGVariables.properties";
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
     private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
-    private static final String SageSubMenusLevelDListFile = "ADMSageSubMenusD.properties";
     public static final String ListNone = "<None>";
     public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
@@ -49,13 +50,13 @@ public class util {
     public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
+    public static Properties SageBGVariablesProps = new Properties();
+    public static Collection<String> SageBGVariablesKeys = new LinkedHashSet<String>();
     public static Collection<String> SageSubMenusKeys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel1Props = new Properties();
     public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel2Props = new Properties();
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
-    public static Properties SageSubMenusLevelDProps = new Properties();
-    public static Collection<String> SageSubMenusLevelDKeys = new LinkedHashSet<String>();
 
     public static void InitADM(){
         
@@ -76,12 +77,12 @@ public class util {
             
             //also load the standard actions list - only needs loaded at startup
             LoadStandardActionList();
+            //also load the BGVariables for BG Images on Top Level Menus
+            LoadSageBGVariablesList();
+            SageBGVariablesKeys.add(ListNone);
             //also load SubMenu lists for levels 1 and 2 and Diamond
             LoadSubMenuListLevel1();
             LoadSubMenuListLevel2();
-            if (IsDiamond()){
-                LoadSubMenuListLevelD();
-            }
             //Add in a -None- option to the list
             SageSubMenusLevel1Keys.add(ListNone);
             SageSubMenusLevel2Keys.add(ListNone);
@@ -102,6 +103,25 @@ public class util {
 
         }
 
+    }
+    
+    public static void ClearAll(){
+
+        //backup existing MenuItems before clearing settings and menus
+        if (MenuItem.MenuItemList.size()>0){
+            ExportMenuItems(PropertyBackupFile);
+        }
+        
+        //clear all the Sage property settings for ADM
+        System.out.println("ADM: ClearAll: clear Sage Properties");
+        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
+        ADMInitComplete = Boolean.FALSE;
+        System.out.println("ADM: ClearAll: load default menus");
+        LoadMenuItemDefaults();
+        System.out.println("ADM: ClearAll: initialize settings");
+        InitADM();
+        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
+        
     }
     
     //saves all MenuItems to Sage properties
@@ -186,7 +206,7 @@ public class util {
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         MenuItem.SetMenuItemAction(tMenuItemName,null);
         MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeDefault);
-        MenuItem.SetMenuItemBGImageFile(tMenuItemName,null);
+        MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
         MenuItem.SetMenuItemButtonText(tMenuItemName,ButtonTextDefault);
         MenuItem.SetMenuItemName(tMenuItemName);
         MenuItem.SetMenuItemParent(tMenuItemName,Parent);
@@ -625,42 +645,6 @@ public class util {
         return;
     }
 
-    public static void LoadSubMenuListLevelD(){
-        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevelDListFile;
-        
-        //read the properties from the properties file
-        try {
-            FileInputStream in = new FileInputStream(SubMenuPropsPath);
-            try {
-                SageSubMenusLevelDProps.load(in);
-                in.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: LoadSubMenuListLevelD: IO exception loading standard actions " + util.class.getName() + ex);
-                return;
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadSubMenuListLevelD: file not found loading standard actions " + util.class.getName() + ex);
-            return;
-        }
-        //sort the keys into value order
-        SortedMap<String,String> SageSubMenusList = new TreeMap<String,String>();
-
-        //Add all the Values to a sorted list and add the Diamond value to the level 1 props
-        for (String SageSubMenusItem : SageSubMenusLevelDProps.stringPropertyNames()){
-            SageSubMenusList.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
-            //SageSubMenusLevel1Props.put(SageSubMenusLevelDProps.getProperty(SageSubMenusItem),SageSubMenusItem);
-        }
-
-        //add the Diamond values to the level 1 list
-        for (String SageSubMenusValue : SageSubMenusList.keySet()){
-            SageSubMenusLevel1Keys.add(SageSubMenusList.get(SageSubMenusValue));
-            SageSubMenusKeys.add(SageSubMenusList.get(SageSubMenusValue));
-        }
-        
-        System.out.println("ADM: LoadSubMenuListLevelD: completed for '" + SubMenuPropsPath + "'");
-        return;
-    }
-
     public static void LoadStandardActionList(){
         String StandardActionPropsPath = ADMDefaultsLocation + "\\" + StandardActionListFile;
         
@@ -696,6 +680,53 @@ public class util {
         return;
     }
 
+    public static void LoadSageBGVariablesList(){
+        String StandardActionPropsPath = ADMDefaultsLocation + "\\" + SageBGVariablesListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(StandardActionPropsPath);
+            try {
+                SageBGVariablesProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadSageBGVariablesList: IO exception loading SageBGVariables " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadSageBGVariablesList: file not found loading SageBGVariables " + util.class.getName() + ex);
+            return;
+        }
+
+        //sort the keys into value order
+        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list
+        for (String ActionItem : SageBGVariablesProps.stringPropertyNames()){
+            ActionValuesList.put(SageBGVariablesProps.getProperty(ActionItem),ActionItem);
+        }
+
+        //build a list of keys in the order of the values
+        for (String ActionValue : ActionValuesList.keySet()){
+            SageBGVariablesKeys.add(ActionValuesList.get(ActionValue));
+        }
+        
+        System.out.println("ADM: LoadSageBGVariablesList: completed for '" + StandardActionPropsPath + "'");
+        return;
+    }
+
+    public static String GetSageBGVariablesButtonText(String Option){
+        if (Option==null || Option.equals(ListNone)){
+            return ListNone;
+        }
+        //determine if using Advanced options
+        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
+            return SageBGVariablesProps.getProperty(Option, ListNone) + " (" + Option + ")";
+        }else{
+            return SageBGVariablesProps.getProperty(Option, ListNone);
+        }
+    }
+
     public static String GetStandardActionButtonText(String Option){
         //determine if using Advanced options
         if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
@@ -703,6 +734,10 @@ public class util {
         }else{
             return StandardActionProps.getProperty(Option, OptionNotFound);
         }
+    }
+
+    public static Collection<String> GetSageBGVariablesList(){
+        return SageBGVariablesKeys;
     }
 
     public static Collection<String> GetStandardActionList(){
@@ -749,10 +784,6 @@ public class util {
         String RetVal = "";
         if (Level==1){
             RetVal = SageSubMenusLevel1Props.getProperty(Option, ListNone);
-            if (IsDiamond() && RetVal.equals(ListNone)){
-                //check the D props too
-                RetVal = SageSubMenusLevelDProps.getProperty(Option, ListNone);
-            }
         }else{
             RetVal = SageSubMenusLevel2Props.getProperty(Option, ListNone);
         }
