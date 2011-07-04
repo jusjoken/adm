@@ -1,13 +1,10 @@
-#summary One-sentence summary of this page.
+#summary FAQ for ADM
 
-= Introduction =
+= FAQ =
 
-Add your content here.
+Look here first to see if your question has already been answered.
+<wiki:toc max_depth="3" />
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+==Q. Where do I find details on how to use ADM?==
+===A. check out the ADM Wiki...===
+  * The ADM Wiki can be found here [#ADMFAQ]
