@@ -64,7 +64,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * Press LEFT to exit the move function
   * Default Menu Item will be indicated by an "*" after the Display Name
     * The Default item is the one that will have focus when a new menu is opened
-  * Sage Submenus are indicated by their name such as <pre><Submenu> after the Menu Item Display Name
+  * Sage Submenus are indicated by their name such as '<Submenu>' after the Menu Item Display Name
 
 === Delete All Menu Items ===
   * Allows you to start from scratch and create a new set of Menu Items
@@ -72,7 +72,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * a single new Menu Item will be added for you to start your new Menus
 
-=== Export-Import ===
+=== Export/Import ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMExport.JPG http://dl.dropbox.com/u/7826058/ADM/ADMExport-ppc.JPG] _Export_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMImport.JPG http://dl.dropbox.com/u/7826058/ADM/ADMImport-ppc.JPG] _Import_ || _click to view_ ||
   * Export
     * Creates a .properties style file with all the values required to store and retrieve your Menus
