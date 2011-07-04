@@ -115,12 +115,20 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * The current parent for this Menu Item
     * Selecting this item allows you to move the Menu Item to another Parent by selecting from a list of valid parents
     * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
+    * Note: if you select a Parent that is using a Sage Submenu then the Submenu setting for that Parent will be cleared.
     
-  * Action Types
+  * Action Types / Action
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard-ppc.JPG] _Standard Action_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol-ppc.JPG] _By Widget Symbol_ || _click to view_ ||
     * Execute Standard Sage Menu Action
-      *
+      * Select from a list of Standard Actions 
+      * The selected Action will launch when the Menu Item is selected within the SageTV menu system
+
     * Execute Widget by Symbol (Advanced mode only)
-      *
+      * Offers a text entry box to type a Widget Symbol to use for the Menu Item Action
+      * The Symbol entered will be validated against SageTV to ensure it exists.
+      * Note: not all Widget Symbols can be used as a valid action. So even if it exists does not mean it will give you the desired results.  Use with caution.
+      * The entered Widget Symbol will execute when the Menu Item is selected within the SageTV menu system
+
     * Video Browser with specific Folder
     [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-small.JPG] _click to view_
       * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
@@ -128,18 +136,21 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
       * The Folder name is case sensitive and should have the trailing "/" (but it will be added by ADM if you miss it)
       
-  * Action
-    *
   * Sage Submenu
-    *
+    * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
+    * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
+    * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
+
   * Default Menu Item
     * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
     * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
     * there must be 1 and only 1 default and ADM will enfore this
+
   * Background Image
     * Only valid for Level 1 menus (Top menu in SageTV)
     * Select from a list of Themed images 
     * this function may expand to offer selecting a specific file
+
   * Show Menu Item
     * Hides or Shows the Menu Item in SageTV
     * the item will always show in ADM Manager but will be in a "greyed" text
