@@ -131,7 +131,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * The entered Widget Symbol will execute when the Menu Item is selected within the SageTV menu system
 
     * Video Browser with specific Folder
-    [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-small.JPG] _click to view_
+      ||[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-ppc.JPG] _Video Folders_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder-ppc.JPG] _Set Folder_ || _click to view_ ||
+
       * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
       * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
