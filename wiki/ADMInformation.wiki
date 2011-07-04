@@ -92,6 +92,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Default menus after being loaded can then by edited and saved by using the Export feature
 
 === Basic - Advanced Options ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG] _Basic_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG] _Advanced_ || _click to view_ ||
   * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
   * Advanced Options Mode
     * lets you see the Widget Symbols and internal Menu Names on lists while in ADM Manager
@@ -108,9 +109,12 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 === Editing current Menu Items ===
   * Display Name
-    * 
+    * This is the name that will be displayed on SageTV Menus
+    
   * Parent
-    * Moves the Menu Item to another Parent by selecting from a list
+    * The current parent for this Menu Item
+    * Selecting this item allows you to move the Menu Item to another Parent by selecting from a list of valid parents
+    * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
     
   * Action Types
     * Execute Standard Sage Menu Action
