@@ -333,7 +333,11 @@ public class MenuItem {
     }
 
     public static Integer GetMenuItemLevel(String Name){
-        return MenuItemList.get(Name).getLevel();
+        if (Name.equals(util.TopMenu)){
+            return 0;
+        }else{
+            return MenuItemList.get(Name).getLevel();
+        }
     }
     
     public static void SetMenuItemLevel(String Name, Integer Setting){
@@ -405,8 +409,16 @@ public class MenuItem {
         String OldParent = MenuItemList.get(Name).getParent();
         SaveMenuItemtoSage(Name, "Parent", Setting);
         MenuItemList.get(Name).setParent(Setting);
+
+        //see if the Level needs changing
+        if (GetMenuItemLevel(OldParent)==GetMenuItemLevel(Setting)){
+            //Same levels so no need to change
+        }else{
+            //set level to 1 more than the parent
+            SetMenuItemLevel(Name,GetMenuItemLevel(Setting)+1);
+        }
         
-        if (OldParent.equals(Setting) || OldParent==null){
+        if (OldParent.equals(Setting) || OldParent==null || Setting.equals(util.TopMenu)){
             System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "' OldParent = '" + OldParent + "'");
         }else{
             //check the new parent and set it's SubMenu properly
