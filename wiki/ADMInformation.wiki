@@ -50,7 +50,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * note:see the [#Troubleshooting] section for more info on using this feature
 
 === List by: Menu Structure or Menus Grouped ===
-  ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure-ppc.JPG] _Menu Structure_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped-ppc.JPG] _Grouped Menus_ || _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure-ppc.JPG] _Menu Structure_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped-ppc.JPG] _Menus Grouped_ || _click to view_ ||
   * Menu Structure
     * Lists all menus in the natural order they will appear in SageTV
     * Indentation is used to indicate menu depth (level changes)
@@ -64,7 +64,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * Press LEFT to exit the move function
   * Default Menu Item will be indicated by an "*" after the Display Name
     * The Default item is the one that will have focus when a new menu is opened
-  * Sage Submenus are indicated by their name such as "<Submenu>" after the Menu Item Display Name
+  * Sage Submenus are indicated by their name such as "!<Submenu>" after the Menu Item Display Name
 
 === Delete All Menu Items ===
   * EXPLAIN HERE
