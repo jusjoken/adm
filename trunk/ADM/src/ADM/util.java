@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.31";
+    public static String Version = "0.33";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -745,7 +745,15 @@ public class util {
     }
 
     public static Boolean IsSageSubMenu(String SubMenu){
-        return SageSubMenusKeys.contains(SubMenu);
+        return !MenuItem.MenuItemList.containsKey(SubMenu);
+//        if (SubMenu.startsWith("adm", 0)){
+//            System.out.println("ADM: IsSageSubMenu: SubMenu '" + SubMenu + "' NOT a Sage Submenu");
+//            return Boolean.FALSE;
+//        }else{
+//            System.out.println("ADM: IsSageSubMenu: SubMenu '" + SubMenu + "' IS a Sage Submenu");
+//            return Boolean.TRUE;
+//        }
+        //return SageSubMenusKeys.contains(SubMenu);
     }
     
     //Save the current item that is focused for later retrieval
