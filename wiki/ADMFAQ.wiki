@@ -6,5 +6,5 @@ Look here first to see if your question has already been answered.
 <wiki:toc max_depth="3" />
 
 ==Q. Where do I find details on how to use ADM?==
-===A. check out the ADM Wiki...===
-  * The ADM Wiki can be found here [#ADMInformation]
+===A. Check out the ADM Wiki...===
+  * The ADM Wiki can be found here [http://code.google.com/p/sagetv-adm/wiki/ADMInformation ADM Information]
