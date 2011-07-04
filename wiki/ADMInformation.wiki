@@ -43,6 +43,39 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG] _click to view_
 
+=== Menu Structure Terms ===
+  [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
+  * Top Level
+    * Also known as Level 0
+    * Holds no menu items but all Level 1 menus have this as their parent
+  * Level 1
+    * Also known as Top Level menu content area in Studio
+    * Holds the Left Side Menu Options
+    * Standard examples - TV, Videos, Music, Photos, Search etc
+    * Parent is Top Level
+    * Can have Children/Submenus
+      * Can create new Menu Items with this Level 1 item as it's parent (Children will be Level 2)
+      * or
+      * Can set a Standard Sage Level 2 Submenu to be displayed
+
+  * Level 2
+    * Also known as Secondary Level menu content area in Studio
+    * Holds the Middle Menu Options
+    * Parents are Level 1 Items
+    * Standard examples - Search Level 1 has the following Level 2 menu items - TV Airings, Videos, Music etc
+    * Can have Children/Submenus
+      * Can create new Menu Items with this Level 2 item as it's parent (Children will be Level 3)
+      * or
+      * Can set a Standard Sage Level 3 Submenu to be displayed
+    
+  * Level 3
+    * Also known as Tertiary Level menu content area in Studio
+    * Holds the Right Side Menu Options
+    * Parents are Level 2 Items
+    * Standard examples - TV Airings Level 2 has the following Level 3 menu items - Search Titles, Search People etc
+    * Cannot have Children/Submenus
+  
+
 === Enable - Disable ADM ===
   * If Enabled then SageTV will use the menu items that you built using ADM Manager
   * If Disabled then SageTV will use the built in menus available in SageTV
