@@ -7,4 +7,4 @@ Look here first to see if your question has already been answered.
 
 ==Q. Where do I find details on how to use ADM?==
 ===A. check out the ADM Wiki...===
-  * The ADM Wiki can be found here [#ADMFAQ]
+  * The ADM Wiki can be found here [#ADMInformation]
