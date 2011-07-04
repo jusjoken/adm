@@ -86,7 +86,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Note: Export/Import files are not meant to be manually edited and may cause issues within ADM if this is done.
 
 === Load Default Menus ===
-  * EXPLAIN HERE
+  * loads either a Standard Sage menu item list or a Diamond list if Diamond is detected
+  * A confirmation will be displayed
+  * Default menus are designed to "mimic" the structure of the built in SageTV menus
+  * Default menus after being loaded can then by edited and saved by using the Export feature
 
 === Basic - Advanced Options ===
   * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
