@@ -108,6 +108,17 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Disables Advanced Options
 
 === Editing current Menu Items ===
+
+  * Select any Menu Item from the right hand list and a dialog will offer options
+    * Edit
+      * edits the currently selected Menu Item
+    * Add Menu Item below
+      * Adds a new menu item at the same level as the current Menu Item. See [#Creating_new_Menu_and_Submenu_Items].
+    * Add Submenu Item below
+      * Adds a new menu item at the next higher level as the current Menu Item (current level + 1). See [#Creating_new_Menu_and_Submenu_Items].
+    * Delete
+      * See [#Deleting_Menu_Items]
+
   * Display Name
     * This is the name that will be displayed on SageTV Menus
     
@@ -159,14 +170,17 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Children of this menu item will also show "greyed" out if their parent is not "Shown"
     * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
 
-=== Creating new Menu Items ===
-  * EXPLAIN HERE
-
-=== Creating new Submenu Items ===
-  * EXPLAIN HERE
+=== Creating new Menu and Submenu Items ===
+  * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
+  * A new Menu Item will be created and a Text Entry dialog will open for you to set the Display Name
+  * The Edit dialog will then open to set all any addition fields. See [#Editing_current_Menu_Items].
+  * Note: if you close out of the new Menu Item without setting it's fields it will still be created and you need to Delete it if you don't want it in your Menus.
 
 === Deleting Menu Items ===
-  * EXPLAIN HERE
+  * Select any Menu Item and then select Delete from the dialog
+  * Will Delete the current Menu Item AND all of it's Children if there are any
+  * A confirmation will be displayed
+  * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
 
 === Menu Structure Terms ===
   [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
