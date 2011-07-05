@@ -1,4 +1,5 @@
 #summary Information on the use of the ADM SageTV Mod
+#labels Featured
 = Introduction =
 
 Check here for basic information about Another Dynamic Menu (ADM) and how to use various functions.
