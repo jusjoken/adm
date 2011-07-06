@@ -10,6 +10,7 @@ package ADM;
  */
 
 import sagex.UIContext;
+import sagex.SageAPI;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -24,12 +25,13 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.33";
+    public static String Version = "0.34";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SageADMBasePropertyLocation = "ADM/";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
+    public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -754,6 +756,44 @@ public class util {
 //            return Boolean.TRUE;
 //        }
         //return SageSubMenusKeys.contains(SubMenu);
+    }
+
+    //save the current item details to sage properties to assist the copy function
+    public static void SaveCurrentMenuItemDetails(String ButtonText, String SubMenu, Integer Level){
+        //due to an issue with getting the current widget we save that info directly in the STV and then retrieve it here
+        String CurrentWidgetSymbol = sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", ButtonText);
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", SubMenu);
+        
+        //determine if there is an Action Widget for this Menu Item
+        String Action = null;
+        Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(MyUIContext, CurrentWidgetSymbol);
+        for (Object Child : Children){
+            //System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
+            if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child))){
+                //found an action so save it and leave
+                Action = sagex.api.WidgetAPI.GetWidgetSymbol(MyUIContext,Child);
+                break;
+            }
+        }
+        if (Action!=null){
+            sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", Action);
+        }
+        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + Action + " Level '" + Level + "'");
+    }
+    
+    //create a new Menu Item from the current Menu Item details
+    public static void CreateMenuItemfromCopyDetails(String Parent){
+        //
+        
+    }
+    
+    public static String GetCurrentMenuItemDetailsButtonText(){
+        return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", OptionNotFound);
+    }
+    
+    public static String GetCurrentMenuItemDetailsWidgetSymbol(){
+        return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
     }
     
     //Save the current item that is focused for later retrieval
