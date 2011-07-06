@@ -44,6 +44,7 @@ public class util {
     public static final String ListNone = "<None>";
     public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
+    public static final String ActionTypeExecuteWidgetbySymbol = "ExecuteWidget";
     public static final String ButtonTextDefault = "<Not defined>";
     public static final String SortStyleDefault = "xNaturalOrder";
     private static final char[] symbols = new char[36];
@@ -556,7 +557,7 @@ public class util {
     
     public static String GetActionTypeButtonText(String Option){
         String ButtonText = OptionNotFound;
-        if("ExecuteWidget".equals(Option)){
+        if(ActionTypeExecuteWidgetbySymbol.equals(Option)){
             ButtonText = "Execute Widget by Symbol";
         }else if(ActionTypeDefault.equals(Option)){
             ButtonText = "None";
@@ -764,6 +765,7 @@ public class util {
         String CurrentWidgetSymbol = sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", ButtonText);
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", SubMenu);
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
         
         //determine if there is an Action Widget for this Menu Item
         String Action = null;
@@ -783,17 +785,78 @@ public class util {
     }
     
     //create a new Menu Item from the current Menu Item details
-    public static void CreateMenuItemfromCopyDetails(String Parent){
+    public static String CreateMenuItemfromCopyDetails(String Parent){
         //
+        String tMenuItemName = GetNewMenuItemName();
+
+        //Create a new MenuItem with defaults
+        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+        if (!GetCurrentMenuItemDetailsAction().equals(OptionNotFound)){
+            MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
+            MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeExecuteWidgetbySymbol);
+        }
+        MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
+        MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentMenuItemDetailsButtonText());
+        MenuItem.SetMenuItemName(tMenuItemName);
+        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
+        MenuItem.SetMenuItemSortKey(tMenuItemName,MenuItem.SortKeyCounter++);
+        if (GetCurrentMenuItemDetailsSubMenu().equals(OptionNotFound)){
+            MenuItem.SetMenuItemSubMenu(tMenuItemName,ListNone);
+            MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
+        }else{
+            MenuItem.SetMenuItemSubMenu(tMenuItemName,GetCurrentMenuItemDetailsSubMenu());
+            MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.TRUE);
+        }
+        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
+        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         
+        //Level needs to be 1 more than the Parent
+        MenuItem.SetMenuItemLevel(tMenuItemName,MenuItem.GetMenuItemLevel(Parent)+1);
+        
+        System.out.println("ADM: CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        return tMenuItemName;
+        
+    }
+    
+    public static String CreateMenuItemfromCopyDetails(){
+        //default the Parent to TopMenu
+        return CreateMenuItemfromCopyDetails(TopMenu);
+    }
+    
+    public static Collection<String> GetCurrentMenuItemDetailsParentList(){
+        if (GetCurrentMenuItemDetailsSubMenu().equals(OptionNotFound)){
+            return MenuItem.GetMenuItemParentList();
+        }else{
+            return MenuItem.GetMenuItemParentList(GetCurrentMenuItemDetailsLevel());
+        }
     }
     
     public static String GetCurrentMenuItemDetailsButtonText(){
         return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", OptionNotFound);
     }
     
+    public static String GetCurrentMenuItemDetailsAction(){
+        return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "Action", OptionNotFound);
+    }
+    
+    public static Integer GetCurrentMenuItemDetailsLevel(){
+        Integer tLevel = 0;
+        try {
+            tLevel = Integer.valueOf(sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "Level", "0"));
+        } catch (NumberFormatException ex) {
+            System.out.println("ADM: GetCurrentMenuItemDetailsLevel: error loading level: " + util.class.getName() + ex);
+            tLevel = 0;
+        }
+        //System.out.println("ADM: GetCurrentMenuItemDetailsLevel: returning level = '" + tLevel + "'");
+        return tLevel;
+    }
+    
     public static String GetCurrentMenuItemDetailsWidgetSymbol(){
         return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
+    }
+    
+    public static String GetCurrentMenuItemDetailsSubMenu(){
+        return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", OptionNotFound);
     }
     
     //Save the current item that is focused for later retrieval

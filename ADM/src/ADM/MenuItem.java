@@ -36,7 +36,7 @@ public class MenuItem {
     private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
     private Integer Level = 0;
-    private static Integer SortKeyCounter = 0;
+    public static Integer SortKeyCounter = 0;
     public static Map<String,MenuItem> MenuItemList = new LinkedHashMap<String,MenuItem>();
 
     public MenuItem(String bName){
@@ -730,6 +730,26 @@ public class MenuItem {
             }
         }
         System.out.println("ADM: GetMenuItemParentList: '" + ValidParentList + "'");
+        return ValidParentList;
+    }
+    
+    //get valid parent list for only 1 specific level
+    public static Collection<String> GetMenuItemParentList(Integer SpecificLevel){
+        System.out.println("ADM: GetMenuItemParentList: for Level = '" + SpecificLevel + "'");
+        Collection<String> FullSortedList = GetMenuItemNameList(null,Boolean.TRUE);
+        Collection<String> ValidParentList = new LinkedHashSet<String>();
+        
+        //for Level 1 TopLevel if the only valid parent
+        if (SpecificLevel==1){
+            ValidParentList.add(util.TopMenu);
+        }else{
+            for (String TempName : FullSortedList){
+                if (MenuItemList.get(TempName).Level==SpecificLevel-1){
+                    ValidParentList.add(TempName);
+                }
+            }
+        }
+        System.out.println("ADM: GetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
         return ValidParentList;
     }
     
