@@ -1,13 +1,277 @@
-#summary One-sentence summary of this page.
-
+#summary Information on the use of the ADM SageTV Mod
 = Introduction =
 
-Add your content here.
+Check here for basic information about Another Dynamic Menu (ADM) and how to use various functions.
 
+Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
+
+[http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu-small.JPG] _click to view_
+
+<wiki:toc max_depth="3" />
+
+[http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.JPG] _click to view_
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Getting Started ==
+
+  * Works with SageTV 7.1.9 
+  
+  * available as a "UI Mod" plugin under SageTV version 7+ called "ADM - Another Dynamic Menu"
+  * works with Standard SageTV as well as with Diamond (see Diamond section below)
+  * ADM Manager is always available from the Main Menu Options menu
+  * How it works
+    * on initial load ADM will load either a Standard Sage menu item list or a Diamond list if Diamond is detected
+    * ADM uses the Standard SageTV "Menu System" to display a dynamic list of user customizable Menu Items
+    * the menu Look and Feel is not ADM's - as it uses this from SageTV
+    * you can add, delete, hide any Menu Item or even start from scratch (Delete ALL) and build an entire new custom Menu
+    * if you "mess up" you can always load the default menus and start again
+    * the menu items are saved in the Sage .properties file but can be Exported and Imported from other clients
+
+== !ToDo List ==
+  * Check this list out if you are "wondering" if a new feature is planned for ADM
+    * Launch specific Diamond Movie Custom flow - not yet available
+    * Launch specific Diamond Custom TV view - not yet available
+      * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
+    * Launch an external program is being considered
+    * Background Image - offer an option to select a specifc file to display (rather than only Themed Images)
+
+== ADM Manager ==
+
+=== Launching the ADM Manager ===
+
+[http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG] _click to view_
+  * Press Options from the Main Menu
+  * Select ADM Manager
+
+=== Enable - Disable ADM ===
+  * If Enabled then SageTV will use the menu items that you built using ADM Manager
+  * If Disabled then SageTV will use the built in menu items available in SageTV
+  * note:see the [#Troubleshooting] section for more info on using this feature
+
+=== List by: Menu Structure or Menus Grouped ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure-ppc.JPG] _Menu Structure_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped.JPG http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped-ppc.JPG] _Menus Grouped_ || _click to view_ ||
+  * Menu Structure
+    * Lists all menus in the natural order they will appear in SageTV
+    * Indentation is used to indicate menu depth (level changes)
+    * Menu item Order cannot be changed in this list view
+  * Menus Grouped
+    * Lists all menus Grouped with other menu items at the same level with the same Parent
+    * The Menu Item's Path is displayed to indicate menu depth (level changes) and groupings
+    * Menu item Order within a menu group can be changed
+      * Press RIGHT when on a Menu Item
+      * Press UP/DOWN to move the item within the Menu Group
+      * Press LEFT to exit the move function
+  * Default Menu Item will be indicated by an "*" after the Display Name
+    * The Default item is the one that will have focus when a new menu is opened
+  * Sage Submenus are indicated by their name such as '<Submenu>' after the Menu Item Display Name
+
+=== Delete All Menu Items ===
+  * Allows you to start from scratch and create a new set of Menu Items
+  * A confirmation will be displayed
+  * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  * a single new Menu Item will be added for you to start your new Menus
+
+=== Export/Import ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMExport.JPG http://dl.dropbox.com/u/7826058/ADM/ADMExport-ppc.JPG] _Export_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMImport.JPG http://dl.dropbox.com/u/7826058/ADM/ADMImport-ppc.JPG] _Import_ || _click to view_ ||
+  * Export
+    * Creates a .properties style file with all the values required to store and retrieve your Menus
+    * Export files can be Imported to any other client. If the clients share the Server as the default SageTV working folder then the Export will be available in the Import list. Otherwise you can copy/paste Export files using your OS's file system to make it available for Import.
+
+  * Import
+    * Offers a list of export .properties style files to be imported
+    * an Imported file will replace the current Menus
+    * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  
+  * Note: Export/Import files are not meant to be manually edited and may cause issues within ADM if this is done.
+
+=== Load Default Menus ===
+  * loads either a Standard Sage menu item list or a Diamond list if Diamond is detected
+  * A confirmation will be displayed
+  * Default menus are designed to "mimic" the structure of the built in SageTV menus
+  * Default menus after being loaded can then by edited and saved by using the Export feature
+
+=== Basic - Advanced Options ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG] _Basic_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG] _Advanced_ || _click to view_ ||
+  * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
+  * Advanced Options Mode
+    * lets you see the Widget Symbols and internal Menu Names on lists while in ADM Manager
+    * offers one extra Action that lets you type in a Widget Symbol (which it validates) rather than picking from the internal lists
+    * adds a "Clear All ADM Settings" option.  See [#Clear_All_ADM_Settings]
+
+=== Clear All ADM Settings ===
+  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
+  * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
+  * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  * Loads the Default Menus (see above)
+  * Enables ADM
+  * Disables Advanced Options
+
+=== Editing current Menu Items ===
+
+  * Select any Menu Item from the right hand list and a dialog will offer options
+    * Edit
+      * edits the currently selected Menu Item
+    * Add Menu Item below
+      * Adds a new menu item at the same level as the current Menu Item. See [#Creating_new_Menu_and_Submenu_Items].
+    * Add Submenu Item below
+      * Adds a new menu item at the next higher level as the current Menu Item (current level + 1). See [#Creating_new_Menu_and_Submenu_Items].
+    * Delete
+      * See [#Deleting_Menu_Items]
+
+  * Display Name
+    * This is the name that will be displayed on SageTV Menus
+    
+  * Parent
+    * The current parent for this Menu Item
+    * Selecting this item allows you to move the Menu Item to another Parent by selecting from a list of valid parents
+    * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
+    * Note: if you select a Parent that is using a Sage Submenu then the Submenu setting for that Parent will be cleared.
+    
+  * Action Types / Action
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard-ppc.JPG] _Standard Action_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol-ppc.JPG] _By Widget Symbol_ || _click to view_ ||
+    
+    * Execute Standard Sage Menu Action
+      * Select from a list of Standard Actions 
+      * The selected Action will launch when the Menu Item is selected within the SageTV menu system
+
+    * Execute Widget by Symbol (Advanced mode only)
+      * Offers a text entry box to type a Widget Symbol to use for the Menu Item Action
+      * The Symbol entered will be validated against SageTV to ensure it exists.
+      * Note: not all Widget Symbols can be used as a valid action. So even if it exists does not mean it will give you the desired results.  Use with caution.
+      * The entered Widget Symbol will execute when the Menu Item is selected within the SageTV menu system
+
+    * Video Browser with specific Folder
+      ||[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-ppc.JPG] _Video Folders_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder-ppc.JPG] _Set Folder_ || _click to view_ ||
+
+        * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
+        * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
+      [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
+        * The Folder name is case sensitive and should have the trailing "/" (but it will be added by ADM if you miss it)
+      
+  * Sage Submenu
+    * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
+    * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
+    * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
+
+  * Default Menu Item
+    * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
+    * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
+    * there must be 1 and only 1 default and ADM will enfore this
+
+  * Background Image
+    * Only valid for Level 1 menus (Top menu in SageTV)
+    * Select from a list of Themed images 
+    * this function may expand to offer selecting a specific file
+
+  * Show Menu Item
+    * Hides or Shows the Menu Item in SageTV
+    * the item will always show in ADM Manager but will be in a "greyed" text
+    * Children of this menu item will also show "greyed" out if their parent is not "Shown"
+    * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+
+=== Creating new Menu and Submenu Items ===
+  * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
+  * A new Menu Item will be created and a Text Entry dialog will open for you to set the Display Name
+  * The Edit dialog will then open to set all any addition fields. See [#Editing_current_Menu_Items].
+  * Note: if you close out of the new Menu Item without setting it's fields it will still be created and you need to Delete it if you don't want it in your Menus.
+
+=== Deleting Menu Items ===
+  * Select any Menu Item and then select Delete from the dialog
+  * Will Delete the current Menu Item AND all of it's Children if there are any
+  * A confirmation will be displayed
+  * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
+
+=== Menu Structure Terms ===
+  [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
+  * Top Level
+    * Also known as Level 0
+    * Holds no menu items but all Level 1 menus have this as their parent
+
+  * Level 1
+    * Also known as Top Level menu content area in Studio
+    * Holds the Left Side Menu Options
+    * Standard examples - TV, Videos, Music, Photos, Search etc
+    * Parent is Top Level
+    * Can have Children/Submenus
+      * Can create new Menu Items with this Level 1 item as it's parent (Children will be Level 2)
+      * or
+      * Can set a Standard Sage Level 2 Submenu to be displayed
+
+  * Level 2
+    * Also known as Secondary Level menu content area in Studio
+    * Holds the Middle Menu Options
+    * Parents are Level 1 Items
+    * Standard examples - Search Level 1 has the following Level 2 menu items - TV Airings, Videos, Music etc
+    * Can have Children/Submenus
+      * Can create new Menu Items with this Level 2 item as it's parent (Children will be Level 3)
+      * or
+      * Can set a Standard Sage Level 3 Submenu to be displayed
+    
+  * Level 3
+    * Also known as Tertiary Level menu content area in Studio
+    * Holds the Right Side Menu Options
+    * Parents are Level 2 Items
+    * Standard examples - TV Airings Level 2 has the following Level 3 menu items - Search Titles, Search People etc
+    * Cannot have Children/Submenus
+  
+== Plugin Compatibilities ==
+=== General ===
+  * any Plugin that modifies the Main Menus or their submenus may have issues and should be tested
+  * I can add notes here for any reported issues, workarounds or succeses
+  * If you need temporary access to a Menu that is missing then you can go to the ADM Manager and Disable ADM and the function should operate normally with the standard SageTV Menus
+  
+=== Diamond ===
+  * see [#Diamond_Notes]
+=== MyTV ===
+  * Should work with ADM disabled
+  * Tested with Diamond MyTV
+  * ADM Enabled
+    * Add a custom Submenu (2nd level menu) and specify the MyTV submenu as it's Sage Submenu
+    * The Auto Open function will not work yet (perhaps in a future release)
+
+== Diamond Notes ==
+  * This plugin has been designed to work combined with Diamond if it is installed
+  * Compatible with Diamond version 3.30
+
+=== Diamond Specific Functions ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG] _Movies_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG] _Videos_ || _click to view_ ||
+  * Default Menu
+    * A Diamond Specific menu will oad on initial run (newly installed) and when Load Default Menus is selected
+    * This menu will have 2 unique menus at the Top Level
+      * Movies - configured to launch the diamond Movies Menu with your customized diamond Movie views
+        * This is the menu you create and modify with Diamond tools (not a copy)
+      * Videos - configured to launch the Sage Videos built in menu that Diamond customizes
+    * ADM will detect which of these 2 menus you have enabled in Diamond and set the opposite to be not Shown
+    * You can manually edit either or both of the menus by setting the Show Menu Item property. you can show both if you want.
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Default Menu_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos-ppc.JPG] _Show-Hide_ || _click to view_ ||
+  * Replace videos with Diamond Movies
+    * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager using the Show Menu Item property.
+  * Hide Main Menu Items
+    * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
+  * Background Images
+    * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
+  * Future !ToDos to support Diamond
+    * Check out the [#ToDo_List]
+      
+  
+==Troubleshooting==
+  * Disable ADM
+    * if you need temporary access to any standard SageTV menu you may not have included in your custom menu then do this...
+      * Press Options from the Main Menu
+      * Select ADM Manager
+      * Select the button marked "ADM is Enabled"
+      * Now ADM is Disabled
+      * Press HOME and the Sage Standard menus will be shown
+      * Follow these steps to re-enable ADM when you are done
+  * Loading Default Menus
+    * go to the ADM Manager
+    * select Load Default Menus
+    * for more info [#Default_Menus]
+  * Clear All ADM Settings
+    * If all else fails then look here to [#Clear_All_ADM_Settings]
+  * Where are the Imports/Exports
+    * sageroot\userdata\ADM
+    * sageroot is different depending on where it is installed. It is it's working folder for the application. Same location where the sage.properties and sageclient.properties are.
+    
+ 
