@@ -727,7 +727,7 @@ public class MenuItem {
 
     public static Collection<String> GetParentListforMenuItem(String Name){
         System.out.println("ADMTemp: GetMenuItemSubMenu: for '" + Name + "' ='" + GetMenuItemSubMenu(Name) + "'");
-        if (Name.equals(GetMenuItemSubMenu(Name))){
+        if (Name.equals(GetMenuItemSubMenu(Name)) || GetMenuItemSubMenu(Name)==null){
             return MenuItem.GetMenuItemParentList();
         }else{
             return MenuItem.GetMenuItemParentList(GetMenuItemLevel(Name));
