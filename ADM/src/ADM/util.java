@@ -263,6 +263,8 @@ public class util {
         
         //now that the menus are loaded - set a level for each menu item and store it
         MenuItem.SetMenuItemLevels();
+        //now ensure SortKeys are in order
+        FixSortOrder();
         
         return;
     }
@@ -1026,5 +1028,16 @@ public class util {
             return Insets;
         }
     }
-  
+
+    public static void FixSortOrder(){
+        Integer Counter = 0;
+        for (String Item : MenuItem.GetMenuItemSortedList(Boolean.FALSE)){
+            ++Counter;
+            if (!MenuItem.GetMenuItemSortKey(Item).equals(Counter)){
+                MenuItem.SetMenuItemSortKeyNoCheck(Item, Counter);
+                System.out.println("ADM: FixSortOrder: Name '" + Item + "' changed to SortKey = '" + Counter + "'");
+            }
+        }
+    }
+    
 }

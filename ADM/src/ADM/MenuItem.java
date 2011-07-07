@@ -459,6 +459,11 @@ public class MenuItem {
         MenuItemList.get(Name).setSortKey(Setting.toString());
     }
 
+    public static void SetMenuItemSortKeyNoCheck(String Name, Integer Setting){
+        SaveMenuItemtoSage(Name, "SortKey", Setting.toString());
+        MenuItemList.get(Name).SortKey = Setting;
+    }
+
     //Prepares for an insert of a MenuItem at a specific SortKey location by making that SortKey available
     private static void InsertSortKey(Integer bSortKey){
         SortedMap<Integer,String> SortedKeyList = new TreeMap<Integer,String>();
