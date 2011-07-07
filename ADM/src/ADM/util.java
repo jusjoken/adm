@@ -35,8 +35,8 @@ public class util {
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
-    private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + "\\userdata\\ADM";
-    private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + "\\STVs\\ADM\\defaults";
+    private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
+    private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String SageBGVariablesListFile = "ADMSageBGVariables.properties";
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
@@ -282,7 +282,7 @@ public class util {
         //load default MenuItems from one or more default .properties file
         String DefaultPropFile = "ADMDefault.properties";
         String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
-        String DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFile;
+        String DefaultsFullPath = ADMDefaultsLocation + File.separator + DefaultPropFile;
         String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
         String DiamondMenuVideos = "admSageTVVideos";
         String DiamondMenuMovies = "admDiamondMovies";
@@ -290,7 +290,7 @@ public class util {
         
         // check to see if the Diamond Plugin is installed
         if (IsDiamond()){
-            DefaultsFullPath = ADMDefaultsLocation + "\\" + DefaultPropFileDiamond;
+            DefaultsFullPath = ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
         }
         ImportMenuItems(DefaultsFullPath);
         
@@ -378,7 +378,7 @@ public class util {
     
     public static void ExportMenuItems(String ExportFile){
         String PropLocation = "";
-        String ExportFilePath = ADMLocation + "\\" + ExportFile;
+        String ExportFilePath = ADMLocation + File.separator + ExportFile;
         //System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
         
         //iterate through all the MenuItems and save to a Property Collection
@@ -571,7 +571,7 @@ public class util {
     }
     
     public static void LoadSubMenuListLevel1(){
-        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevel1ListFile;
+        String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel1ListFile;
         
         //read the properties from the properties file
         try {
@@ -610,7 +610,7 @@ public class util {
     }
 
     public static void LoadSubMenuListLevel2(){
-        String SubMenuPropsPath = ADMDefaultsLocation + "\\" + SageSubMenusLevel2ListFile;
+        String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel2ListFile;
         
         //read the properties from the properties file
         try {
@@ -649,7 +649,7 @@ public class util {
     }
 
     public static void LoadStandardActionList(){
-        String StandardActionPropsPath = ADMDefaultsLocation + "\\" + StandardActionListFile;
+        String StandardActionPropsPath = ADMDefaultsLocation + File.separator + StandardActionListFile;
         
         //read the properties from the properties file
         try {
@@ -684,7 +684,7 @@ public class util {
     }
 
     public static void LoadSageBGVariablesList(){
-        String StandardActionPropsPath = ADMDefaultsLocation + "\\" + SageBGVariablesListFile;
+        String StandardActionPropsPath = ADMDefaultsLocation + File.separator + SageBGVariablesListFile;
         
         //read the properties from the properties file
         try {
@@ -780,6 +780,8 @@ public class util {
         }
         if (Action!=null){
             sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", Action);
+        }else{
+            sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
         System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + Action + " Level '" + Level + "'");
     }
