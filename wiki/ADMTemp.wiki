@@ -193,6 +193,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
 
 === ADM Copy Mode ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
     * select Main Menu from the dialog which will Enable Copy Mode and jump to the Main Menu
@@ -208,6 +209,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * The Menus displayed will now be your ADM customized menus including the new ones you created
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG] _Folder Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
     * select Folder Browser from the dialog which will Enable Copy Mode and jump to the Folder Browser
