@@ -13,6 +13,16 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.35 ==
+
+  * New ADM Copy Feature
+    * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
+    * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
+    * see [#ADM_Copy_Mode] for more info
+  * Fix for Linux path issues
+  * Fix for issues related to selecting a different Parent
+  * Other minor fixes
+
 == Getting Started ==
 
   * Works with SageTV 7.1.9 
@@ -181,6 +191,36 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Will Delete the current Menu Item AND all of it's Children if there are any
   * A confirmation will be displayed
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
+
+=== ADM Copy Mode ===
+  * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
+    * From ADM Manager select Copy Mode is Disabled from the left hand menu
+    * select Main Menu from the dialog which will Enable Copy Mode and jump to the Main Menu
+    * the Internal Sage Menu will be displayed (as if ADM was Disabled)
+    * move the focus to any menu item you want to copy
+    * press Options/ESC
+    * select Copy xxxxx Menu Item
+    * Select a Parent Menu to attach this new Menu Item to
+    * Edit any of the fields such as the Display Name. See [#Editing_current_Menu_Items] for more info
+    * Close the Edit Dialog and the menu item has been created.
+    * Continue repeating these steps for any other Menu Items you want to copy
+    * To finish, press Options/ESC and select Disable ADM Copy Mode
+    * The Menus displayed will now be your ADM customized menus including the new ones you created
+    * Return to ADM Manager if you wish to move any of the newly created Menu Items
+
+  * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
+    * From ADM Manager select Copy Mode is Disabled from the left hand menu
+    * select Folder Browser from the dialog which will Enable Copy Mode and jump to the Folder Browser
+    * move the focus to any folder item you want to create a menu item for
+    * press Options/ESC
+    * select Create Menu Item for xxxxx
+    * Select a Parent Menu to attach this new Menu Item to
+    * Edit any of the fields such as the Display Name. See [#Editing_current_Menu_Items] for more info
+    * Close the Edit Dialog and the menu item has been created.
+    * Continue repeating these steps for any other Folder Menu Items you want to create
+    * To finish, press Options/ESC and select Disable ADM Copy Mode
+    * Return to ADM Manager if you wish to move any of the newly created Menu Items
+
 
 === Menu Structure Terms ===
   [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
