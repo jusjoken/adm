@@ -25,7 +25,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.34";
+    public static String Version = "0.35";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -45,6 +45,8 @@ public class util {
     public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
     public static final String ActionTypeExecuteWidgetbySymbol = "ExecuteWidget";
+    public static final String ActionTypeExecuteBrowseVideoFolder = "ExecuteBrowseVideoFolder";
+    public static final String ActionTypeExecuteStandardMenuAction = "ExecuteStandardMenuAction";
     public static final String ButtonTextDefault = "<Not defined>";
     public static final String SortStyleDefault = "xNaturalOrder";
     private static final char[] symbols = new char[36];
@@ -484,6 +486,9 @@ public class util {
     }
     
     public static void LaunchVideoBrowser(String FoldertoLaunch){
+        if (FoldertoLaunch.equals("/")){
+            FoldertoLaunch = null;
+        }
         System.out.println("ADM: LaunchVideoBrowser - for Folder = '" + FoldertoLaunch + "'");
         String WidgetSymbol = "OPUS4A-174637";
         Object[] passvalue = new Object[1];
@@ -561,9 +566,9 @@ public class util {
             ButtonText = "Execute Widget by Symbol";
         }else if(ActionTypeDefault.equals(Option)){
             ButtonText = "None";
-        }else if("ExecuteStandardMenuAction".equals(Option)){
+        }else if(ActionTypeExecuteStandardMenuAction.equals(Option)){
             ButtonText = "Execute Standard Sage Menu Action";
-        }else if("ExecuteBrowseVideoFolder".equals(Option)){
+        }else if(ActionTypeExecuteBrowseVideoFolder.equals(Option)){
             ButtonText = "Video Browser with specific Folder";
         }
         System.out.println("ADM: GetActionTypeButtonText returned '" + ButtonText + "' for '" + Option + "'");
@@ -759,10 +764,77 @@ public class util {
         //return SageSubMenusKeys.contains(SubMenu);
     }
 
+    //save the current Folder item details to sage properties to assist the copy function
+    public static void SaveCurrentVideoFolderDetails(String CurFolder, String FolderName){
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "Folder");
+        String FolderPath = "";
+        if (FolderName!=null){
+            FolderPath = FolderName;
+        }
+
+        if (CurFolder!=null){
+            FolderPath = CurFolder + FolderPath;
+        }
+        //ensure the Folder string ends in a "/"
+        if (FolderPath.isEmpty() || !FolderPath.endsWith("/")){
+            FolderPath = FolderPath + "/";
+        }
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
+        
+        System.out.println("ADM: SaveCurrentVideoFolderDetails: FolderName '" + FolderPath + "'");
+    }
+    
+    public static String GetCurrentVideoFolderDetails(){
+        return sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", OptionNotFound);
+    }
+    
+    public static String GetCurrentVideoFolderDetailsButtonText(){
+        String ButtonText = sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", ButtonTextDefault);
+        ButtonText = ButtonText.replace("/", " ").trim();
+        if (ButtonText.isEmpty()){
+            ButtonText = "Root";
+        }
+        return ButtonText;
+    }
+    
+    public static Collection<String> GetCurrentVideoFolderDetailsParentList(){
+        return MenuItem.GetMenuItemParentList();
+    }
+    
+    //create a new Menu Item from the current Video Folder Menu Item details
+    public static String CreateMenuItemfromVideoFolderCopyDetails(String Parent){
+        //
+        String tMenuItemName = GetNewMenuItemName();
+
+        //Create a new MenuItem with defaults
+        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+        MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentVideoFolderDetails());
+        MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeExecuteBrowseVideoFolder);
+
+        MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
+        MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentVideoFolderDetailsButtonText());
+        MenuItem.SetMenuItemName(tMenuItemName);
+        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
+        MenuItem.SetMenuItemSortKey(tMenuItemName,MenuItem.SortKeyCounter++);
+        MenuItem.SetMenuItemSubMenu(tMenuItemName,ListNone);
+        MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
+        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
+        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+        
+        //Level needs to be 1 more than the Parent
+        MenuItem.SetMenuItemLevel(tMenuItemName,MenuItem.GetMenuItemLevel(Parent)+1);
+        
+        System.out.println("ADM: CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        return tMenuItemName;
+        
+    }
+    
     //save the current item details to sage properties to assist the copy function
-    public static void SaveCurrentMenuItemDetails(String ButtonText, String SubMenu, Integer Level){
+    public static void SaveCurrentMenuItemDetails(String ButtonText, String SubMenu, String CurrentWidgetSymbol, Integer Level){
         //due to an issue with getting the current widget we save that info directly in the STV and then retrieve it here
-        String CurrentWidgetSymbol = sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
+        //String CurrentWidgetSymbol = sagex.api.Configuration.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", OptionNotFound);
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "MenuItem");
+        sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", CurrentWidgetSymbol);
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", ButtonText);
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", SubMenu);
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
