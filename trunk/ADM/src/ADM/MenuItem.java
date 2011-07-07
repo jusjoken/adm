@@ -10,6 +10,7 @@ package ADM;
  */
 
 //import java.util.ArrayList;
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -131,7 +132,7 @@ public class MenuItem {
             //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
             BGImageFile = bBGImageFile;
             BGImageFilePath = bBGImageFile;
-        }else if (bBGImageFile.contains("\\")){
+        }else if (bBGImageFile.contains(File.separator)){
             //a path to the image file is being used
             //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - path found");
             BGImageFile = bBGImageFile;
@@ -719,6 +720,15 @@ public class MenuItem {
         return FinalList;
     }
 
+    public static Collection<String> GetParentListforMenuItem(String Name){
+        System.out.println("ADMTemp: GetMenuItemSubMenu: for '" + Name + "' ='" + GetMenuItemSubMenu(Name) + "'");
+        if (Name.equals(GetMenuItemSubMenu(Name))){
+            return MenuItem.GetMenuItemParentList();
+        }else{
+            return MenuItem.GetMenuItemParentList(GetMenuItemLevel(Name));
+        }
+    }
+    
     public static Collection<String> GetMenuItemParentList(){
         Collection<String> FullSortedList = GetMenuItemNameList(null,Boolean.TRUE);
         Collection<String> ValidParentList = new LinkedHashSet<String>();
@@ -784,6 +794,9 @@ public class MenuItem {
 //    }
 //
     public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
+        if (Name.equals(util.TopMenu)){
+            return "Top Level";
+        }
         String FullName = "";
         if (MenuItemList.get(Name).Parent.equals(util.TopMenu)){
             FullName = MenuItemList.get(Name).ButtonText;
