@@ -18,20 +18,23 @@ import java.util.Properties;
 import java.io.*;
 import java.lang.Float;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.35";
+    public static String Version = "0.36";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String SageADMBasePropertyLocation = "ADM/";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
+    public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
@@ -44,9 +47,6 @@ public class util {
     public static final String ListNone = "<None>";
     public static final String OptionNotFound = "Option not Found";
     public static final String ActionTypeDefault = "DoNothing";
-    public static final String ActionTypeExecuteWidgetbySymbol = "ExecuteWidget";
-    public static final String ActionTypeExecuteBrowseVideoFolder = "ExecuteBrowseVideoFolder";
-    public static final String ActionTypeExecuteStandardMenuAction = "ExecuteStandardMenuAction";
     public static final String ButtonTextDefault = "<Not defined>";
     public static final String SortStyleDefault = "xNaturalOrder";
     private static final char[] symbols = new char[36];
@@ -62,7 +62,19 @@ public class util {
     public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel2Props = new Properties();
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
+    public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
 
+//    public static final String ActionTypeExecuteWidgetbySymbol = "ExecuteWidget";
+//    public static final String ActionTypeExecuteBrowseVideoFolder = "ExecuteBrowseVideoFolder";
+//    public static final String ActionTypeExecuteStandardMenuAction = "ExecuteStandardMenuAction";
+
+    public class ActionType {
+        public static final String WidgetbySymbol = "ExecuteWidget";
+        public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
+        public static final String StandardMenuAction = "ExecuteStandardMenuAction";
+        public static final String TVRecordingView = "ExecuteTVRecordingView";
+    }
+    
     public static void InitADM(){
         
         if (!ADMInitComplete) {
@@ -101,6 +113,8 @@ public class util {
             for (int idx = 10; idx < 36; ++idx)
                 symbols[idx] = (char) ('a' + idx - 10);
             
+            //load the SageTV Recording views
+            LoadSageTVRecordingViews();
             
             ADMInitComplete = true;
 
@@ -440,6 +454,20 @@ public class util {
         return;
     }
     
+    public static void ExecuteMenuItem(String Name){
+        String tActionType = MenuItem.GetMenuItemActionType(Name);
+        if(tActionType.equals(ActionType.BrowseVideoFolder)){
+            LaunchVideoBrowser(MenuItem.GetMenuItemAction(Name));
+        }else if(tActionType.equals(ActionType.StandardMenuAction)){
+            ExecuteWidget(MenuItem.GetMenuItemAction(Name));
+        }else if(tActionType.equals(ActionType.TVRecordingView)){
+            LaunchTVRecordingsView(MenuItem.GetMenuItemAction(Name));
+        }else if(tActionType.equals(ActionType.WidgetbySymbol)){
+            ExecuteWidget(MenuItem.GetMenuItemAction(Name));
+        }
+        //else do nothing
+    }
+    
     public static void ExecuteWidget(String WidgetSymbol){
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
@@ -515,6 +543,31 @@ public class util {
                
     }
     
+    public static void LaunchTVRecordingsView(String ViewType){
+        System.out.println("ADM: LaunchTVRecordingsView - for ViewType = '" + ViewType + "'");
+        String WidgetSymbol = "OPUS4A-174116";
+        Object[] passvalue = new Object[1];
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
+        if (passvalue[0]==null){
+            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+        }else{
+            //set the current ViewType as a Static Context 
+            sagex.api.Global.AddStaticContext(MyUIContext, "ViewFilter", ViewType);
+            
+            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
+
+            try {
+                sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
+            } catch (InvocationTargetException ex) {
+                System.out.println("ADM: LaunchTVRecordingsView: error executing widget" + util.class.getName() + ex);
+            }
+
+            //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
+            
+        }
+               
+    }
+    
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
@@ -564,14 +617,16 @@ public class util {
     
     public static String GetActionTypeButtonText(String Option){
         String ButtonText = OptionNotFound;
-        if(ActionTypeExecuteWidgetbySymbol.equals(Option)){
+        if(ActionType.WidgetbySymbol.equals(Option)){
             ButtonText = "Execute Widget by Symbol";
         }else if(ActionTypeDefault.equals(Option)){
             ButtonText = "None";
-        }else if(ActionTypeExecuteStandardMenuAction.equals(Option)){
+        }else if(ActionType.StandardMenuAction.equals(Option)){
             ButtonText = "Execute Standard Sage Menu Action";
-        }else if(ActionTypeExecuteBrowseVideoFolder.equals(Option)){
+        }else if(ActionType.BrowseVideoFolder.equals(Option)){
             ButtonText = "Video Browser with specific Folder";
+        }else if(ActionType.TVRecordingView.equals(Option)){
+            ButtonText = "Launch Specific TV Recordings View";
         }
         System.out.println("ADM: GetActionTypeButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
@@ -811,7 +866,7 @@ public class util {
         //Create a new MenuItem with defaults
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentVideoFolderDetails());
-        MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeExecuteBrowseVideoFolder);
+        MenuItem.SetMenuItemActionType(tMenuItemName,ActionType.BrowseVideoFolder);
 
         MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
         MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentVideoFolderDetailsButtonText());
@@ -869,7 +924,7 @@ public class util {
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         if (!GetCurrentMenuItemDetailsAction().equals(OptionNotFound)){
             MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
-            MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeExecuteWidgetbySymbol);
+            MenuItem.SetMenuItemActionType(tMenuItemName,ActionType.WidgetbySymbol);
         }
         MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
         MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentMenuItemDetailsButtonText());
@@ -1038,6 +1093,28 @@ public class util {
                 System.out.println("ADM: FixSortOrder: Name '" + Item + "' changed to SortKey = '" + Counter + "'");
             }
         }
+    }
+
+    public static void LoadSageTVRecordingViews(){
+        //put the ViewType and Default View Name into a list
+        SageTVRecordingViews.put("xAll","All Recordings");
+        SageTVRecordingViews.put("xRecordings","Archived Recordings");
+        SageTVRecordingViews.put("xArchives","Recorded Movies");
+        SageTVRecordingViews.put("xMovies","Current Recordings");
+        //SageTVRecordingViews.put("xPartials","");
+        SageTVRecordingViews.put("xView5","Recording View5");
+        SageTVRecordingViews.put("xView6","Recording View6");
+        SageTVRecordingViews.put("xView7","Recording View7");
+        SageTVRecordingViews.put("xView8","Recording View8");
+    }
+
+    public static Collection<String> GetSageTVRecordingViewsList(){
+        return SageTVRecordingViews.keySet();
+    }
+    
+    public static String GetSageTVRecordingViewsButtonText(String Name){
+        //return the stored name from Sage or the Default Name if nothing is stored
+        return sagex.api.Configuration.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
 }
