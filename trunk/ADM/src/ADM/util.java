@@ -73,8 +73,13 @@ public class util {
         public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
         public static final String StandardMenuAction = "ExecuteStandardMenuAction";
         public static final String TVRecordingView = "ExecuteTVRecordingView";
+        
     }
-    
+    public static String GetWidgetbySymbol(){ return ActionType.WidgetbySymbol; }
+    public static String GetBrowseVideoFolder(){ return ActionType.BrowseVideoFolder; }
+    public static String GetStandardMenuAction(){ return ActionType.StandardMenuAction; }
+    public static String GetTVRecordingView(){ return ActionType.TVRecordingView; }
+        
     public static void InitADM(){
         
         if (!ADMInitComplete) {
