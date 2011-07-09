@@ -1117,4 +1117,9 @@ public class util {
         return sagex.api.Configuration.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
+    public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
+        //rename the specified TV Recording View 
+        sagex.api.Configuration.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
+    }
+    
 }
