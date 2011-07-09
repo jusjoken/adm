@@ -73,7 +73,7 @@ public class util {
         public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
         public static final String StandardMenuAction = "ExecuteStandardMenuAction";
         public static final String TVRecordingView = "ExecuteTVRecordingView";
-        
+        public static final String TVRecordingViewSymbol = "OPUS4A-174116";
     }
     public static String GetWidgetbySymbol(){ return ActionType.WidgetbySymbol; }
     public static String GetBrowseVideoFolder(){ return ActionType.BrowseVideoFolder; }
@@ -550,16 +550,15 @@ public class util {
     
     public static void LaunchTVRecordingsView(String ViewType){
         System.out.println("ADM: LaunchTVRecordingsView - for ViewType = '" + ViewType + "'");
-        String WidgetSymbol = "OPUS4A-174116";
         Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, ActionType.TVRecordingViewSymbol);
         if (passvalue[0]==null){
-            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + ActionType.TVRecordingViewSymbol + "'");
         }else{
             //set the current ViewType as a Static Context 
             sagex.api.Global.AddStaticContext(MyUIContext, "ViewFilter", ViewType);
             
-            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + ActionType.TVRecordingViewSymbol + "'");
 
             try {
                 sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
@@ -914,6 +913,15 @@ public class util {
         }
         if (Action!=null){
             sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", Action);
+            //test for special Action Widget Symbols
+            if (Action.equals(ActionType.TVRecordingViewSymbol)){
+                //TV RecordingsView found so save the view Type
+                for (Object Child : Children){
+                    if ("Attribute".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child)) && "ViewFilter".equals(sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child))){
+                        System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetValue '" + sagex.api.WidgetAPI.GetWidgetProperty(MyUIContext,Child,"Value") + "'");
+                    }
+                }
+            }
         }else{
             sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
