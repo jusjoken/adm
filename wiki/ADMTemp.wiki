@@ -7,11 +7,18 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu-small.JPG] _click to view_
 
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="4" />
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.JPG] _click to view_
 
 = Details =
+
+== Changes in Version 0.36 ==
+
+  * Updated ADM Copy
+    * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
+  * New Action Type to Launch Specific TV Recordings View
+  * Other minor fixes
 
 == Changes in Version 0.35 ==
 
@@ -138,7 +145,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
     * Note: if you select a Parent that is using a Sage Submenu then the Submenu setting for that Parent will be cleared.
     
-  * Action Types / Action
+  ==== Action Types / Action ====
     ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard-ppc.JPG] _Standard Action_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol-ppc.JPG] _By Widget Symbol_ || _click to view_ ||
     
     * Execute Standard Sage Menu Action
