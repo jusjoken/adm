@@ -18,6 +18,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Updated ADM Copy
     * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
   * New Action Type to Launch Specific TV Recordings View
+    * works for Standard SageTV as well as Diamond TV Views
   * Other minor fixes
 
 == Changes in Version 0.35 ==
@@ -48,8 +49,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
     * Launch specific Diamond Movie Custom flow - not yet available
-    * Launch specific Diamond Custom TV view - not yet available
-      * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
     * Launch an external program is being considered
     * Background Image - offer an option to select a specifc file to display (rather than only Themed Images)
 
@@ -165,7 +164,19 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
         * The Folder name is case sensitive and should have the trailing "/" (but it will be added by ADM if you miss it)
+        * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
       
+    * Launch Specific TV Recordings View
+      * Select from a list of SageTV built in Recordings Views
+      * The selected Recordings View will launch when the Menu Item is selected within the SageTV menu system
+      * Special features
+        * After selecting a Recordings View you may be prompted to Rename the View or the Menu Item so they match
+        * The View name is always displayed at the Top Left of the Recordings View
+        * Renaming the view is at the SageTV level and is the same as using the Rename function in the Menu Options while displaying the specific Recordings View
+        * If you change the Display Name for the Menu Item you may also be prompted to rename either the Menu Item or the Recordings View so they match.
+        * You will have the option to leave them names differently
+      * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
+
   * Sage Submenu
     * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
     * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
@@ -272,6 +283,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   
 === Diamond ===
   * see [#Diamond_Notes]
+
 === MyTV ===
   * Should work with ADM disabled
   * Tested with Diamond MyTV
@@ -300,6 +312,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
   * Background Images
     * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
+  * TV Views
+    * TV Recordings views which Diamond uses are standard SageTV Recordings View with added customizations
+    * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
+    * ADM Copy mode can be used to create these Menu Items as well
   * Future !ToDos to support Diamond
     * Check out the [#ToDo_List]
       
