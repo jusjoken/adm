@@ -28,7 +28,7 @@ public class MenuItem {
     private String Name = "";
     private String ButtonText = "";
     private String SubMenu = "";
-    private String Action = "";
+    private String ActionAttribute = "";
     private String ActionType = "";
     private String BGImageFile = "";
     private String BGImageFilePath = "";
@@ -47,7 +47,7 @@ public class MenuItem {
         ButtonText = util.ButtonTextDefault;
         SubMenu = null;
         ActionType = util.ActionTypeDefault;
-        Action = null;
+        ActionAttribute = null;
         BGImageFile = null;
         BGImageFilePath = null;
         IsDefault = false;
@@ -64,7 +64,7 @@ public class MenuItem {
         SubMenu = bSubMenu;
         HasSubMenu = bHasSubMenu;
         ActionType = bActionType;
-        Action = bAction;
+        ActionAttribute = bAction;
         SetBGImageFileandPath(bBGImageFile);
         IsDefault = bIsDefault;
         IsActive = bIsActive;
@@ -74,25 +74,29 @@ public class MenuItem {
     }
 
     public String getAction() {
-        return Action;
+        return ActionAttribute;
     }
 
-    public void setAction(String Action) {
-        this.Action = Action;
+    public void setAction(String ActionAttribute) {
+        this.ActionAttribute = ActionAttribute;
     }
 
     public static String GetMenuItemAction(String Name){
-        //System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuItemList.get(Name).getAction() + "'");
+        System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuItemList.get(Name).getAction() + "'");
         return MenuItemList.get(Name).getAction();
     }
 
     public static void SetMenuItemAction(String Name, String Setting){
-        if (MenuItemList.get(Name).getActionType().equals("ExecuteBrowseVideoFolder")){
-            //ensure the Folder string ends in a "/"
+        if (GetMenuItemActionType(Name).equals(Action.BrowseVideoFolder)){
+            //ensure the Folder string ends in a "/" unless it's blank
             if (Setting.isEmpty() || !Setting.endsWith("/")){
                 Setting = Setting + "/";
             }
+            if (Setting.equals("/")){
+                Setting = null;
+            }
         }
+        System.out.println("ADM: SetMenuItemAction for '" + Name + "' = '" + Setting + "'");
         MenuItemList.get(Name).setAction(Setting);
         SaveMenuItemtoSage(Name, "Action", Setting);
     }
@@ -859,6 +863,10 @@ public class MenuItem {
         Collection<String> bSortedNames = GetMenuItemNameList(Parent);
         System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bSortedNames.size());
         return bSortedNames.size();
+    }
+
+    public static void Execute(String Name){
+        Action.Execute(GetMenuItemActionType(Name), GetMenuItemAction(Name));
     }
     
 }

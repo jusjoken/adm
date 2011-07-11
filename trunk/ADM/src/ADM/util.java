@@ -456,40 +456,6 @@ public class util {
         return;
     }
     
-    public static void ExecuteMenuItem(String Name){
-        String tActionType = MenuItem.GetMenuItemActionType(Name);
-        if(tActionType.equals(Action.BrowseVideoFolder)){
-            LaunchVideoBrowser(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(Action.StandardMenuAction)){
-            ExecuteWidget(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(Action.TVRecordingView)){
-            LaunchTVRecordingsView(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(Action.WidgetbySymbol)){
-            ExecuteWidget(MenuItem.GetMenuItemAction(Name));
-        }
-        //else do nothing
-    }
-    
-    public static void ExecuteWidget(String WidgetSymbol){
-        Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
-        if (passvalue[0]==null){
-            System.out.println("ADM: ExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
-        }else{
-            System.out.println("ADM: ExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
-
-        try {
-            sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
-        } catch (InvocationTargetException ex) {
-            System.out.println("ADM: ExecuteWidget: error executing widget" + util.class.getName() + ex);
-        }
-            
-            //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
-            
-        }
-               
-    }
-    
     public static Boolean IsWidgetValid(String WidgetSymbol){
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
@@ -513,58 +479,6 @@ public class util {
             String WidgetName = sagex.api.WidgetAPI.GetWidgetName(MyUIContext, WidgetSymbol);
             System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
             return WidgetName;
-        }
-               
-    }
-    
-    public static void LaunchVideoBrowser(String FoldertoLaunch){
-        if (FoldertoLaunch.equals("/")){
-            FoldertoLaunch = null;
-        }
-        System.out.println("ADM: LaunchVideoBrowser - for Folder = '" + FoldertoLaunch + "'");
-        String WidgetSymbol = "OPUS4A-174637";
-        Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
-        if (passvalue[0]==null){
-            System.out.println("ADM: LaunchVideoBrowser - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
-        }else{
-            //set the current folder as a Global Context 
-            sagex.api.Global.AddGlobalContext(MyUIContext, "gCurrentVideoBrowserFolder", FoldertoLaunch);
-            
-            System.out.println("ADM: LaunchVideoBrowser - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
-
-            try {
-                sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
-            } catch (InvocationTargetException ex) {
-                System.out.println("ADM: LaunchVideoBrowser: error executing widget" + util.class.getName() + ex);
-            }
-
-            //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
-            
-        }
-               
-    }
-    
-    public static void LaunchTVRecordingsView(String ViewType){
-        System.out.println("ADM: LaunchTVRecordingsView - for ViewType = '" + ViewType + "'");
-        Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, Action.GetWidgetSymbol(Action.TVRecordingView));
-        if (passvalue[0]==null){
-            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + Action.GetWidgetSymbol(Action.TVRecordingView) + "'");
-        }else{
-            //set the current ViewType as a Static Context 
-            sagex.api.Global.AddStaticContext(MyUIContext, "ViewFilter", ViewType);
-            
-            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + Action.GetWidgetSymbol(Action.TVRecordingView) + "'");
-
-            try {
-                sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
-            } catch (InvocationTargetException ex) {
-                System.out.println("ADM: LaunchTVRecordingsView: error executing widget" + util.class.getName() + ex);
-            }
-
-            //            sagex.api.WidgetAPI.ExecuteWidgetChain(MyUIContext, WidgetSymbol);
-            
         }
                
     }
