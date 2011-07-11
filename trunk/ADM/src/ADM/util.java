@@ -690,15 +690,6 @@ public class util {
         }
     }
 
-    public static String GetStandardActionButtonText(String Option){
-        //determine if using Advanced options
-        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
-            return StandardActionProps.getProperty(Option, OptionNotFound) + " (" + Option + ")";
-        }else{
-            return StandardActionProps.getProperty(Option, OptionNotFound);
-        }
-    }
-
     public static Collection<String> GetSageBGVariablesList(){
         return SageBGVariablesKeys;
     }
