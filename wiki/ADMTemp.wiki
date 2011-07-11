@@ -243,13 +243,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
 
-=== Menu Structure Terms ===
+== Menu Structure Terms ==
   [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
-  * Top Level
+  === Top Level ===
     * Also known as Level 0
     * Holds no menu items but all Level 1 menus have this as their parent
 
-  * Level 1
+  === Level 1 ===
     * Also known as Top Level menu content area in Studio
     * Holds the Left Side Menu Options
     * Standard examples - TV, Videos, Music, Photos, Search etc
@@ -259,7 +259,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * or
       * Can set a Standard Sage Level 2 Submenu to be displayed
 
-  * Level 2
+  === Level 2 ===
     * Also known as Secondary Level menu content area in Studio
     * Holds the Middle Menu Options
     * Parents are Level 1 Items
@@ -269,14 +269,14 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * or
       * Can set a Standard Sage Level 3 Submenu to be displayed
     
-  * Level 3
+  === Level 3 ===
     * Also known as Tertiary Level menu content area in Studio
     * Holds the Right Side Menu Options
     * Parents are Level 2 Items
     * Standard examples - TV Airings Level 2 has the following Level 3 menu items - Search Titles, Search People etc
     * Cannot have Children/Submenus
     
-  * Children/Submenus
+  === Children/Submenus ===
     * Children and Submenus are mutually exclusive. A Menu Item either has a Submenu set for it OR it has Children associated to it.
     * Children
       * assigned by creating Submenu items on a Parent Menu Item
