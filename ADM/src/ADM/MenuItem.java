@@ -869,4 +869,8 @@ public class MenuItem {
         Action.Execute(GetMenuItemActionType(Name), GetMenuItemAction(Name));
     }
     
+    public static String GetActionAttributeButtonText(String Name){
+        return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+    }
+    
 }

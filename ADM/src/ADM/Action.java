@@ -85,6 +85,38 @@ public class Action {
         return ActionList.keySet();
     }
 
+    public static Boolean IsValidAction(String Type){
+        if (Type.equals(ActionTypeDefault)){
+            return Boolean.FALSE;
+        }else{
+            return ActionList.containsKey(Type);
+        }
+    }
+    
+    public static String GetAttributeButtonText(String Type, String Attribute){
+        if (Type.equals(StandardMenuAction)){
+            //determine if using Advanced options
+            if ("true".equals(sagex.api.Configuration.GetProperty(util.AdvancedModePropertyLocation, "false"))){
+                return util.StandardActionProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
+            }else{
+                return util.StandardActionProps.getProperty(Attribute, util.OptionNotFound);
+            }
+        }else if(Type.equals(WidgetbySymbol)){
+            return Attribute + " - " + util.GetWidgetName(Attribute);
+        }else if(Type.equals(BrowseVideoFolder)){
+            if (Attribute==null){
+                return "Root";
+            }else{
+                return Attribute;
+            }
+        }else if(Type.equals(TVRecordingView)){
+            return util.GetSageTVRecordingViewsButtonText(Attribute);
+        }else{
+            return util.OptionNotFound;
+        }
+    }
+    
+    
     public static void Execute(String ActionType, String ActionAttribute){
         System.out.println("ADM: Execute - ActionType = '" + ActionType + "' Action = '" + ActionAttribute + "'");
         if (!ActionType.equals(ActionTypeDefault)){
