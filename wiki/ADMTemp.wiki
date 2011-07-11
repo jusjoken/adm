@@ -186,6 +186,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
     * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
     * there must be 1 and only 1 default and ADM will enfore this
+    * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
 
   * Background Image
     * Only valid for Level 1 menus (Top menu in SageTV)
@@ -274,6 +275,15 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Parents are Level 2 Items
     * Standard examples - TV Airings Level 2 has the following Level 3 menu items - Search Titles, Search People etc
     * Cannot have Children/Submenus
+    
+  * Children/Submenus
+    * Children and Submenus are mutually exclusive. A Menu Item either has a Submenu set for it OR it has Children associated to it.
+    * Children
+      * assigned by creating Submenu items on a Parent Menu Item
+      * changing a Menu Item's Parent will make the current Menu Item a Child of that Parent. (it will also remove any Submenu settings for the Parent)
+    * Submenus
+      * assigned by setting a Menu Item's Submenu setting in the Edit dialog
+      * if a Menu Item has Children assigned then the Submenu setting is not offered.  You must delete the Children first.
   
 == Plugin Compatibilities ==
 === General ===
