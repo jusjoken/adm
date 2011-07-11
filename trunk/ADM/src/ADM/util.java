@@ -10,7 +10,6 @@ package ADM;
  */
 
 import sagex.UIContext;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -32,13 +31,11 @@ public class util {
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
-    public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     private static final String PropertyBackupFile = "ADMbackup.properties";
     private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
     private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
-    private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String SageBGVariablesListFile = "ADMSageBGVariables.properties";
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
     private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
@@ -51,8 +48,6 @@ public class util {
     private static final Random random = new Random();
     public static Boolean ADMInitComplete = false;
     public static MenuItem[] MenuList = new MenuItem[8];
-    public static Properties StandardActionProps = new Properties();
-    public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
     public static Properties SageBGVariablesProps = new Properties();
     public static Collection<String> SageBGVariablesKeys = new LinkedHashSet<String>();
     public static Collection<String> SageSubMenusKeys = new LinkedHashSet<String>();
@@ -60,20 +55,7 @@ public class util {
     public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel2Props = new Properties();
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
-    public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
 
-//    public class ActionType {
-//        public static final String WidgetbySymbol = "ExecuteWidget";
-//        public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
-//        public static final String StandardMenuAction = "ExecuteStandardMenuAction";
-//        public static final String TVRecordingView = "ExecuteTVRecordingView";
-//        public static final String TVRecordingViewSymbol = "OPUS4A-174116";
-//    }
-    public static String GetWidgetbySymbol(){ return Action.WidgetbySymbol; }
-    public static String GetBrowseVideoFolder(){ return Action.BrowseVideoFolder; }
-    public static String GetStandardMenuAction(){ return Action.StandardMenuAction; }
-    public static String GetTVRecordingView(){ return Action.TVRecordingView; }
-        
     public static void InitADM(){
         
         if (!ADMInitComplete) {
@@ -94,8 +76,6 @@ public class util {
             
             LoadMenuItemsFromSage();
             
-            //also load the standard actions list - only needs loaded at startup
-            LoadStandardActionList();
             //also load the BGVariables for BG Images on Top Level Menus
             LoadSageBGVariablesList();
             SageBGVariablesKeys.add(ListNone);
@@ -114,9 +94,6 @@ public class util {
                 symbols[idx] = (char) ('0' + idx);
             for (int idx = 10; idx < 36; ++idx)
                 symbols[idx] = (char) ('a' + idx - 10);
-            
-            //load the SageTV Recording views
-            LoadSageTVRecordingViews();
             
             ADMInitComplete = true;
 
@@ -285,19 +262,6 @@ public class util {
         return;
     }
 
-    private static Boolean IsDiamond(){
-        String DiamondPluginID = "DiamondSTVi";
-        String DiamondWidgetSymbol = "AOSCS-65";
-        // check to see if the Diamond Plugin is installed
-        UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
-        Object[] FoundWidget = new Object[1];
-        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, DiamondWidgetSymbol);
-        if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
-    
     public static void LoadMenuItemDefaults(){
         //load default MenuItems from one or more default .properties file
         String DefaultPropFile = "ADMDefault.properties";
@@ -309,13 +273,13 @@ public class util {
         
         
         // check to see if the Diamond Plugin is installed
-        if (IsDiamond()){
+        if (Diamond.IsDiamond()){
             DefaultsFullPath = ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
         }
         ImportMenuItems(DefaultsFullPath);
         
         //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
-        if (IsDiamond()){
+        if (Diamond.IsDiamond()){
             //admSageTVVideos
             if ("true".equals(sagex.api.Configuration.GetProperty(DiamondVideoMenuCheckProp, "false"))){
                 //show the Videos Menu
@@ -456,33 +420,6 @@ public class util {
         return;
     }
     
-    public static Boolean IsWidgetValid(String WidgetSymbol){
-        Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
-        if (passvalue[0]==null){
-            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
-            return Boolean.FALSE;
-        }else{
-            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
-            return Boolean.TRUE;
-        }
-               
-    }
-    
-    public static String GetWidgetName(String WidgetSymbol){
-        Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, WidgetSymbol);
-        if (passvalue[0]==null){
-            System.out.println("ADM: GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
-            return null;
-        }else{
-            String WidgetName = sagex.api.WidgetAPI.GetWidgetName(MyUIContext, WidgetSymbol);
-            System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
-            return WidgetName;
-        }
-               
-    }
-    
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
@@ -608,41 +545,6 @@ public class util {
         return;
     }
 
-    public static void LoadStandardActionList(){
-        String StandardActionPropsPath = ADMDefaultsLocation + File.separator + StandardActionListFile;
-        
-        //read the properties from the properties file
-        try {
-            FileInputStream in = new FileInputStream(StandardActionPropsPath);
-            try {
-                StandardActionProps.load(in);
-                in.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: LoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
-                return;
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
-            return;
-        }
-
-        //sort the keys into value order
-        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
-
-        //Add all the Values to a sorted list
-        for (String ActionItem : StandardActionProps.stringPropertyNames()){
-            ActionValuesList.put(StandardActionProps.getProperty(ActionItem),ActionItem);
-        }
-
-        //build a list of keys in the order of the values
-        for (String ActionValue : ActionValuesList.keySet()){
-            StandardActionKeys.add(ActionValuesList.get(ActionValue));
-        }
-        
-        System.out.println("ADM: LoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
-        return;
-    }
-
     public static void LoadSageBGVariablesList(){
         String StandardActionPropsPath = ADMDefaultsLocation + File.separator + SageBGVariablesListFile;
         
@@ -683,7 +585,7 @@ public class util {
             return ListNone;
         }
         //determine if using Advanced options
-        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
+        if (IsAdvancedMode()){
             return SageBGVariablesProps.getProperty(Option, ListNone) + " (" + Option + ")";
         }else{
             return SageBGVariablesProps.getProperty(Option, ListNone);
@@ -692,10 +594,6 @@ public class util {
 
     public static Collection<String> GetSageBGVariablesList(){
         return SageBGVariablesKeys;
-    }
-
-    public static Collection<String> GetStandardActionList(){
-        return StandardActionKeys;
     }
 
     public static Boolean IsSageSubMenu(String SubMenu){
@@ -710,6 +608,14 @@ public class util {
         //return SageSubMenusKeys.contains(SubMenu);
     }
 
+    public static Boolean IsAdvancedMode(){
+        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
     //save the current Folder item details to sage properties to assist the copy function
     public static void SaveCurrentVideoFolderDetails(String CurFolder, String FolderName){
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "Folder");
@@ -787,24 +693,24 @@ public class util {
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
         
         //determine if there is an Action Widget for this Menu Item
-        String aAction = null;
+        String ActionWidget = null;
         Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(MyUIContext, CurrentWidgetSymbol);
         for (Object Child : Children){
             //System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
             if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child))){
                 //found an action so save it and leave
-                aAction = sagex.api.WidgetAPI.GetWidgetSymbol(MyUIContext,Child);
+                ActionWidget = sagex.api.WidgetAPI.GetWidgetSymbol(MyUIContext,Child);
                 break;
             }
         }
-        if (aAction!=null){
+        if (ActionWidget!=null){
             //test for special Action Widget Symbols
-            if (aAction.equals(Action.GetWidgetSymbol(Action.TVRecordingView))){
+            if (ActionWidget.equals(Action.GetWidgetSymbol(Action.TVRecordingView))){
                 //TV RecordingsView found so save the view Type
                 sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.TVRecordingView);
                 String tViewFilter = OptionNotFound;
                 String tViewTitlePostfixText = OptionNotFound;
-                String tAction = OptionNotFound;
+                String tempAction = OptionNotFound;
                 for (Object Child : Children){
                     if ("Attribute".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child))){
                         if ("ViewFilter".equals(sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child))){
@@ -818,22 +724,22 @@ public class util {
                     }
                 }
                 //determine if a standard TV Recording view was found or one of the extra views (5,6,7,or 8)
-                if (GetSageTVRecordingViewsList().contains(tViewFilter)){
-                    tAction = tViewFilter;
+                if (Action.GetSageTVRecordingViewsList().contains(tViewFilter)){
+                    tempAction = tViewFilter;
                 }else{
-                    tAction = "xAll";
+                    tempAction = "xAll";
                 }
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", tAction);
-                System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetValue '" + tAction + "'");
+                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", tempAction);
+                System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetValue '" + tempAction + "'");
             }else{
                 //save the Widget Symbol as the Action
                 sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.WidgetbySymbol);
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", aAction);
+                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", ActionWidget);
             }
         }else{
             //sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
-        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + aAction + " Level '" + Level + "'");
+        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + ActionWidget + " Level '" + Level + "'");
     }
     
     //create a new Menu Item from the current Menu Item details
@@ -963,7 +869,7 @@ public class util {
         }
 
         //determine if using Advanced options
-        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false")) && !SkipAdvanced){
+        if (IsAdvancedMode() && !SkipAdvanced){
             return RetVal + " (" + Option + ")";
         }else{
             return RetVal;
@@ -986,6 +892,14 @@ public class util {
         return ADMLocation;
     }
     
+    public static String GetADMDefaultsLocation(){
+        return ADMDefaultsLocation;
+    }
+
+    public static UIContext GetMyUIContext(){
+        return MyUIContext;
+    }
+
     public static String GetNewMenuItemName(){
         Boolean UniqueName = Boolean.FALSE;
         String NewName = null;
@@ -1007,7 +921,7 @@ public class util {
     public static Float[] GetMenuInsets(){
         Float[] Insets = new Float[]{0f,0f,0f,0f};
         Float[] DiamondInsets = new Float[]{0f,0f,0.015f,0f};
-        if (IsDiamond()){
+        if (Diamond.IsDiamond()){
             System.out.println("ADM: GetMenuInsets: Diamond");
             return DiamondInsets;
         }else{
@@ -1027,35 +941,9 @@ public class util {
         }
     }
 
-    public static void LoadSageTVRecordingViews(){
-        //put the ViewType and Default View Name into a list
-        SageTVRecordingViews.put("xAll","All Recordings");
-        SageTVRecordingViews.put("xRecordings","Archived Recordings");
-        SageTVRecordingViews.put("xArchives","Recorded Movies");
-        SageTVRecordingViews.put("xMovies","Current Recordings");
-        //SageTVRecordingViews.put("xPartials","");
-        SageTVRecordingViews.put("xView5","Recording View5");
-        SageTVRecordingViews.put("xView6","Recording View6");
-        SageTVRecordingViews.put("xView7","Recording View7");
-        SageTVRecordingViews.put("xView8","Recording View8");
-    }
-
-    public static Collection<String> GetSageTVRecordingViewsList(){
-        return SageTVRecordingViews.keySet();
-    }
-    
-    public static String GetSageTVRecordingViewsButtonText(String Name){
-        //return the stored name from Sage or the Default Name if nothing is stored
-        return sagex.api.Configuration.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
-    }
-    
-    public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
-        //rename the specified TV Recording View 
-        sagex.api.Configuration.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
-    }
-    
     public static String EvaluateAttribute(String Attribute){
         System.out.println("ADM: EvaluateAttribute: Attribute = '" + Attribute + "'");
         return sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), Attribute).toString();
     }
+
 }

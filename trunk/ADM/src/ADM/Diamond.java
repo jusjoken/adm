@@ -35,5 +35,16 @@ public class Diamond {
         }
     }
 
+    public static Boolean IsDiamond(){
+        String DiamondPluginID = "DiamondSTVi";
+        String DiamondWidgetSymbol = "AOSCS-65";
+        // check to see if the Diamond Plugin is installed
+        Object[] FoundWidget = new Object[1];
+        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), DiamondWidgetSymbol);
+        if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
     
 }
