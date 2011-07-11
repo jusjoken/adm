@@ -62,26 +62,25 @@ public class util {
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
 
-//    public static final String ActionTypeExecuteWidgetbySymbol = "ExecuteWidget";
-//    public static final String ActionTypeExecuteBrowseVideoFolder = "ExecuteBrowseVideoFolder";
-//    public static final String ActionTypeExecuteStandardMenuAction = "ExecuteStandardMenuAction";
-
-    public class ActionType {
-        public static final String WidgetbySymbol = "ExecuteWidget";
-        public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
-        public static final String StandardMenuAction = "ExecuteStandardMenuAction";
-        public static final String TVRecordingView = "ExecuteTVRecordingView";
-        public static final String TVRecordingViewSymbol = "OPUS4A-174116";
-    }
-    public static String GetWidgetbySymbol(){ return ActionType.WidgetbySymbol; }
-    public static String GetBrowseVideoFolder(){ return ActionType.BrowseVideoFolder; }
-    public static String GetStandardMenuAction(){ return ActionType.StandardMenuAction; }
-    public static String GetTVRecordingView(){ return ActionType.TVRecordingView; }
+//    public class ActionType {
+//        public static final String WidgetbySymbol = "ExecuteWidget";
+//        public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
+//        public static final String StandardMenuAction = "ExecuteStandardMenuAction";
+//        public static final String TVRecordingView = "ExecuteTVRecordingView";
+//        public static final String TVRecordingViewSymbol = "OPUS4A-174116";
+//    }
+    public static String GetWidgetbySymbol(){ return Action.WidgetbySymbol; }
+    public static String GetBrowseVideoFolder(){ return Action.BrowseVideoFolder; }
+    public static String GetStandardMenuAction(){ return Action.StandardMenuAction; }
+    public static String GetTVRecordingView(){ return Action.TVRecordingView; }
         
     public static void InitADM(){
         
         if (!ADMInitComplete) {
 
+            //Init Actions
+            Action.Init();
+            
             //ensure the ADM file location exists
             try{
                 boolean success = (new File(ADMLocation)).mkdirs();
@@ -459,13 +458,13 @@ public class util {
     
     public static void ExecuteMenuItem(String Name){
         String tActionType = MenuItem.GetMenuItemActionType(Name);
-        if(tActionType.equals(ActionType.BrowseVideoFolder)){
+        if(tActionType.equals(Action.BrowseVideoFolder)){
             LaunchVideoBrowser(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(ActionType.StandardMenuAction)){
+        }else if(tActionType.equals(Action.StandardMenuAction)){
             ExecuteWidget(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(ActionType.TVRecordingView)){
+        }else if(tActionType.equals(Action.TVRecordingView)){
             LaunchTVRecordingsView(MenuItem.GetMenuItemAction(Name));
-        }else if(tActionType.equals(ActionType.WidgetbySymbol)){
+        }else if(tActionType.equals(Action.WidgetbySymbol)){
             ExecuteWidget(MenuItem.GetMenuItemAction(Name));
         }
         //else do nothing
@@ -549,14 +548,14 @@ public class util {
     public static void LaunchTVRecordingsView(String ViewType){
         System.out.println("ADM: LaunchTVRecordingsView - for ViewType = '" + ViewType + "'");
         Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, ActionType.TVRecordingViewSymbol);
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(MyUIContext, Action.GetWidgetSymbol(Action.TVRecordingView));
         if (passvalue[0]==null){
-            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + ActionType.TVRecordingViewSymbol + "'");
+            System.out.println("ADM: LaunchTVRecordingsView - FindWidgetSymbol failed for WidgetSymbol = '" + Action.GetWidgetSymbol(Action.TVRecordingView) + "'");
         }else{
             //set the current ViewType as a Static Context 
             sagex.api.Global.AddStaticContext(MyUIContext, "ViewFilter", ViewType);
             
-            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + ActionType.TVRecordingViewSymbol + "'");
+            System.out.println("ADM: LaunchTVRecordingsView - ExecuteWidgetChain called with WidgetSymbol = '" + Action.GetWidgetSymbol(Action.TVRecordingView) + "'");
 
             try {
                 sage.SageTV.apiUI(sagex.api.Global.GetUIContextName(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
@@ -614,23 +613,6 @@ public class util {
             ButtonText = "Close";
         }
         System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
-        return ButtonText;
-    }
-    
-    public static String GetActionTypeButtonText(String Option){
-        String ButtonText = OptionNotFound;
-        if(ActionType.WidgetbySymbol.equals(Option)){
-            ButtonText = "Execute Widget by Symbol";
-        }else if(ActionTypeDefault.equals(Option)){
-            ButtonText = "None";
-        }else if(ActionType.StandardMenuAction.equals(Option)){
-            ButtonText = "Execute Standard Sage Menu Action";
-        }else if(ActionType.BrowseVideoFolder.equals(Option)){
-            ButtonText = "Video Browser with specific Folder";
-        }else if(ActionType.TVRecordingView.equals(Option)){
-            ButtonText = "Launch Specific TV Recordings View";
-        }
-        System.out.println("ADM: GetActionTypeButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
     }
     
@@ -868,7 +850,7 @@ public class util {
         //Create a new MenuItem with defaults
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentVideoFolderDetails());
-        MenuItem.SetMenuItemActionType(tMenuItemName,ActionType.BrowseVideoFolder);
+        MenuItem.SetMenuItemActionType(tMenuItemName,Action.BrowseVideoFolder);
 
         MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
         MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentVideoFolderDetailsButtonText());
@@ -900,21 +882,21 @@ public class util {
         sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
         
         //determine if there is an Action Widget for this Menu Item
-        String Action = null;
+        String aAction = null;
         Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(MyUIContext, CurrentWidgetSymbol);
         for (Object Child : Children){
             //System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
             if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child))){
                 //found an action so save it and leave
-                Action = sagex.api.WidgetAPI.GetWidgetSymbol(MyUIContext,Child);
+                aAction = sagex.api.WidgetAPI.GetWidgetSymbol(MyUIContext,Child);
                 break;
             }
         }
-        if (Action!=null){
+        if (aAction!=null){
             //test for special Action Widget Symbols
-            if (Action.equals(ActionType.TVRecordingViewSymbol)){
+            if (aAction.equals(Action.GetWidgetSymbol(Action.TVRecordingView))){
                 //TV RecordingsView found so save the view Type
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", ActionType.TVRecordingView);
+                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.TVRecordingView);
                 String tViewFilter = OptionNotFound;
                 String tViewTitlePostfixText = OptionNotFound;
                 String tAction = OptionNotFound;
@@ -940,13 +922,13 @@ public class util {
                 System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetValue '" + tAction + "'");
             }else{
                 //save the Widget Symbol as the Action
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", ActionType.WidgetbySymbol);
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", Action);
+                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.WidgetbySymbol);
+                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", aAction);
             }
         }else{
             //sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
-        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + Action + " Level '" + Level + "'");
+        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + aAction + " Level '" + Level + "'");
     }
     
     //create a new Menu Item from the current Menu Item details
@@ -957,13 +939,13 @@ public class util {
         //Create a new MenuItem with defaults
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
         if (!GetCurrentMenuItemDetailsAction().equals(OptionNotFound)){
-            if (GetCurrentMenuItemDetailsType().equals(ActionType.WidgetbySymbol)){
+            if (GetCurrentMenuItemDetailsType().equals(Action.WidgetbySymbol)){
                 MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
-                MenuItem.SetMenuItemActionType(tMenuItemName,ActionType.WidgetbySymbol);
-            }else if (GetCurrentMenuItemDetailsType().equals(ActionType.TVRecordingView)){
+                MenuItem.SetMenuItemActionType(tMenuItemName,Action.WidgetbySymbol);
+            }else if (GetCurrentMenuItemDetailsType().equals(Action.TVRecordingView)){
                 //Action contains a value that needs Evaluating - store it and evaluate when launched
                 MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
-                MenuItem.SetMenuItemActionType(tMenuItemName,ActionType.TVRecordingView);
+                MenuItem.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
             }
             
         }
