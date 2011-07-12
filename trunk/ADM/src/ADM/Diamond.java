@@ -4,6 +4,9 @@
  */
 package ADM;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  *
  * @author jusjoken
@@ -14,14 +17,24 @@ public class Diamond {
 
     public static final String PropName="JOrton/CustomViews";
 
-    public static Object GetCustomViews(){
+//    public static Object GetCustomViews(){
+//        String views=sagex.api.Configuration.GetProperty(PropName,"");
+//        if(views.contains(";")){	
+//            System.out.println("ADM Diamond : GetCustomViews = '" + views.split(";") + "'");
+//            return views.split(";");
+//        }
+//        System.out.println("ADM Diamond : GetCustomViews = '" + views + "'");
+//        return views;
+//    }
+//
+    public static Collection<String> GetCustomViews(){
         String views=sagex.api.Configuration.GetProperty(PropName,"");
         if(views.contains(";")){	
-            System.out.println("ADM Diamond : GetCustomViews = '" + views.split(";") + "'");
-            return views.split(";");
+            System.out.println("ADM Diamond : GetCustomViews (split) = '" + views.split(";") + "'");
+            return Arrays.asList(views.split(";"));
         }
-        System.out.println("ADM Diamond : GetCustomViews = '" + views + "'");
-        return views;
+        System.out.println("ADM Diamond : GetCustomViews (single) = '" + views + "'");
+        return Arrays.asList(views);
     }
 
     public static String GetViewName(String name){
@@ -30,11 +43,15 @@ public class Diamond {
             System.out.println("ADM Diamond : GetViewName("+name+") = '" + SplitString[0] + "'");
             return SplitString[0];
         } else {
-            System.out.println("ADM Diamond ERROR: GetViewName("+name+")");
-            return "Error";
+            System.out.println("ADM Diamond : Not Found: GetViewName("+name+")");
+            return util.OptionNotFound;
         }
     }
 
+    public static void RenameFlow(String OldName, String NewName){
+        //sagediamond.CustomViews.RenameView();
+    }
+    
     public static Boolean IsDiamond(){
         String DiamondPluginID = "DiamondSTVi";
         String DiamondWidgetSymbol = "AOSCS-65";
