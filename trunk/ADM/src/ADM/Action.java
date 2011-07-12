@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import sagex.UIContext;
 
 /**
  *
@@ -37,29 +36,33 @@ public class Action {
     private String WidgetSymbol = Blank;
     private String FieldTitle = "";
     private Boolean AdvancedOnly = Boolean.FALSE;
+    private Boolean DiamondOnly = Boolean.FALSE;
     private static Map<String,Action> ActionList = new LinkedHashMap<String,Action>();
     private static Boolean InitComplete = Boolean.FALSE;
     public static final String WidgetbySymbol = "ExecuteWidget";
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
     public static final String StandardMenuAction = "ExecuteStandardMenuAction";
     public static final String TVRecordingView = "ExecuteTVRecordingView";
+    public static final String DiamondDefaultFlows = "ExecuteDiamondDefaultFlow";
+    public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
     public static final String ActionTypeDefault = "DoNothing";
 
-    public Action(String Type, Boolean AdvancedOnly, String ButtonText){
-        this(Type,AdvancedOnly,ButtonText,"Action",Blank,Blank);
+    public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
+        this(Type,DiamondOnly,AdvancedOnly,ButtonText,"Action",Blank,Blank);
     }
 
-    public Action(String Type, Boolean AdvancedOnly, String ButtonText, String FieldTitle){
-        this(Type,AdvancedOnly,ButtonText,FieldTitle,Blank,Blank);
+    public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText, String FieldTitle){
+        this(Type,DiamondOnly,AdvancedOnly,ButtonText,FieldTitle,Blank,Blank);
     }
 
-    public Action(String Type, Boolean AdvancedOnly, String ButtonText, String FieldTitle, String WidgetSymbol){
-        this(Type,AdvancedOnly,ButtonText,FieldTitle,WidgetSymbol,Blank);
+    public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText, String FieldTitle, String WidgetSymbol){
+        this(Type,DiamondOnly,AdvancedOnly,ButtonText,FieldTitle,WidgetSymbol,Blank);
     }
 
-    public Action(String Type, Boolean AdvancedOnly, String ButtonText, String FieldTitle, String WidgetSymbol, String Attribute){
+    public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText, String FieldTitle, String WidgetSymbol, String Attribute){
         this.Type = Type;
         this.AdvancedOnly = AdvancedOnly;
+        this.DiamondOnly = DiamondOnly;
         this.ButtonText = ButtonText;
         this.FieldTitle = FieldTitle;
         this.WidgetSymbol = WidgetSymbol;
@@ -71,11 +74,13 @@ public class Action {
             //Clear existing Actions if any
             ActionList.clear();
             //Create the Actions for ADM to use
-            ActionList.put(ActionTypeDefault, new Action(ActionTypeDefault,Boolean.FALSE,"None"));
-            ActionList.put(WidgetbySymbol, new Action(WidgetbySymbol,Boolean.TRUE,"Execute Widget by Symbol", "Action"));
-            ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637","gCurrentVideoBrowserFolder"));
-            ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
-            ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116", "ViewFilter"));
+            ActionList.put(ActionTypeDefault, new Action(ActionTypeDefault,Boolean.FALSE,Boolean.FALSE,"None"));
+            ActionList.put(WidgetbySymbol, new Action(WidgetbySymbol,Boolean.FALSE,Boolean.TRUE,"Execute Widget by Symbol", "Action"));
+            ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637","gCurrentVideoBrowserFolder"));
+            ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
+            ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116", "ViewFilter"));
+            ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
+            ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216", "ViewCell"));
 
             //also load the standard actions list - only needs loaded at startup
             LoadStandardActionList();
@@ -91,6 +96,8 @@ public class Action {
     public static String GetBrowseVideoFolder(){ return BrowseVideoFolder; }
     public static String GetStandardMenuAction(){ return StandardMenuAction; }
     public static String GetTVRecordingView(){ return TVRecordingView; }
+    public static String GetDiamondCustomFlows(){ return DiamondCustomFlows; }
+    public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
         
     public static String GetButtonText(String Type){
         return ActionList.get(Type).ButtonText;
@@ -108,17 +115,29 @@ public class Action {
         return ActionList.get(Type).AdvancedOnly;
     }
     
+    public static Boolean GetDiamondOnly(String Type){
+        return ActionList.get(Type).DiamondOnly;
+    }
+    
     public static String GetAttribute(String Type){
         return ActionList.get(Type).Attribute;
     }
     
     public static Collection<String> GetTypes(){
-        if (util.IsAdvancedMode()){
+        if (util.IsAdvancedMode() && Diamond.IsDiamond()){
             return ActionList.keySet();
         }else{
             Collection<String> tempList = new LinkedHashSet<String>();
             for (String Item : ActionList.keySet()){
-                if (!GetAdvancedOnly(Item)){
+                if (GetAdvancedOnly(Item)){
+                    if (util.IsAdvancedMode()){
+                        tempList.add(Item);
+                    }
+                }else if (GetDiamondOnly(Item)){
+                    if (Diamond.IsDiamond()){
+                        tempList.add(Item);
+                    }
+                }else{
                     tempList.add(Item);
                 }
             }
