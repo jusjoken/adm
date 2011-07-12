@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -26,8 +27,11 @@ public class Action {
     private static final String Blank = "admActionBlank";
     //private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String StandardActionListFile = "ADMStandardActions.properties";
+    private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
+    public static Properties DiamondDefaultFlowsProps = new Properties();
+    public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     private String Type = "";
@@ -82,8 +86,9 @@ public class Action {
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
             ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216", "ViewCell"));
 
-            //also load the standard actions list - only needs loaded at startup
+            //also load the actions lists - only needs loaded at startup
             LoadStandardActionList();
+            LoadDiamondDefaultFlowsList();
 
             //load the SageTV Recording views
             LoadSageTVRecordingViews();
@@ -153,10 +158,6 @@ public class Action {
         }
     }
     
-    public static String GetStandardActionButtonText(String Attribute){
-        return GetAttributeButtonText(StandardMenuAction, Attribute);
-    }
-    
     public static String GetAttributeButtonText(String Type, String Attribute){
         if (Type.equals(StandardMenuAction)){
             //determine if using Advanced options
@@ -175,6 +176,14 @@ public class Action {
             }
         }else if(Type.equals(TVRecordingView)){
             return GetSageTVRecordingViewsButtonText(Attribute);
+        }else if(Type.equals(DiamondDefaultFlows)){
+            if (util.IsAdvancedMode()){
+                return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
+            }else{
+                return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound);
+            }
+        }else if(Type.equals(DiamondCustomFlows)){
+            return Diamond.GetViewName(Attribute);
         }else{
             return util.OptionNotFound;
         }
@@ -248,6 +257,49 @@ public class Action {
                
     }
     
+    public static void LoadDiamondDefaultFlowsList(){
+        String DiamondDefaultFlowsPropsPath = util.GetADMDefaultsLocation() + File.separator + DiamondDefaultFlowsListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(DiamondDefaultFlowsPropsPath);
+            try {
+                DiamondDefaultFlowsProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: LoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: LoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
+            return;
+        }
+
+        //sort the keys into value order
+        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
+
+        //Add all the Values to a sorted list
+        for (String ActionItem : DiamondDefaultFlowsProps.stringPropertyNames()){
+            ActionValuesList.put(DiamondDefaultFlowsProps.getProperty(ActionItem),ActionItem);
+        }
+
+        //build a list of keys in the order of the values
+        for (String ActionValue : ActionValuesList.keySet()){
+            DiamondDefaultFlowsKeys.add(ActionValuesList.get(ActionValue));
+        }
+        
+        System.out.println("ADM: LoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
+        return;
+    }
+
+//    public static Collection<String> GetDiamondDefaultFlowsList(){
+//        return DiamondDefaultFlowsKeys;
+//    }
+//
+//    public static Collection<String> GetDiamondCustomFlowsList(){
+//        return Diamond.GetCustomViews();
+//    }
+//
     public static void LoadStandardActionList(){
         String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
         
@@ -285,6 +337,38 @@ public class Action {
 
     public static Collection<String> GetStandardList(){
         return StandardActionKeys;
+    }
+
+    public static Collection<String> GetActionList(String Type){
+        if (Type.equals(StandardMenuAction)){
+            return StandardActionKeys;
+        }else if(Type.equals(TVRecordingView)){
+            return SageTVRecordingViews.keySet();
+        }else if(Type.equals(DiamondDefaultFlows)){
+            return DiamondDefaultFlowsKeys;
+        }else if(Type.equals(DiamondCustomFlows)){
+            return Diamond.GetCustomViews();
+        }else{
+            return Collections.emptyList();
+        }
+    }
+
+    public static Boolean HasActionList(String Type){
+        if (Type.equals(StandardMenuAction)){
+            return Boolean.TRUE;
+        }else if(Type.equals(WidgetbySymbol)){
+            return Boolean.FALSE;
+        }else if(Type.equals(BrowseVideoFolder)){
+            return Boolean.FALSE;
+        }else if(Type.equals(TVRecordingView)){
+            return Boolean.TRUE;
+        }else if(Type.equals(DiamondDefaultFlows)){
+            return Boolean.TRUE;
+        }else if(Type.equals(DiamondCustomFlows)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
     }
 
     private static void LoadSageTVRecordingViews(){
