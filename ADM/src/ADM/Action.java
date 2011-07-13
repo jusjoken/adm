@@ -248,7 +248,7 @@ public class Action {
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), WidgetSymbol);
         if (passvalue[0]==null){
             System.out.println("ADM: GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
-            return null;
+            return util.OptionNotFound;
         }else{
             String WidgetName = sagex.api.WidgetAPI.GetWidgetName(util.GetMyUIContext(), WidgetSymbol);
             System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
@@ -292,14 +292,6 @@ public class Action {
         return;
     }
 
-//    public static Collection<String> GetDiamondDefaultFlowsList(){
-//        return DiamondDefaultFlowsKeys;
-//    }
-//
-//    public static Collection<String> GetDiamondCustomFlowsList(){
-//        return Diamond.GetCustomViews();
-//    }
-//
     public static void LoadStandardActionList(){
         String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
         
