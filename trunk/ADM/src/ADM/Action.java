@@ -152,8 +152,10 @@ public class Action {
 
     public static Boolean IsValidAction(String Type){
         if (Type.equals(ActionTypeDefault)){
+            System.out.println("ADM: IsValidAction - FALSE for = '" + Type + "'");
             return Boolean.FALSE;
         }else{
+            System.out.println("ADM: IsValidAction - Lookup for = '" + Type + "' = '" + ActionList.containsKey(Type) + "'");
             return ActionList.containsKey(Type);
         }
     }
@@ -327,10 +329,6 @@ public class Action {
         return;
     }
 
-    public static Collection<String> GetStandardList(){
-        return StandardActionKeys;
-    }
-
     public static Collection<String> GetActionList(String Type){
         if (Type.equals(StandardMenuAction)){
             return StandardActionKeys;
@@ -376,10 +374,6 @@ public class Action {
         SageTVRecordingViews.put("xView8","Recording View8");
     }
 
-    public static Collection<String> GetSageTVRecordingViewsList(){
-        return SageTVRecordingViews.keySet();
-    }
-    
     public static String GetSageTVRecordingViewsButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
         return sagex.api.Configuration.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));

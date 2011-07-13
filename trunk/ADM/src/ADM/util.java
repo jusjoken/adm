@@ -703,43 +703,55 @@ public class util {
                 break;
             }
         }
+        String FinalAction = ActionWidget;
+        String FinalType = Action.WidgetbySymbol;
         if (ActionWidget!=null){
             //test for special Action Widget Symbols
             if (ActionWidget.equals(Action.GetWidgetSymbol(Action.TVRecordingView))){
                 //TV RecordingsView found so save the view Type
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.TVRecordingView);
+                FinalType = Action.TVRecordingView;
                 String tViewFilter = OptionNotFound;
                 String tViewTitlePostfixText = OptionNotFound;
-                String tempAction = OptionNotFound;
                 for (Object Child : Children){
                     if ("Attribute".equals(sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child))){
                         if ("ViewFilter".equals(sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child))){
                             tViewFilter = sagex.api.WidgetAPI.GetWidgetProperty(MyUIContext,Child,"Value");
+                            //get rid of the imbedded " (quotes) in the returned string
                             tViewFilter = tViewFilter.replace("\"", "");
                         }else if ("ViewTitlePostfixText".equals(sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child))){
                             tViewTitlePostfixText = sagex.api.WidgetAPI.GetWidgetProperty(MyUIContext,Child,"Value");
+                            //get rid of the imbedded " (quotes) in the returned string
                             tViewFilter = "xView" + tViewTitlePostfixText.replace("\"", "");
                             break;
                         }
                     }
                 }
                 //determine if a standard TV Recording view was found or one of the extra views (5,6,7,or 8)
-                if (Action.GetSageTVRecordingViewsList().contains(tViewFilter)){
-                    tempAction = tViewFilter;
+                if (Action.GetActionList(Action.TVRecordingView).contains(tViewFilter)){
+                    FinalAction = tViewFilter;
                 }else{
-                    tempAction = "xAll";
+                    FinalAction = "xAll";
                 }
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", tempAction);
-                System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetValue '" + tempAction + "'");
-            }else{
+            }else if (ActionWidget.equals(Action.GetWidgetSymbol(Action.DiamondCustomFlows))){
+                //Diamond custom flow found so save the Attribute value
+                FinalType = Action.DiamondCustomFlows;
+                FinalAction = OptionNotFound;
+                
+                //TODO: need to find a way to determine the selected Flow
+                
+            }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
+                FinalType = Action.StandardMenuAction;
+            }else if (Action.GetActionList(Action.DiamondDefaultFlows).contains(ActionWidget)){
                 //save the Widget Symbol as the Action
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.WidgetbySymbol);
-                sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", ActionWidget);
+                FinalType = Action.DiamondDefaultFlows;
+            }else{
             }
+            sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", FinalType);
+            sagex.api.Configuration.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
         }else{
             //sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
-        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Action '" + ActionWidget + " Level '" + Level + "'");
+        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
     
     //create a new Menu Item from the current Menu Item details
@@ -749,16 +761,9 @@ public class util {
 
         //Create a new MenuItem with defaults
         MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-        if (!GetCurrentMenuItemDetailsAction().equals(OptionNotFound)){
-            if (GetCurrentMenuItemDetailsType().equals(Action.WidgetbySymbol)){
-                MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
-                MenuItem.SetMenuItemActionType(tMenuItemName,Action.WidgetbySymbol);
-            }else if (GetCurrentMenuItemDetailsType().equals(Action.TVRecordingView)){
-                //Action contains a value that needs Evaluating - store it and evaluate when launched
-                MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
-                MenuItem.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
-            }
-            
+        if (Action.IsValidAction(GetCurrentMenuItemDetailsType())){
+            MenuItem.SetMenuItemAction(tMenuItemName,GetCurrentMenuItemDetailsAction());
+            MenuItem.SetMenuItemActionType(tMenuItemName,GetCurrentMenuItemDetailsType());
         }
         MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
         MenuItem.SetMenuItemButtonText(tMenuItemName,GetCurrentMenuItemDetailsButtonText());
@@ -943,7 +948,16 @@ public class util {
 
     public static String EvaluateAttribute(String Attribute){
         System.out.println("ADM: EvaluateAttribute: Attribute = '" + Attribute + "'");
-        return sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), Attribute).toString();
+        Object[] passvalue = new Object[1];
+        passvalue[0] = sagex.api.WidgetAPI.EvaluateExpression(MyUIContext, Attribute);
+        if (passvalue[0]==null){
+            System.out.println("ADM: EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
+            return OptionNotFound;
+        }else{
+            System.out.println("ADM: EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
+            return passvalue[0].toString();
+        }
+        
     }
 
 }
