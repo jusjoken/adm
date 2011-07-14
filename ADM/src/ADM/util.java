@@ -102,20 +102,22 @@ public class util {
     
     public static void ClearAll(){
 
-        //backup existing MenuItems before clearing settings and menus
-        if (MenuItem.MenuItemList.size()>0){
-            ExportMenuItems(PropertyBackupFile);
-        }
+        MenuNode.Test();
         
-        //clear all the Sage property settings for ADM
-        System.out.println("ADM: ClearAll: clear Sage Properties");
-        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
-        ADMInitComplete = Boolean.FALSE;
-        System.out.println("ADM: ClearAll: load default menus");
-        LoadMenuItemDefaults();
-        System.out.println("ADM: ClearAll: initialize settings");
-        InitADM();
-        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
+//        //backup existing MenuItems before clearing settings and menus
+//        if (MenuItem.MenuItemList.size()>0){
+//            ExportMenuItems(PropertyBackupFile);
+//        }
+//        
+//        //clear all the Sage property settings for ADM
+//        System.out.println("ADM: ClearAll: clear Sage Properties");
+//        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
+//        ADMInitComplete = Boolean.FALSE;
+//        System.out.println("ADM: ClearAll: load default menus");
+//        LoadMenuItemDefaults();
+//        System.out.println("ADM: ClearAll: initialize settings");
+//        InitADM();
+//        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
         
     }
     
