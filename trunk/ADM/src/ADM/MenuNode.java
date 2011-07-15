@@ -48,7 +48,7 @@ public class MenuNode {
         HasSubMenu = bHasSubMenu;
         ActionType = bActionType;
         ActionAttribute = bAction;
-        //SetBGImageFileandPath(bBGImageFile);
+        SetBGImageFileandPath(bBGImageFile);
         IsDefault = bIsDefault;
         IsActive = bIsActive;
         SortKey = bSortKey;
@@ -58,18 +58,6 @@ public class MenuNode {
     @Override
     public String toString(){
         return Name;
-    }
-
-    public void setAction(String ActionAttribute) {
-        this.ActionAttribute = ActionAttribute;
-    }
-
-    public void setActionType(String ActionType) {
-        this.ActionType = ActionType;
-    }
-
-    public void setBGImageFile(String BGImageFile) {
-        SetBGImageFileandPath(BGImageFile);
     }
 
     private void SetBGImageFileandPath(String bBGImageFile){
@@ -91,18 +79,6 @@ public class MenuNode {
         }
     }
     
-    public void setButtonText(String ButtonText) {
-        this.ButtonText = ButtonText;
-    }
-
-    public void setName(String Name) {
-        this.Name = Name;
-    }
-
-    public void setParent(String Parent) {
-        this.Parent = Parent;
-    }
-
     public void setSortKey(String SortKey) {
         Integer tSortKey = 0;
         try {
@@ -116,46 +92,6 @@ public class MenuNode {
         this.SortKey = tSortKey;
     }
     
-    public void setSubMenu(String SubMenu) {
-        this.SubMenu = SubMenu;
-    }
-    
-    public void setHasSubMenu(Boolean HasSubMenu) {
-        this.HasSubMenu = HasSubMenu;
-    }
-
-    public void setHasSubMenu(String HasSubMenu) {
-        if ("true".equals(HasSubMenu)){
-            this.HasSubMenu = true;
-        }else{
-            this.HasSubMenu = false;
-        }
-    }
-
-    public void setIsDefault(Boolean IsDefault) {
-        this.IsDefault = IsDefault;
-    }
-
-    public void setIsDefault(String IsDefault) {
-        if ("true".equals(IsDefault)){
-            this.IsDefault = true;
-        }else{
-            this.IsDefault = false;
-        }
-    }
-
-    public void setIsActive(Boolean IsActive) {
-        this.IsActive = IsActive;
-    }
-
-    public void setIsActive(String IsActive) {
-        if ("true".equals(IsActive)){
-            this.IsActive = true;
-        }else{
-            this.IsActive = false;
-        }
-    }
-
 
     public static void LoadMenuItemsFromSage(){
         //create and store the top menu node
@@ -174,17 +110,17 @@ public class MenuNode {
             for (String tMenuItemName : MenuItemNames){
                 PropLocation = util.SagePropertyLocation + tMenuItemName;
                 MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
-                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault));
-                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
-                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault));
-                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
-                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
+                NewMenuItem.ActionAttribute = sagex.api.Configuration.GetProperty(PropLocation + "/Action", null);
+                NewMenuItem.ActionType = sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
+                NewMenuItem.SetBGImageFileandPath(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
+                NewMenuItem.ButtonText = sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                NewMenuItem.Name = sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName);
+                NewMenuItem.Parent = sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu");
                 NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
-                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
-                NewMenuItem.setHasSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
-                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
-                NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
+                NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null);
+                NewMenuItem.HasSubMenu = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
+                NewMenuItem.IsDefault = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
+                NewMenuItem.IsActive = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
                 //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
             }
             if (MenuNodeList.size()>0){
@@ -214,12 +150,14 @@ public class MenuNode {
         if (!NodeExists(root, aNode.Name)){
             //check if the current nodes parent exists yet
             if (aNode.Parent.equals(util.TopMenu)){
-                root.add(new DefaultMutableTreeNode(aNode));
+                //root.add(new DefaultMutableTreeNode(aNode));
+                InsertNode(root, aNode);
                 System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
             }else{
                 AddNode(MenuNodeList.get(aNode.Parent));
                 DefaultMutableTreeNode tParent = FindNode(root, aNode.Parent);
-                tParent.add(new DefaultMutableTreeNode(aNode));
+                //tParent.add(new DefaultMutableTreeNode(aNode));
+                InsertNode(tParent, aNode);
                 System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding");
             }
         }else{
@@ -227,26 +165,55 @@ public class MenuNode {
         }
     }
     
-    private static void createNodes() {
-        //DefaultMutableTreeNode grandparent;
-        //DefaultMutableTreeNode parent;
+    private static void InsertNode(DefaultMutableTreeNode iParent, MenuNode iNode){
+        //insert the node according to the SortKey value
+        System.out.println("ADM: 1 InsertNode: node '" + iNode.ButtonText + "' Childcount = '" + iParent.getChildCount() + "' Parent = '" + iParent + "'");
+        if ( iParent.getChildCount() != 0 ) {
 
-        root = new DefaultMutableTreeNode(new MenuNode(util.TopMenu));
+            System.out.println("ADM: 2 InsertNode: node '" + iNode.ButtonText + "' FirstChild = '" + iParent.getFirstChild() + "'");
+            DefaultMutableTreeNode tlastChild = (DefaultMutableTreeNode)iParent.getFirstChild() ;
+            MenuNode lastChild = (MenuNode)tlastChild.getUserObject() ;
+            System.out.println("ADM: 3 InsertNode: node '" + iNode.ButtonText + "'");
+            //MenuNode newChildA = (MenuNode) iNode ;
+            if ( iNode.SortKey < lastChild.SortKey ) {
+            System.out.println("ADM: 4 InsertNode: node '" + iNode.ButtonText + "'");
+                // Its at the top of the list
+                iParent.insert(new DefaultMutableTreeNode(iNode), 0);
+            }
+            else if ( iParent.getChildCount() == 1 ) {
+            System.out.println("ADM: 5 InsertNode: node '" + iNode.ButtonText + "'");
+                // There is only one element and since it ain't less than then well put it after
+                iParent.insert(new DefaultMutableTreeNode(iNode), 1);
+            } else { 
+            System.out.println("ADM: 6 InsertNode: node '" + iNode.ButtonText + "'");
+                // we gotta go look for the right spot to insert it
+                Boolean done = Boolean.FALSE ;
+                for ( int i = 1 ; i < iParent.getChildCount() && !done ; i++ ) {
 
-        DefaultMutableTreeNode grandparent = new DefaultMutableTreeNode(new MenuNode("Child1"));
-        DefaultMutableTreeNode grandparent2 = new DefaultMutableTreeNode(new MenuNode("Child2"));
-        root.add(grandparent);
-        root.add(grandparent2);
-
-        DefaultMutableTreeNode parent = new DefaultMutableTreeNode(new MenuNode("Child1 - Child1"));
-        grandparent.add(parent);
-        Testing = new DefaultMutableTreeNode(new MenuNode("Child1 - Child2"));
-        grandparent.add(Testing);
-        parent = new DefaultMutableTreeNode(new MenuNode("Child1 - Child3"));
-        grandparent.add(parent);
-
+                    DefaultMutableTreeNode tnextChild = (DefaultMutableTreeNode)iParent.getChildAt(i) ;
+                    MenuNode nextChild = (MenuNode)tnextChild.getUserObject() ;
+            System.out.println("ADM: 7 InsertNode: node '" + iNode.ButtonText + "'");
+                    if (( iNode.SortKey > lastChild.SortKey ) && ( iNode.SortKey < nextChild.SortKey ) ){
+                        // Ok it needs to go between these two
+            System.out.println("ADM: 8 InsertNode: node '" + iNode.ButtonText + "'");
+                        iParent.insert(new DefaultMutableTreeNode(iNode), i);
+                        done = Boolean.TRUE;
+                    }
+                }
+                if ( !done ) { // didn't find a place to insert the node must be the last one
+            System.out.println("ADM: 9 InsertNode: node '" + iNode.ButtonText + "'");
+                    iParent.insert(new DefaultMutableTreeNode(iNode), iParent.getChildCount());
+                }
+            }            
+            
+        }else{
+            //no children so just do an add
+            System.out.println("ADM: 10 InsertNode: node '" + iNode.ButtonText + "'");
+            iParent.add(new DefaultMutableTreeNode(iNode));
+            
+        }
     }
-
+    
     public static void Test(){
         //createNodes();
         LoadMenuItemsFromSage();
@@ -276,7 +243,7 @@ public class MenuNode {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
             tButtonText = tMenu.ButtonText;
-            System.out.println("ADM: TEST NODES: Child = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "' buttonText = '" + tButtonText + "' Path = '" + GetPath(child) + "'"  );
+            System.out.println("ADM: TEST NODES: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "' buttonText = '" + tButtonText + "' Path = '" + GetPath(child) + "'"  );
         }         
     }
     
