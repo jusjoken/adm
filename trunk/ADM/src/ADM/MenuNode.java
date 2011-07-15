@@ -31,9 +31,10 @@ public class MenuNode {
     private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
     private Integer Level = 0;
+    private DefaultMutableTreeNode NodeItem;
     public static Integer SortKeyCounter = 0;
     public static Map<String,MenuNode> MenuNodeList = new LinkedHashMap<String,MenuNode>();
-    public static DefaultMutableTreeNode root;
+    public static DefaultMutableTreeNode root = new DefaultMutableTreeNode(util.OptionNotFound);
 
     public MenuNode(String bName){
         //create a MenuItem with just default values
@@ -60,6 +61,32 @@ public class MenuNode {
         return Name;
     }
 
+    public static String GetMenuItemAction(String Name){
+        //System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuNodeList.get(Name).ActionAttribute + "'");
+        return MenuNodeList.get(Name).ActionAttribute;
+    }
+
+    public static void SetMenuItemAction(String Name, String Setting){
+        if (GetMenuItemActionType(Name).equals(Action.BrowseVideoFolder)){
+            //ensure the Folder string ends in a "/" unless it's blank
+            if (Setting.isEmpty() || !Setting.endsWith("/")){
+                Setting = Setting + "/";
+            }
+            if (Setting.equals("/")){
+                Setting = null;
+            }
+        }
+        Save(Name, "Action", Setting);
+    }
+
+    public static String GetMenuItemActionType(String Name){
+        return MenuNodeList.get(Name).ActionType;
+    }
+
+    public static void SetMenuItemActionType(String Name, String Setting){
+        Save(Name, "ActionType", Setting);
+    }
+    
     private void SetBGImageFileandPath(String bBGImageFile){
         //see if using a GlobalVariable from a Theme or a path to an image file
         if (bBGImageFile==null || bBGImageFile.equals("")){
@@ -79,6 +106,190 @@ public class MenuNode {
         }
     }
     
+    public static String GetMenuItemBGImageFileButtonText(String Name){
+        return util.GetSageBGVariablesButtonText(MenuNodeList.get(Name).BGImageFile);
+    }
+    
+    public static String GetMenuItemBGImageFile(String Name){
+        return MenuNodeList.get(Name).BGImageFile;
+    }
+
+    public static String GetMenuItemBGImageFilePath(String Name){
+        return MenuNodeList.get(Name).BGImageFilePath;
+    }
+
+    public static void SetMenuItemBGImageFile(String Name, String Setting){
+        if (Setting.equals(util.ListNone) || Setting==null){
+            Save(Name, "BGImageFile", null);
+        }else{
+            Save(Name, "BGImageFile", Setting);
+        }
+    }
+
+    public static String GetMenuItemButtonText(String Name){
+        if (Name.equals(util.TopMenu)){
+            return "Top Level";
+        }else{
+            return MenuNodeList.get(Name).ButtonText;
+        }
+    }
+
+    public static String GetMenuItemButtonTextNewTest(String Name){
+        if (MenuNodeList.get(Name).ButtonText.equals(util.ButtonTextDefault)){
+            return "";
+        }else{
+            return MenuNodeList.get(Name).GetMenuItemButtonText(Name);
+        }
+    }
+
+    public static void SetMenuItemButtonText(String Name, String Setting){
+        Save(Name, "ButtonText", Setting);
+    }
+
+    public static Boolean GetMenuItemHasChildren(String Name){
+        return !MenuNodeList.get(Name).NodeItem.isLeaf();
+    }
+
+    public static Boolean GetMenuItemHasSubMenu(String Name){
+        return MenuNodeList.get(Name).HasSubMenu;
+    }
+
+    public static void SetMenuItemHasSubMenu(String Name, Boolean Setting){
+        Save(Name, "HasSubMenu", Setting.toString());
+    }
+
+    public static Boolean GetMenuItemIsActive(String Name){
+        return MenuNodeList.get(Name).IsActive;
+    }
+
+    public static String GetMenuItemIsActiveIncludingParentFormatted(String Name){
+        if (!MenuNodeList.get(Name).IsActive){
+            return "No";
+        }else if (GetMenuItemIsActiveIncludingParent(Name)){
+            return "Yes";
+        }
+        // in this case this item is active BUT the parent is not
+        return "Yes (but Parent is not Active)";
+    }
+    
+    public static Boolean GetMenuItemIsActiveIncludingParent(String Name){
+        //if this item is inactive then return FALSE
+        if (!MenuNodeList.get(Name).IsActive){
+            return Boolean.FALSE;
+        }else{
+            //if the level is 1 then just return the item setting
+            if (MenuNodeList.get(Name).NodeItem.getLevel()==1){
+                return MenuNodeList.get(Name).IsActive;
+            }else if (MenuNodeList.get(Name).NodeItem.getLevel()==2){
+                //for level 2 just return the parents setting
+                return MenuNodeList.get(MenuNodeList.get(Name).Parent).IsActive;
+            }else{
+                //for level 3 check the level 2 parent
+                if (!MenuNodeList.get(MenuNodeList.get(Name).Parent).IsActive){
+                    return Boolean.FALSE;
+                }else{
+                    //now just return the level 1 parent setting
+                    return MenuNodeList.get(MenuNodeList.get(MenuNodeList.get(Name).Parent).Parent).IsActive;
+                }
+            }
+        }
+    }
+
+    public static void SetMenuItemIsActive(String Name, Boolean Setting){
+        Save(Name, "IsActive", Setting.toString());
+    }
+
+    public static Boolean GetMenuItemIsDefault(String Name){
+        return MenuNodeList.get(Name).IsDefault;
+    }
+
+    public static void SetMenuItemIsDefault(String Name, Boolean Setting){
+        //System.out.println("ADM: SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
+        if (Setting==Boolean.TRUE){
+            //System.out.println("ADM: SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
+            //first clear existing Default settings for Menu Items with the same parent 
+            ClearSubMenuDefaults(MenuNodeList.get(Name).Parent);
+            Save(Name, "IsDefault", Setting.toString());
+        }else{
+            //System.out.println("ADM: SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
+            Save(Name, "IsDefault", Setting.toString());
+            //ensure at least 1 item remaining is a default
+            ValidateSubMenuDefault(MenuNodeList.get(Name).Parent);
+        }
+    }
+
+    public static void ValidateSubMenuDefault(String bParent){
+        //ensure that 1 and only 1 item is set as the default
+        Boolean FoundDefault = Boolean.FALSE;
+        
+        if (MenuNodeList.get(bParent).NodeItem.getChildCount()>0){
+
+            Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(bParent).NodeItem.preorderEnumeration();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+                if (tMenu.IsDefault){
+                    if (FoundDefault){
+                    //Save setting
+                        Save(tMenu.Name, "IsDefault", Boolean.FALSE.toString());
+                    }else{
+                        FoundDefault = Boolean.TRUE;
+                    }
+                }
+            }         
+            if (!FoundDefault){
+                //no default found so set the first item as the default
+                DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode)MenuNodeList.get(bParent).NodeItem.getFirstChild();
+                MenuNode tMenu = (MenuNode)firstChild.getUserObject();
+                System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + tMenu.Name + "'");
+                Save(tMenu.Name, "IsDefault", Boolean.TRUE.toString());
+            }else {
+                System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : Default already set");
+            }
+        }else{
+            //no subMenu items so make sure this parent's SubMenu settings are correct
+            SetMenuItemSubMenu(bParent, util.ListNone);
+            SetMenuItemHasSubMenu(bParent, Boolean.FALSE);
+            System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
+        }
+    }
+        
+    //clear all defaults for a submenu - used prior to setting a new default to ensure there is not more than one
+    public static void ClearSubMenuDefaults(String bParent){
+        if (MenuNodeList.get(bParent).NodeItem.getChildCount()>0){
+            Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(bParent).NodeItem.preorderEnumeration();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+                if (tMenu.IsDefault){
+                    //Save setting
+                    Save(tMenu.Name, "IsDefault", Boolean.FALSE.toString());
+                }
+            }         
+        }
+        System.out.println("ADM: ClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList.get(bParent).NodeItem.getChildCount() + "' cleared");
+    }
+    
+    public static String GetSubMenuDefault(String bParent){
+        if (MenuNodeList.get(bParent).NodeItem.getChildCount()>0){
+            Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(bParent).NodeItem.preorderEnumeration();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+                if (tMenu.IsDefault){
+                    System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
+                    return tMenu.Name;
+                }
+            }         
+        }
+        System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' - none found");
+        return "";
+    }
+
+    public static Integer GetMenuItemLevel(String Name){
+        return MenuNodeList.get(Name).NodeItem.getLevel();
+    }
+
     public void setSortKey(String SortKey) {
         Integer tSortKey = 0;
         try {
@@ -94,9 +305,6 @@ public class MenuNode {
     
 
     public static void LoadMenuItemsFromSage(){
-        //create and store the top menu node
-        root = new DefaultMutableTreeNode(new MenuNode(util.TopMenu));
-        
         String PropLocation = "";
         
         //find all MenuItem Name entries from the SageTV properties file
@@ -104,7 +312,13 @@ public class MenuNode {
         
         if (MenuItemNames.length>0){
             //clear the existing MenuItems from the list
-            MenuNode.MenuNodeList.clear();
+            MenuNodeList.clear();
+            root.removeAllChildren();
+
+            //create and store the top menu node
+            MenuNode rootNode = new MenuNode(util.TopMenu);
+            root = new DefaultMutableTreeNode(rootNode);
+            rootNode.NodeItem = root;
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
@@ -167,55 +381,54 @@ public class MenuNode {
     
     private static void InsertNode(DefaultMutableTreeNode iParent, MenuNode iNode){
         //insert the node according to the SortKey value
-        System.out.println("ADM: 1 InsertNode: node '" + iNode.ButtonText + "' Childcount = '" + iParent.getChildCount() + "' Parent = '" + iParent + "'");
         if ( iParent.getChildCount() != 0 ) {
 
-            System.out.println("ADM: 2 InsertNode: node '" + iNode.ButtonText + "' FirstChild = '" + iParent.getFirstChild() + "'");
             DefaultMutableTreeNode tlastChild = (DefaultMutableTreeNode)iParent.getFirstChild() ;
             MenuNode lastChild = (MenuNode)tlastChild.getUserObject() ;
-            System.out.println("ADM: 3 InsertNode: node '" + iNode.ButtonText + "'");
             //MenuNode newChildA = (MenuNode) iNode ;
             if ( iNode.SortKey < lastChild.SortKey ) {
-            System.out.println("ADM: 4 InsertNode: node '" + iNode.ButtonText + "'");
                 // Its at the top of the list
-                iParent.insert(new DefaultMutableTreeNode(iNode), 0);
+                InsertNode(iParent,iNode,0);
             }
             else if ( iParent.getChildCount() == 1 ) {
-            System.out.println("ADM: 5 InsertNode: node '" + iNode.ButtonText + "'");
                 // There is only one element and since it ain't less than then well put it after
-                iParent.insert(new DefaultMutableTreeNode(iNode), 1);
+                InsertNode(iParent,iNode,1);
             } else { 
-            System.out.println("ADM: 6 InsertNode: node '" + iNode.ButtonText + "'");
                 // we gotta go look for the right spot to insert it
                 Boolean done = Boolean.FALSE ;
                 for ( int i = 1 ; i < iParent.getChildCount() && !done ; i++ ) {
 
                     DefaultMutableTreeNode tnextChild = (DefaultMutableTreeNode)iParent.getChildAt(i) ;
                     MenuNode nextChild = (MenuNode)tnextChild.getUserObject() ;
-            System.out.println("ADM: 7 InsertNode: node '" + iNode.ButtonText + "'");
                     if (( iNode.SortKey > lastChild.SortKey ) && ( iNode.SortKey < nextChild.SortKey ) ){
                         // Ok it needs to go between these two
-            System.out.println("ADM: 8 InsertNode: node '" + iNode.ButtonText + "'");
-                        iParent.insert(new DefaultMutableTreeNode(iNode), i);
+                        InsertNode(iParent,iNode,i);
                         done = Boolean.TRUE;
                     }
                 }
                 if ( !done ) { // didn't find a place to insert the node must be the last one
-            System.out.println("ADM: 9 InsertNode: node '" + iNode.ButtonText + "'");
-                    iParent.insert(new DefaultMutableTreeNode(iNode), iParent.getChildCount());
+                    InsertNode(iParent,iNode,iParent.getChildCount());
                 }
             }            
-            
         }else{
             //no children so just do an add
-            System.out.println("ADM: 10 InsertNode: node '" + iNode.ButtonText + "'");
-            iParent.add(new DefaultMutableTreeNode(iNode));
-            
+            InsertNode(iParent,iNode,-1);
+        }
+    }
+    
+    private static void InsertNode(DefaultMutableTreeNode iParent, MenuNode iNode, Integer iLocation){
+        DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(iNode);
+        iNode.NodeItem = tNode;
+        if (iLocation>=0){
+            //do an insert
+            iParent.insert(tNode, iLocation);
+        }else{
+            //do an add for -1
+            iParent.add(tNode);
         }
     }
     
     public static void Test(){
-        //createNodes();
         LoadMenuItemsFromSage();
         System.out.println("ADM: TEST NODES: ");
         ListChildren(root);
@@ -235,7 +448,8 @@ public class MenuNode {
 //        setParent(Child3, FindNode(root, "Child2"));
 //        ListChildren(root);
     }
-    
+
+    @SuppressWarnings("unchecked")
     public static void ListChildren(DefaultMutableTreeNode Node){
         Enumeration<DefaultMutableTreeNode> en = Node.preorderEnumeration();
         String tButtonText;
@@ -243,10 +457,11 @@ public class MenuNode {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
             tButtonText = tMenu.ButtonText;
-            System.out.println("ADM: TEST NODES: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "' buttonText = '" + tButtonText + "' Path = '" + GetPath(child) + "'"  );
+            System.out.println("ADM: TEST NODES: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "' HasChildren = '" + GetMenuItemHasChildren(tMenu.Name) + "' buttonText = '" + tButtonText + "' Path = '" + GetPath(child) + "'"  );
         }         
     }
     
+    @SuppressWarnings("unchecked")
     public static DefaultMutableTreeNode FindNode(DefaultMutableTreeNode Root, DefaultMutableTreeNode Node){
         Enumeration<DefaultMutableTreeNode> en = Root.preorderEnumeration();
         while (en.hasMoreElements())   {
@@ -262,6 +477,7 @@ public class MenuNode {
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     public static DefaultMutableTreeNode FindNode(DefaultMutableTreeNode Root, String NodeKey){
         Enumeration<DefaultMutableTreeNode> en = Root.preorderEnumeration();
         while (en.hasMoreElements())   {
@@ -277,6 +493,7 @@ public class MenuNode {
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     public static Boolean NodeExists(DefaultMutableTreeNode Root, String NodeKey){
         Enumeration<DefaultMutableTreeNode> en = Root.preorderEnumeration();
         while (en.hasMoreElements())   {
@@ -326,5 +543,38 @@ public class MenuNode {
         lParent.insert( Node, lNewIndex );  
         //TODO: need to save the indexes of all this parents children
     }  
+    
+    private static void Save(String Name, String PropType, String Setting){
+        String PropLocation = util.SagePropertyLocation + Name;
+        sagex.api.Configuration.SetProperty(PropLocation + "/" + PropType, Setting);
+        //no save the specifc node field change
+        if (PropType.equals("Action")){
+            MenuNodeList.get(Name).ActionAttribute = Setting;
+        }else if (PropType.equals("ActionType")){
+            MenuNodeList.get(Name).ActionType = Setting;
+        }else if (PropType.equals("BGImageFile")){
+            MenuNodeList.get(Name).BGImageFile = Setting;
+        }else if (PropType.equals("ButtonText")){
+            MenuNodeList.get(Name).ButtonText = Setting;
+        }else if (PropType.equals("HasSubMenu")){
+            MenuNodeList.get(Name).HasSubMenu = Boolean.getBoolean(Setting);
+        }else if (PropType.equals("IsActive")){
+            MenuNodeList.get(Name).IsActive = Boolean.getBoolean(Setting);
+        }else if (PropType.equals("IsDefault")){
+            MenuNodeList.get(Name).IsDefault = Boolean.getBoolean(Setting);
+//        }else if (PropType.equals("")){
+//            MenuNodeList.get(Name). = Setting;
+//        }else if (PropType.equals("")){
+//            MenuNodeList.get(Name). = Setting;
+//        }else if (PropType.equals("")){
+//            MenuNodeList.get(Name). = Setting;
+//        }else if (PropType.equals("")){
+//            MenuNodeList.get(Name). = Setting;
+            
+        }
+        
+        
+        System.out.println("ADM: Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
+    }
     
 }
