@@ -460,8 +460,6 @@ public class MenuItem {
         this.Name = Name;
     }
 
-//DONE TO HERE //    
-//IN PROGRESS TO HERE //    
     public static void SetMenuItemName(String Name){
         SaveMenuItemtoSage(Name, "Name", Name);
     }
@@ -655,6 +653,8 @@ public class MenuItem {
         return Boolean.FALSE;
     }
     
+//DONE TO HERE //    
+//IN PROGRESS TO HERE //    
     final void AddMenuItemtoList(MenuItem NewMenuItem){
         MenuItemList.put(NewMenuItem.Name, NewMenuItem);
     }

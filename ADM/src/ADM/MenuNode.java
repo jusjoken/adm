@@ -218,6 +218,7 @@ public class MenuNode {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void ValidateSubMenuDefault(String bParent){
         //ensure that 1 and only 1 item is set as the default
         Boolean FoundDefault = Boolean.FALSE;
@@ -255,6 +256,7 @@ public class MenuNode {
     }
         
     //clear all defaults for a submenu - used prior to setting a new default to ensure there is not more than one
+    @SuppressWarnings("unchecked")
     public static void ClearSubMenuDefaults(String bParent){
         if (MenuNodeList.get(bParent).NodeItem.getChildCount()>0){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(bParent).NodeItem.preorderEnumeration();
@@ -270,6 +272,7 @@ public class MenuNode {
         System.out.println("ADM: ClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList.get(bParent).NodeItem.getChildCount() + "' cleared");
     }
     
+    @SuppressWarnings("unchecked")
     public static String GetSubMenuDefault(String bParent){
         if (MenuNodeList.get(bParent).NodeItem.getChildCount()>0){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(bParent).NodeItem.preorderEnumeration();
@@ -290,6 +293,43 @@ public class MenuNode {
         return MenuNodeList.get(Name).NodeItem.getLevel();
     }
 
+    public static void SetMenuItemName(String Name){
+        Save(Name, "Name", Name);
+    }
+
+    public static String GetMenuItemParent(String Name){
+        //get the parent from the Tree structure
+        return MenuNodeList.get(Name).NodeItem.getParent().toString();
+    }
+
+    // Should not need to set the parent attribute as the Tree takes care of this
+//    public static void SetMenuItemParent(String Name, String Setting){
+//        String OldParent = MenuItemList.get(Name).getParent();
+//        SaveMenuItemtoSage(Name, "Parent", Setting);
+//        MenuItemList.get(Name).setParent(Setting);
+//
+//        //see if the Level needs changing
+//        if (GetMenuItemLevel(OldParent)==GetMenuItemLevel(Setting)){
+//            //Same levels so no need to change
+//        }else{
+//            //set level to 1 more than the parent
+//            SetMenuItemLevel(Name,GetMenuItemLevel(Setting)+1);
+//        }
+//        
+//        if (OldParent.equals(Setting) || OldParent==null || Setting.equals(util.TopMenu)){
+//            System.out.println("ADM: SetMenuItemParent: Parent saved for '" + Name + "' to = '" + Setting + "' OldParent = '" + OldParent + "'");
+//        }else{
+//            //check the new parent and set it's SubMenu properly
+//            SetMenuItemSubMenu(Setting,util.ListNone);
+//            SetMenuItemHasSubMenu(Setting, Boolean.TRUE);
+//
+//            //make sure the old and new SubMenus have a single default item
+//            ValidateSubMenuDefault(OldParent);
+//            ValidateSubMenuDefault(Setting);
+//            System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + Setting + "'");
+//        }
+//    }
+
     public void setSortKey(String SortKey) {
         Integer tSortKey = 0;
         try {
@@ -298,11 +338,76 @@ public class MenuNode {
             System.out.println("ADM: setSortKey: error converting '" + SortKey + "' " + util.class.getName() + ex);
             tSortKey = SortKeyCounter++;
         }
-//        //check if this SortKey is in use - if so then insert it after
-//        InsertSortKey(tSortKey);
         this.SortKey = tSortKey;
     }
     
+    @SuppressWarnings("unchecked")
+    public static void SortKeyUpdate(){
+        //update all the sortkey values to the index
+        Enumeration<DefaultMutableTreeNode> en = root.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            System.out.println("ADM: 1 SortKeyUpdate: Child = '" + child + "'"  );
+            if (!tMenu.Name.equals(util.TopMenu)){
+                tMenu.SortKey = child.getParent().getIndex(child);
+                System.out.println("ADM: 2 SortKeyUpdate: Child = '" + child + "'"  );
+                String PropLocation = util.SagePropertyLocation + tMenu.Name + "/" + "SortKey";
+                System.out.println("ADM: 3 SortKeyUpdate: Child = '" + child + "'"  );
+                sagex.api.Configuration.SetProperty(PropLocation, tMenu.SortKey.toString());
+                System.out.println("ADM: SortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
+            }
+        }         
+    }
+    
+    //the SubMenu field is only filled in if using a built in Sage SubMenu
+    // otherwise, the Name of the MenuItem is returned if the MenuItem has a SubMenu
+    public String getSubMenu() {
+        if (SubMenu==null){
+            if (HasSubMenu){
+                return Name;
+            }else{
+                return SubMenu;
+            }
+        }else{
+            return SubMenu;
+        }
+    }
+
+    public static String GetMenuItemSubMenu(String Name){
+        return MenuNodeList.get(Name).getSubMenu();
+    }
+
+    public static String GetMenuItemSubMenuButtonText(String Name){
+        return util.GetSubMenuListButtonText(MenuNodeList.get(Name).getSubMenu(), GetMenuItemLevel(Name));
+    }
+
+    public static void SetMenuItemSubMenu(String Name, String Setting){
+        //System.out.println("ADM: SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
+        if (Setting.equals(util.ListNone) || Setting==null){
+            //set the SubMenu field
+            Save(Name, "SubMenu", null);
+            //set the HasSubMenu field
+            Save(Name, "HasSubMenu", Boolean.FALSE.toString());
+        }else{
+            //set the SubMenu field
+            Save(Name, "SubMenu", Setting);
+            //set the HasSubMenu field
+            Save(Name, "HasSubMenu", Boolean.TRUE.toString());
+        }
+    }
+
+    public static Boolean IsSubMenuItem(String bParent, String Item){
+        //check if Item is a child of bParent
+        //Collection<String> SubMenuItems = GetMenuItemNameList(bParent,Boolean.TRUE);
+        if (MenuNodeList.get(Item).NodeItem.getParent().toString().equals(bParent)){
+            System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+            return Boolean.TRUE;
+        }else{
+            System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
+            return Boolean.FALSE;
+        }
+    }
 
     public static void LoadMenuItemsFromSage(){
         String PropLocation = "";
@@ -343,6 +448,10 @@ public class MenuNode {
                     //check if the current node exists yet
                     AddNode(Node);
                 }
+                //now update the sortkeys from the Tree structure
+                
+                //DONT RUN THIS TILL THIS NEW STUFF IS READY
+                //SortKeyUpdate();
             }
             
         }else{
@@ -562,8 +671,8 @@ public class MenuNode {
             MenuNodeList.get(Name).IsActive = Boolean.getBoolean(Setting);
         }else if (PropType.equals("IsDefault")){
             MenuNodeList.get(Name).IsDefault = Boolean.getBoolean(Setting);
-//        }else if (PropType.equals("")){
-//            MenuNodeList.get(Name). = Setting;
+        }else if (PropType.equals("SubMenu")){
+            MenuNodeList.get(Name).SubMenu = Setting;
 //        }else if (PropType.equals("")){
 //            MenuNodeList.get(Name). = Setting;
 //        }else if (PropType.equals("")){
