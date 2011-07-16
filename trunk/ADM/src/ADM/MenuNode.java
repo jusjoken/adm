@@ -5,11 +5,17 @@
 package ADM;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
@@ -19,9 +25,10 @@ import javax.swing.tree.TreeNode;
  */
 public class MenuNode {
     public static DefaultMutableTreeNode Testing;
+    private static final Random random = new Random();
 
     private String Parent = "";
-    private String Name = "";
+    public String Name = "";
     private String ButtonText = "";
     private String SubMenu = "";
     private String ActionAttribute = "";
@@ -332,6 +339,10 @@ public class MenuNode {
 //        }
 //    }
 
+    public static Integer GetMenuItemSortKey(String Name){
+        return MenuNodeList.get(Name).SortKey;
+    }
+
     public void setSortKey(String SortKey) {
         Integer tSortKey = 0;
         try {
@@ -426,16 +437,42 @@ public class MenuNode {
     @SuppressWarnings("unchecked")
     public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
         Collection<String> bNames = new LinkedHashSet<String>();
-        Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(Parent).NodeItem.preorderEnumeration();
+        if (MenuNodeList.containsKey(Parent)){
+            Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(Parent).NodeItem.preorderEnumeration();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+            System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : tMenu = '" + tMenu + "' Active = '" + tMenu.IsActive + "'");
+                if (tMenu.IsActive==true || IncludeInactive==true){
+            System.out.println("ADM: GetMenuItemNameList ADDING");
+                    bNames.add(tMenu.Name);
+                }
+            }         
+        }
+        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
+        return bNames;
+    }
+    
+    //returns only menu items for a specific parent that are active
+    @SuppressWarnings("unchecked")
+    public static Collection<String> GetMenuItemSortedList(Boolean Grouped){
+        Collection<String> FinalList = new LinkedHashSet<String>();
+        
+        Enumeration<DefaultMutableTreeNode> en;
+        if (Grouped){
+            //Menu Items in Level 1, then Level 2 etc
+            en = root.breadthFirstEnumeration();
+        }else{
+            //Menu Items in Tree Order
+            en = root.preorderEnumeration();
+        }
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            if (tMenu.IsActive==true || IncludeInactive==true){
-                bNames.add(tMenu.Name);
-            }
+            FinalList.add(tMenu.Name);
         }         
-        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
-        return bNames;
+        System.out.println("ADM: GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
+        return FinalList;
     }
 
     public static Collection<String> GetParentListforMenuItem(String Name){
@@ -513,7 +550,7 @@ public class MenuNode {
     }
 
     public static int GetMenuItemCount(){
-        return GetMenuItemCount(null);
+        return GetMenuItemCount(util.TopMenu);
     }
     
     //Get the count of MenuItems for a parent that are active
@@ -536,17 +573,23 @@ public class MenuNode {
         
         //find all MenuItem Name entries from the SageTV properties file
         String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(util.SagePropertyLocation);
+        System.out.println("ADM: 1 LoadMenuItemsFromSage");
         
         if (MenuItemNames.length>0){
             //clear the existing MenuItems from the list
             MenuNodeList.clear();
+        System.out.println("ADM: 2 LoadMenuItemsFromSage");
             root.removeAllChildren();
+        System.out.println("ADM: 3 LoadMenuItemsFromSage");
+
 
             //create and store the top menu node
             MenuNode rootNode = new MenuNode(util.TopMenu);
+        System.out.println("ADM: 4 LoadMenuItemsFromSage");
             root = new DefaultMutableTreeNode(rootNode);
             rootNode.NodeItem = root;
             rootNode.ButtonText = "Top Level";
+        System.out.println("ADM: 5 LoadMenuItemsFromSage");
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
@@ -563,9 +606,10 @@ public class MenuNode {
                 NewMenuItem.HasSubMenu = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
                 NewMenuItem.IsDefault = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
                 NewMenuItem.IsActive = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
-                //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
             }
             if (MenuNodeList.size()>0){
+        System.out.println("ADM: 6 LoadMenuItemsFromSage");
                 //create the tree nodes
                 for (MenuNode Node : MenuNodeList.values()){
                     //check if the current node exists yet
@@ -591,6 +635,226 @@ public class MenuNode {
         
         return;
     }
+    
+    //saves all MenuItems to Sage properties
+    @SuppressWarnings("unchecked")
+    public static void SaveMenuItemsToSage(){
+        String PropLocation = "";
+        
+        //clean up existing MenuItems from the SageTV properties file before writing the new ones
+        sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
+        //clear the MenuNodeList and rebuild it while saving
+        MenuNodeList.clear();
+        
+        //iterate through all the MenuItems and save to SageTV properties
+        Enumeration<DefaultMutableTreeNode> en = root.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            PropLocation = util.SagePropertyLocation + tMenu.Name;
+            sagex.api.Configuration.SetProperty(PropLocation + "/Action", tMenu.ActionAttribute);
+            sagex.api.Configuration.SetProperty(PropLocation + "/ActionType", tMenu.ActionType);
+            sagex.api.Configuration.SetProperty(PropLocation + "/BGImageFile", tMenu.BGImageFile);
+            sagex.api.Configuration.SetProperty(PropLocation + "/ButtonText", tMenu.ButtonText);
+            sagex.api.Configuration.SetProperty(PropLocation + "/Name", tMenu.Name);
+            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", tMenu.Parent);
+            sagex.api.Configuration.SetProperty(PropLocation + "/SortKey", tMenu.SortKey.toString());
+            sagex.api.Configuration.SetProperty(PropLocation + "/SubMenu", tMenu.SubMenu);
+            sagex.api.Configuration.SetProperty(PropLocation + "/HasSubMenu", tMenu.HasSubMenu.toString());
+            sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", tMenu.IsDefault.toString());
+            sagex.api.Configuration.SetProperty(PropLocation + "/IsActive", tMenu.IsActive.toString());
+            //add the item into the MenuNodeList
+            MenuNodeList.put(tMenu.Name, tMenu);
+        }         
+        System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuNodeList.size() + " MenuItems");
+        
+        return;
+    }
+ 
+    public static void DeleteMenuItem(String Name){
+        //store the parent for later cleanup
+        String OldParent = GetMenuItemParent(Name);
+        //do all the deletes first
+        MenuNodeList.get(Name).NodeItem.removeAllChildren();
+        MenuNodeList.get(Name).NodeItem.removeFromParent();
+        //Make sure there is still one default Menu Item
+        ValidateSubMenuDefault(OldParent);
+        //rebuild any lists
+        SaveMenuItemsToSage();
+        System.out.println("ADM: DeleteMenuItem: deleted '" + Name + "'");
+    }
+    
+    public static void DeleteAllMenuItems(){
+
+        //backup existing MenuItems before deleting
+        if (MenuNodeList.size()>0){
+            ExportMenuItems(util.PropertyBackupFile);
+        }
+        
+        //clean up existing MenuItems from the SageTV properties file
+        sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
+        MenuNodeList.clear();
+        root.removeAllChildren();
+        
+        //Create 1 new MenuItem at the TopMenu level
+        NewMenuItem(util.TopMenu, 1) ;
+
+        //now load the properties from the Sage properties file
+        LoadMenuItemsFromSage();
+
+        System.out.println("ADM: DeleteAllMenuItems: completed");
+    }
+    
+    public static String NewMenuItem(String Parent, Integer SortKey){
+        String tMenuItemName = GetNewMenuItemName();
+
+        //Create a new MenuItem with defaults
+        MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,Boolean.FALSE,util.ListNone,util.ActionTypeDefault,null,util.ListNone,Boolean.FALSE,Boolean.TRUE);
+        //add the Node to the Tree
+        InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem);
+        
+        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        return tMenuItemName;
+    }
+ 
+    public static void LoadMenuItemDefaults(){
+        //load default MenuItems from one or more default .properties file
+        String DefaultPropFile = "ADMDefault.properties";
+        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
+        String DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFile;
+        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
+        String DiamondMenuVideos = "admSageTVVideos";
+        String DiamondMenuMovies = "admDiamondMovies";
+        
+        
+        // check to see if the Diamond Plugin is installed
+        if (Diamond.IsDiamond()){
+            DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
+        }
+        ImportMenuItems(DefaultsFullPath);
+        
+        //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
+        if (Diamond.IsDiamond()){
+            //admSageTVVideos
+            if ("true".equals(sagex.api.Configuration.GetProperty(DiamondVideoMenuCheckProp, "false"))){
+                //show the Videos Menu
+                SetMenuItemIsActive(DiamondMenuMovies, Boolean.TRUE);
+                SetMenuItemIsActive(DiamondMenuVideos, Boolean.FALSE);
+            }else{
+                //show the Movies Menu
+                SetMenuItemIsActive(DiamondMenuMovies, Boolean.FALSE);
+                SetMenuItemIsActive(DiamondMenuVideos, Boolean.TRUE);
+            }
+        }
+        System.out.println("ADM: LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
+    }
+
+    public static Boolean ImportMenuItems(String ImportPath){
+
+        if (ImportPath==null){
+            System.out.println("ADM: ImportMenuItems: null ImportPath passed.");
+            return false;
+        }
+        
+        Properties MenuItemProps = new Properties();
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(ImportPath);
+            try {
+                MenuItemProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: ImportMenuItems: IO exception inporting menus " + util.class.getName() + ex);
+                return false;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: ImportMenuItems: file not found inporting menus " + util.class.getName() + ex);
+            return false;
+        }
+        
+        //backup existing MenuItems before processing the import if any exist
+        if (MenuNodeList.size()>0){
+            ExportMenuItems(util.PropertyBackupFile);
+        }
+        
+        if (MenuItemProps.size()>0){
+            //clean up existing MenuItems from the SageTV properties file before writing the new ones
+            sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
+            
+            //load MenuItems from the properties file and write to the Sage properties
+            for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
+                sagex.api.Configuration.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
+                
+                //System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
+            }
+            
+            //now load the properties from the Sage properties file
+            LoadMenuItemsFromSage();
+
+        }
+        System.out.println("ADM: ImportMenuItems: completed for '" + ImportPath + "'");
+        return true;
+    }
+ 
+    public static void ExportMenuItems(String ExportFile){
+        String PropLocation = "";
+        String ExportFilePath = util.ADMLocation + File.separator + ExportFile;
+        //System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
+        
+        //iterate through all the MenuItems and save to a Property Collection
+        Properties MenuItemProps = new Properties();
+
+        for (String tName : MenuNodeList.keySet()){
+            PropLocation = util.SagePropertyLocation + tName;
+            if (GetMenuItemAction(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/Action",GetMenuItemAction(tName));
+            }
+            if (GetMenuItemActionType(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/ActionType", GetMenuItemActionType(tName));
+            }
+            if (GetMenuItemBGImageFile(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/BGImageFile", GetMenuItemBGImageFile(tName));
+            }
+            if (GetMenuItemButtonText(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/ButtonText", GetMenuItemButtonText(tName));
+            }
+            MenuItemProps.setProperty(PropLocation + "/Name", tName);
+            if (GetMenuItemParent(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/Parent", GetMenuItemParent(tName));
+            }
+            if (GetMenuItemSortKey(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/SortKey", GetMenuItemSortKey(tName).toString());
+            }
+            if (GetMenuItemSubMenu(tName)!=null){
+                MenuItemProps.setProperty(PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
+            }
+            MenuItemProps.setProperty(PropLocation + "/HasSubMenu", GetMenuItemHasSubMenu(tName).toString());
+            MenuItemProps.setProperty(PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
+            MenuItemProps.setProperty(PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
+            //System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
+            
+        }
+        //if the export file exists then delete it before exporting
+        
+        //write the properties to the properties file
+        try {
+            FileOutputStream out = new FileOutputStream(ExportFilePath);
+            try {
+                MenuItemProps.store(out, util.PropertyComment);
+                out.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
+        }
+
+        System.out.println("ADM: ExportMenuItems: exported " + MenuNodeList.size() + " MenuItems");
+        
+        return;
+    }
+    
     
     private static void AddNode(MenuNode aNode){
         if (!NodeExists(root, aNode.Name)){
@@ -809,4 +1073,23 @@ public class MenuNode {
         System.out.println("ADM: Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
     }
     
+    public static String GetNewMenuItemName(){
+        Boolean UniqueName = Boolean.FALSE;
+        String NewName = null;
+        while (!UniqueName){
+            NewName = GenerateRandomadmName();
+            //check to see that the name is unique from other existing MenuItemNames
+            UniqueName = !MenuNodeList.containsKey(NewName);
+        }
+        return NewName;
+    }
+
+    private static String GenerateRandomadmName(){
+        char[] buf = new char[10];
+        for (int idx = 0; idx < buf.length; ++idx)
+            buf[idx] = util.symbols[random.nextInt(util.symbols.length)];
+        return "adm" + new String(buf);
+    }
+
+
 }
