@@ -182,26 +182,17 @@ public class MenuNode {
     }
     
     public static Boolean GetMenuItemIsActiveIncludingParent(String Name){
-        //if this item is inactive then return FALSE
-        if (!MenuNodeList.get(Name).IsActive){
-            return Boolean.FALSE;
-        }else{
-            //if the level is 1 then just return the item setting
-            if (MenuNodeList.get(Name).NodeItem.getLevel()==1){
-                return MenuNodeList.get(Name).IsActive;
-            }else if (MenuNodeList.get(Name).NodeItem.getLevel()==2){
-                //for level 2 just return the parents setting
-                return MenuNodeList.get(MenuNodeList.get(Name).Parent).IsActive;
-            }else{
-                //for level 3 check the level 2 parent
-                if (!MenuNodeList.get(MenuNodeList.get(Name).Parent).IsActive){
-                    return Boolean.FALSE;
-                }else{
-                    //now just return the level 1 parent setting
-                    return MenuNodeList.get(MenuNodeList.get(MenuNodeList.get(Name).Parent).Parent).IsActive;
-                }
+        TreeNode[] path = MenuNodeList.get(Name).NodeItem.getPath();
+        for (TreeNode pathnode : path){
+            DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
+            MenuNode tMenu = (MenuNode)pathnodea.getUserObject();
+            if (!tMenu.IsActive){
+                System.out.println("ADM: GetMenuItemIsActiveIncludingParent for '" + Name + "' NOTACTIVE for item = '" + tMenu.Name + "'");
+                return Boolean.FALSE;
             }
         }
+        System.out.println("ADM: GetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
+        return Boolean.TRUE;
     }
 
     public static void SetMenuItemIsActive(String Name, Boolean Setting){
@@ -308,6 +299,8 @@ public class MenuNode {
 
     public static String GetMenuItemParent(String Name){
         //get the parent from the Tree structure
+        System.out.println("ADM: GetMenuItemParent for '" + Name + "'");
+        System.out.println("ADM: GetMenuItemParent for '" + Name + "' = '" + MenuNodeList.get(Name).NodeItem.getParent().toString() + "'");
         return MenuNodeList.get(Name).NodeItem.getParent().toString();
     }
 
@@ -442,9 +435,7 @@ public class MenuNode {
             while (en.hasMoreElements())   {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
-            System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : tMenu = '" + tMenu + "' Active = '" + tMenu.IsActive + "'");
                 if (tMenu.IsActive==true || IncludeInactive==true){
-            System.out.println("ADM: GetMenuItemNameList ADDING");
                     bNames.add(tMenu.Name);
                 }
             }         
@@ -469,7 +460,10 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            FinalList.add(tMenu.Name);
+            //add all items except the Top Level menu
+            if (!tMenu.Name.equals(util.TopMenu)){
+                FinalList.add(tMenu.Name);
+            }
         }         
         System.out.println("ADM: GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
         return FinalList;
@@ -545,7 +539,13 @@ public class MenuNode {
         if (PrefixPadding==null){
             return GetPath(MenuNodeList.get(Name).NodeItem);
         }else{
-            return PrefixPadding + MenuNodeList.get(Name).ButtonText;
+            String tPadded = "";
+            if(MenuNodeList.get(Name).NodeItem.getLevel()==2){
+                tPadded = PrefixPadding;
+            }else if(MenuNodeList.get(Name).NodeItem.getLevel()==3){
+                tPadded = PrefixPadding + PrefixPadding;
+            }
+            return tPadded + MenuNodeList.get(Name).ButtonText;
         }
     }
 
@@ -573,23 +573,17 @@ public class MenuNode {
         
         //find all MenuItem Name entries from the SageTV properties file
         String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(util.SagePropertyLocation);
-        System.out.println("ADM: 1 LoadMenuItemsFromSage");
         
         if (MenuItemNames.length>0){
             //clear the existing MenuItems from the list
             MenuNodeList.clear();
-        System.out.println("ADM: 2 LoadMenuItemsFromSage");
             root.removeAllChildren();
-        System.out.println("ADM: 3 LoadMenuItemsFromSage");
-
 
             //create and store the top menu node
             MenuNode rootNode = new MenuNode(util.TopMenu);
-        System.out.println("ADM: 4 LoadMenuItemsFromSage");
             root = new DefaultMutableTreeNode(rootNode);
             rootNode.NodeItem = root;
             rootNode.ButtonText = "Top Level";
-        System.out.println("ADM: 5 LoadMenuItemsFromSage");
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
@@ -603,9 +597,9 @@ public class MenuNode {
                 NewMenuItem.Parent = sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu");
                 NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
                 NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null);
-                NewMenuItem.HasSubMenu = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
-                NewMenuItem.IsDefault = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
-                NewMenuItem.IsActive = Boolean.getBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
+                NewMenuItem.HasSubMenu = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
+                NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
+                NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
                 System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
             }
             if (MenuNodeList.size()>0){
@@ -775,7 +769,8 @@ public class MenuNode {
         
         //backup existing MenuItems before processing the import if any exist
         if (MenuNodeList.size()>0){
-            ExportMenuItems(util.PropertyBackupFile);
+            //TODO: add Export back in
+            //ExportMenuItems(util.PropertyBackupFile);
         }
         
         if (MenuItemProps.size()>0){
@@ -1009,10 +1004,14 @@ public class MenuNode {
         String OutPath = null;
         TreeNode[] path = Node.getPath();
         for (TreeNode pathnode : path){
-            if (OutPath == null){
-                OutPath = pathnode.toString();
-            }else{
-                OutPath = OutPath + " / " + pathnode.toString();
+            DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
+            MenuNode tMenu = (MenuNode)pathnodea.getUserObject();
+            if (!tMenu.Name.equals(util.TopMenu)){
+                if (OutPath == null){
+                    OutPath = tMenu.ButtonText;
+                }else{
+                    OutPath = OutPath + " / " + tMenu.ButtonText;
+                }
             }
         }
         return OutPath;
@@ -1053,11 +1052,11 @@ public class MenuNode {
         }else if (PropType.equals("ButtonText")){
             MenuNodeList.get(Name).ButtonText = Setting;
         }else if (PropType.equals("HasSubMenu")){
-            MenuNodeList.get(Name).HasSubMenu = Boolean.getBoolean(Setting);
+            MenuNodeList.get(Name).HasSubMenu = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("IsActive")){
-            MenuNodeList.get(Name).IsActive = Boolean.getBoolean(Setting);
+            MenuNodeList.get(Name).IsActive = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("IsDefault")){
-            MenuNodeList.get(Name).IsDefault = Boolean.getBoolean(Setting);
+            MenuNodeList.get(Name).IsDefault = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("SubMenu")){
             MenuNodeList.get(Name).SubMenu = Setting;
 //        }else if (PropType.equals("")){
