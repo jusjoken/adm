@@ -51,31 +51,25 @@ public class CopyMode {
     }
     
     public static Collection<String> GetVideoFolderDetailsParentList(){
-        return MenuItem.GetMenuItemParentList();
+        return MenuNode.GetMenuItemParentList();
     }
     
     //create a new Menu Item from the current Video Folder Menu Item details
     public static String CreateMenuItemfromVideoFolderCopyDetails(String Parent){
-        //
-        String tMenuItemName = util.GetNewMenuItemName();
-
         //Create a new MenuItem with defaults
-        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-        MenuItem.SetMenuItemAction(tMenuItemName,GetVideoFolderDetails());
-        MenuItem.SetMenuItemActionType(tMenuItemName,Action.BrowseVideoFolder);
+        String tMenuItemName = MenuNode.NewMenuItem(Parent, 0);
 
-        MenuItem.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-        MenuItem.SetMenuItemButtonText(tMenuItemName,GetVideoFolderDetailsButtonText());
-        MenuItem.SetMenuItemName(tMenuItemName);
-        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
-        MenuItem.SetMenuItemSortKey(tMenuItemName,MenuItem.SortKeyCounter++);
-        MenuItem.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-        MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
-        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
-        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
-        
-        //Level needs to be 1 more than the Parent
-        MenuItem.SetMenuItemLevel(tMenuItemName,MenuItem.GetMenuItemLevel(Parent)+1);
+        //set all the copy details
+        MenuNode.SetMenuItemAction(tMenuItemName,GetVideoFolderDetails());
+        MenuNode.SetMenuItemActionType(tMenuItemName,Action.BrowseVideoFolder);
+
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,GetVideoFolderDetailsButtonText());
+        MenuNode.SetMenuItemName(tMenuItemName);
+        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
+        MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         
         System.out.println("ADM: CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
@@ -157,33 +151,27 @@ public class CopyMode {
     
     //create a new Menu Item from the current Menu Item details
     public static String CreateMenuItemfromCopyDetails(String Parent){
-        //
-        String tMenuItemName = util.GetNewMenuItemName();
-
         //Create a new MenuItem with defaults
-        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+        String tMenuItemName = MenuNode.NewMenuItem(Parent, 0);
+
+        //set all the copy details
         if (Action.IsValidAction(GetMenuItemDetailsType())){
-            MenuItem.SetMenuItemAction(tMenuItemName,GetMenuItemDetailsAction());
-            MenuItem.SetMenuItemActionType(tMenuItemName,GetMenuItemDetailsType());
+            MenuNode.SetMenuItemAction(tMenuItemName,GetMenuItemDetailsAction());
+            MenuNode.SetMenuItemActionType(tMenuItemName,GetMenuItemDetailsType());
         }
-        MenuItem.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-        MenuItem.SetMenuItemButtonText(tMenuItemName,GetMenuItemDetailsButtonText());
-        MenuItem.SetMenuItemName(tMenuItemName);
-        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
-        MenuItem.SetMenuItemSortKey(tMenuItemName,MenuItem.SortKeyCounter++);
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,GetMenuItemDetailsButtonText());
+        MenuNode.SetMenuItemName(tMenuItemName);
         if (GetMenuItemDetailsSubMenu().equals(util.OptionNotFound)){
-            MenuItem.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-            MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
+            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
         }else{
-            MenuItem.SetMenuItemSubMenu(tMenuItemName,GetMenuItemDetailsSubMenu());
-            MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.TRUE);
+            MenuNode.SetMenuItemSubMenu(tMenuItemName,GetMenuItemDetailsSubMenu());
+            MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.TRUE);
         }
-        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
-        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
-        
-        //Level needs to be 1 more than the Parent
-        MenuItem.SetMenuItemLevel(tMenuItemName,MenuItem.GetMenuItemLevel(Parent)+1);
-        
+        MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+
         System.out.println("ADM: CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
         
@@ -196,9 +184,9 @@ public class CopyMode {
     
     public static Collection<String> GetMenuItemDetailsParentList(){
         if (GetMenuItemDetailsSubMenu().equals(util.OptionNotFound)){
-            return MenuItem.GetMenuItemParentList();
+            return MenuNode.GetMenuItemParentList();
         }else{
-            return MenuItem.GetMenuItemParentList(GetMenuItemDetailsLevel());
+            return MenuNode.GetMenuItemParentList(GetMenuItemDetailsLevel());
         }
     }
     

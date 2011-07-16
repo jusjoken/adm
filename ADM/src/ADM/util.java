@@ -24,15 +24,15 @@ public class util {
 
     public static String Version = "0.36";
     private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
-    private static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
+    public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
+    public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
-    private static final String PropertyBackupFile = "ADMbackup.properties";
-    private static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
-    private static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
+    public static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
+    public static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
     private static final String SageBGVariablesListFile = "ADMSageBGVariables.properties";
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
     private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
@@ -41,10 +41,7 @@ public class util {
     public static final String ActionTypeDefault = "DoNothing";
     public static final String ButtonTextDefault = "<Not defined>";
     public static final String SortStyleDefault = "xNaturalOrder";
-    private static final char[] symbols = new char[36];
-    private static final Random random = new Random();
     public static Boolean ADMInitComplete = false;
-    public static MenuItem[] MenuList = new MenuItem[8];
     public static Properties SageBGVariablesProps = new Properties();
     public static Collection<String> SageBGVariablesKeys = new LinkedHashSet<String>();
     public static Collection<String> SageSubMenusKeys = new LinkedHashSet<String>();
@@ -52,6 +49,8 @@ public class util {
     public static Collection<String> SageSubMenusLevel1Keys = new LinkedHashSet<String>();
     public static Properties SageSubMenusLevel2Props = new Properties();
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
+    public static final char[] symbols = new char[36];
+    
 
     public static void InitADM(){
         
@@ -71,7 +70,7 @@ public class util {
                     System.out.println("ADM: InitADM - error creating '" + ADMLocation + "'" + ex.getMessage());
                 }
             
-            LoadMenuItemsFromSage();
+            MenuNode.LoadMenuItemsFromSage();
             
             //also load the BGVariables for BG Images on Top Level Menus
             LoadSageBGVariablesList();
@@ -102,322 +101,86 @@ public class util {
     
     public static void ClearAll(){
 
-        MenuNode.Test();
+//        MenuNode.Test();
         
-//        //backup existing MenuItems before clearing settings and menus
-//        if (MenuItem.MenuItemList.size()>0){
-//            ExportMenuItems(PropertyBackupFile);
-//        }
+        //backup existing MenuItems before clearing settings and menus
+        if (MenuNode.MenuNodeList.size()>0){
+            MenuNode.ExportMenuItems(PropertyBackupFile);
+        }
+        
+        //clear all the Sage property settings for ADM
+        System.out.println("ADM: ClearAll: clear Sage Properties");
+        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
+        ADMInitComplete = Boolean.FALSE;
+        System.out.println("ADM: ClearAll: load default menus");
+        MenuNode.LoadMenuItemDefaults();
+        System.out.println("ADM: ClearAll: initialize settings");
+        InitADM();
+        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
+        
+    }
+
+    
+//    public static void DeleteMenuItemChildren(String Name){
 //        
-//        //clear all the Sage property settings for ADM
-//        System.out.println("ADM: ClearAll: clear Sage Properties");
-//        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
-//        ADMInitComplete = Boolean.FALSE;
-//        System.out.println("ADM: ClearAll: load default menus");
-//        LoadMenuItemDefaults();
-//        System.out.println("ADM: ClearAll: initialize settings");
-//        InitADM();
-//        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
-        
-    }
-    
-    //saves all MenuItems to Sage properties
-    public static void SaveMenuItemsToSage(){
-        String PropLocation = "";
-        
-        //clean up existing MenuItems from the SageTV properties file before writing the new ones
-        sagex.api.Configuration.RemovePropertyAndChildren(SagePropertyLocation);
-        
-        //iterate through all the MenuItems and save to SageTV properties
-        Iterator<Entry<String,MenuItem>> itr = MenuItem.MenuItemList.entrySet().iterator(); 
-        while (itr.hasNext()) {
-            Entry<String,MenuItem> entry = itr.next();
-            PropLocation = SagePropertyLocation + entry.getValue().getName();
-            sagex.api.Configuration.SetProperty(PropLocation + "/Action", entry.getValue().getAction());
-            sagex.api.Configuration.SetProperty(PropLocation + "/ActionType", entry.getValue().getActionType());
-            sagex.api.Configuration.SetProperty(PropLocation + "/BGImageFile", entry.getValue().getBGImageFile());
-            sagex.api.Configuration.SetProperty(PropLocation + "/ButtonText", entry.getValue().getButtonText());
-            sagex.api.Configuration.SetProperty(PropLocation + "/Name", entry.getValue().getName());
-            sagex.api.Configuration.SetProperty(PropLocation + "/Parent", entry.getValue().getParent());
-            sagex.api.Configuration.SetProperty(PropLocation + "/SortKey", entry.getValue().getSortKey().toString());
-            sagex.api.Configuration.SetProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
-            sagex.api.Configuration.SetProperty(PropLocation + "/HasSubMenu", entry.getValue().getHasSubMenu().toString());
-            sagex.api.Configuration.SetProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
-            sagex.api.Configuration.SetProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
-            //System.out.println("ADM: SaveMenuItemsToSage: saved - '" + entry.getValue().getName() + "'");
-        }         
-        System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuItem.MenuItemList.size() + " MenuItems");
-        
-        return;
-    }
-    
-    public static void DeleteMenuItem(String Name){
-        //store the parent for later cleanup
-        String OldParent = MenuItem.GetMenuItemParent(Name);
-        //do all the deletes first
-        DeleteMenuItemChildren(Name);
-        //Make sure there is still one default Menu Item
-        MenuItem.ValidateSubMenuDefault(OldParent);
-        //rebuild any lists
-        SaveMenuItemsToSage();
-        LoadMenuItemsFromSage();
-        System.out.println("ADM: DeleteMenuItem: deleted '" + Name + "' and reloaded Menus");
-    }
-    
-    public static void DeleteMenuItemChildren(String Name){
-        
-        //find all submenus if any and delete them first
-        Collection<String> Children = MenuItem.GetMenuItemNameList(Name, Boolean.TRUE);
-        for (String Child:Children){
-            DeleteMenuItemChildren(Child);
-        }
-        //delete this item
-        MenuItem.MenuItemList.remove(Name);
-        System.out.println("ADM: DeleteMenuItemChildren: deleted '" + Name + "' and '" + Children.size() + "' Children");
-    }
-    
-    public static void DeleteAllMenuItems(){
+//        //find all submenus if any and delete them first
+//        Collection<String> Children = MenuItem.GetMenuItemNameList(Name, Boolean.TRUE);
+//        for (String Child:Children){
+//            DeleteMenuItemChildren(Child);
+//        }
+//        //delete this item
+//        MenuItem.MenuItemList.remove(Name);
+//        System.out.println("ADM: DeleteMenuItemChildren: deleted '" + Name + "' and '" + Children.size() + "' Children");
+//    }
+//    
 
-        //backup existing MenuItems before deleting
-        if (MenuItem.MenuItemList.size()>0){
-            ExportMenuItems(PropertyBackupFile);
-        }
-        
-        //clean up existing MenuItems from the SageTV properties file
-        sagex.api.Configuration.RemovePropertyAndChildren(SagePropertyLocation);
-        MenuItem.MenuItemList.clear();
-        
-        //Create 1 new MenuItem at the TopMenu level
-        NewMenuItem(TopMenu, 1, 1) ;
-
-        //now load the properties from the Sage properties file
-        LoadMenuItemsFromSage();
-
-        System.out.println("ADM: DeleteAllMenuItems: completed");
-    }
-    
-    public static String NewMenuItem(String Parent, Integer SortKey, Integer Level){
-        String tMenuItemName = GetNewMenuItemName();
-
-        //Create a new MenuItem with defaults
-        MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-        MenuItem.SetMenuItemAction(tMenuItemName,null);
-        MenuItem.SetMenuItemActionType(tMenuItemName,ActionTypeDefault);
-        MenuItem.SetMenuItemBGImageFile(tMenuItemName,ListNone);
-        MenuItem.SetMenuItemButtonText(tMenuItemName,ButtonTextDefault);
-        MenuItem.SetMenuItemName(tMenuItemName);
-        MenuItem.SetMenuItemParent(tMenuItemName,Parent);
-        MenuItem.SetMenuItemSortKey(tMenuItemName,SortKey);
-        MenuItem.SetMenuItemSubMenu(tMenuItemName,ListNone);
-        MenuItem.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
-        MenuItem.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
-        MenuItem.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
-        MenuItem.SetMenuItemLevel(tMenuItemName,Level);
-        
-        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "' SortKey = '" + SortKey + "' Level = '" + Level + "'");
-        return tMenuItemName;
-    }
-    
-    public static void LoadMenuItemsFromSage(){
-        String PropLocation = "";
-        
-        //find all MenuItem Name entries from the SageTV properties file
-        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(SagePropertyLocation);
-        
-        if (MenuItemNames.length>0){
-            //clear the existing MenuItems from the list
-            MenuItem.MenuItemList.clear();
-            
-            //load MenuItems
-            for (String tMenuItemName : MenuItemNames){
-                PropLocation = SagePropertyLocation + tMenuItemName;
-                MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
-                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", ActionTypeDefault));
-                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
-                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", ButtonTextDefault));
-                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
-                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
-                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
-                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
-                NewMenuItem.setHasSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
-                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
-                NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
-                //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
-            }
-
-        }else{
-            //load a default Menu here.  Load a Diamond Menu if Diamond if active
-            System.out.println("ADM: LoadMenuItemsFromSage: no MenuItems found - loading default menu.");
-            LoadMenuItemDefaults();
-        }
-        System.out.println("ADM: LoadMenuItemsFromSage: loaded " + MenuItem.MenuItemList.size() + " MenuItems");
-        
-        //now that the menus are loaded - set a level for each menu item and store it
-        MenuItem.SetMenuItemLevels();
-        //now ensure SortKeys are in order
-        FixSortOrder();
-        
-        return;
-    }
-
-    public static void LoadMenuItemDefaults(){
-        //load default MenuItems from one or more default .properties file
-        String DefaultPropFile = "ADMDefault.properties";
-        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
-        String DefaultsFullPath = ADMDefaultsLocation + File.separator + DefaultPropFile;
-        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
-        String DiamondMenuVideos = "admSageTVVideos";
-        String DiamondMenuMovies = "admDiamondMovies";
-        
-        
-        // check to see if the Diamond Plugin is installed
-        if (Diamond.IsDiamond()){
-            DefaultsFullPath = ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
-        }
-        ImportMenuItems(DefaultsFullPath);
-        
-        //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
-        if (Diamond.IsDiamond()){
-            //admSageTVVideos
-            if ("true".equals(sagex.api.Configuration.GetProperty(DiamondVideoMenuCheckProp, "false"))){
-                //show the Videos Menu
-                MenuItem.SetMenuItemIsActive(DiamondMenuMovies, Boolean.TRUE);
-                MenuItem.SetMenuItemIsActive(DiamondMenuVideos, Boolean.FALSE);
-            }else{
-                //show the Movies Menu
-                MenuItem.SetMenuItemIsActive(DiamondMenuMovies, Boolean.FALSE);
-                MenuItem.SetMenuItemIsActive(DiamondMenuVideos, Boolean.TRUE);
-            }
-            
-        }
-        
-        System.out.println("ADM: LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
-        
-        
-//        //use the following until the Load from properties is coded.
-//        Object tObject;
+   
+//    public static void LoadMenuItemsFromSage(){
+//        String PropLocation = "";
+//        
+//        //find all MenuItem Name entries from the SageTV properties file
+//        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(SagePropertyLocation);
+//        
+//        if (MenuItemNames.length>0){
+//            //clear the existing MenuItems from the list
+//            MenuItem.MenuItemList.clear();
+//            
+//            //load MenuItems
+//            for (String tMenuItemName : MenuItemNames){
+//                PropLocation = SagePropertyLocation + tMenuItemName;
+//                MenuItem NewMenuItem = new MenuItem(tMenuItemName);
+//                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
+//                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", ActionTypeDefault));
+//                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
+//                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", ButtonTextDefault));
+//                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
+//                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
+//                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
+//                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
+//                NewMenuItem.setHasSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
+//                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
+//                NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
+//                //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+//            }
 //
-//        tObject = new MenuItem("xTopMenu", "xItemTV",1, "TV", true,"xSubmenuTV", "ExecuteWidget", "OPUS4A-174600", "gTVBackgroundImage", false,true);
-//        tObject = new MenuItem("xTopMenu", "xItemVideos",2, "Videos SubMenu", true,"xSubmenuVideos", "ExecuteWidget", "OPUS4A-174615", "gVideoBackgroundImage", false,true);
-//        tObject = new MenuItem("xTopMenu", "xItemMusic",3, "Music", true, "xSubmenuMusic", "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
-//        tObject = new MenuItem("xTopMenu", "xItemTestTop",4, "Test 1", true, null, "ExecuteWidget", "OPUS4A-174613", "gMusicBackgroundImage", false,true);
-//        tObject = new MenuItem("xTopMenu", "xItemPhotos",5, "Photos", true,"xSubmenuPhotos", "ExecuteWidget", "OPUS4A-174617", "gPhotoBackgroundImage", false,true);
-//        tObject = new MenuItem("xTopMenu", "xDetailedSetup",6, "Detailed Setup",false, null, "ExecuteWidget", "OPUS4A-174758", "gSettingsBackgroundImage", false,true);
-//        tObject = new MenuItem("xItemTest", "xItemTestSub1",7, "Test 1 - 1", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174604", "gTVBackgroundImage", false,true);
-//        tObject = new MenuItem("xItemTest", "xItemTestSub2",8, "Test 1 - 2", true,"xSubmenuTVScheduleRecord", "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", true,true);
-//        tObject = new MenuItem("xItemTest", "xItemTestSub3",9, "Test 1 - 3", true,"xSubmenuTVScheduleRecord", null, null, "gTVBackgroundImage", false,true);
-//        tObject = new MenuItem("xItemTest", "xItemTestSub4",10, "Test 1 - 4", false, null, "ExecuteWidget", "OPUS4A-174617", "gTVBackgroundImage", false,true);
-        
-    }
+//        }else{
+//            //load a default Menu here.  Load a Diamond Menu if Diamond if active
+//            System.out.println("ADM: LoadMenuItemsFromSage: no MenuItems found - loading default menu.");
+//            LoadMenuItemDefaults();
+//        }
+//        System.out.println("ADM: LoadMenuItemsFromSage: loaded " + MenuItem.MenuItemList.size() + " MenuItems");
+//        
+//        //now that the menus are loaded - set a level for each menu item and store it
+//        MenuItem.SetMenuItemLevels();
+//        //now ensure SortKeys are in order
+//        FixSortOrder();
+//        
+//        return;
+//    }
 
-    public static Boolean ImportMenuItems(String ImportPath){
+//DONE TO HERE //    
+//IN PROGRESS TO HERE //    
 
-        if (ImportPath==null){
-            System.out.println("ADM: ImportMenuItems: null ImportPath passed.");
-            return false;
-        }
-        
-        Properties MenuItemProps = new Properties();
-        
-        //read the properties from the properties file
-        try {
-            FileInputStream in = new FileInputStream(ImportPath);
-            try {
-                MenuItemProps.load(in);
-                in.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: ImportMenuItems: IO exception inporting menus " + util.class.getName() + ex);
-                return false;
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: ImportMenuItems: file not found inporting menus " + util.class.getName() + ex);
-            return false;
-        }
-        
-        //backup existing MenuItems before processing the import if any exist
-        if (MenuItem.MenuItemList.size()>0){
-            ExportMenuItems(PropertyBackupFile);
-        }
-        
-        if (MenuItemProps.size()>0){
-            //clean up existing MenuItems from the SageTV properties file before writing the new ones
-            sagex.api.Configuration.RemovePropertyAndChildren(SagePropertyLocation);
-            
-            //load MenuItems from the properties file and write to the Sage properties
-            for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
-                sagex.api.Configuration.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
-                
-                //System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
-            }
-            
-            //now load the properties from the Sage properties file
-            LoadMenuItemsFromSage();
-
-        }
-        System.out.println("ADM: ImportMenuItems: completed for '" + ImportPath + "'");
-        return true;
-    }
-    
-    public static void ExportMenuItems(String ExportFile){
-        String PropLocation = "";
-        String ExportFilePath = ADMLocation + File.separator + ExportFile;
-        //System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
-        
-        //iterate through all the MenuItems and save to a Property Collection
-        Properties MenuItemProps = new Properties();
-
-        Iterator<Entry<String,MenuItem>> itr = MenuItem.MenuItemList.entrySet().iterator(); 
-        while (itr.hasNext()) {
-            Entry<String,MenuItem> entry = itr.next();
-            PropLocation = SagePropertyLocation + entry.getValue().getName();
-            if (entry.getValue().getAction()!=null){
-                MenuItemProps.setProperty(PropLocation + "/Action",entry.getValue().getAction());
-            }
-            if (entry.getValue().getActionType()!=null){
-                MenuItemProps.setProperty(PropLocation + "/ActionType", entry.getValue().getActionType());
-            }
-            if (entry.getValue().getBGImageFile()!=null){
-                MenuItemProps.setProperty(PropLocation + "/BGImageFile", entry.getValue().getBGImageFile());
-            }
-            if (entry.getValue().getButtonText()!=null){
-                MenuItemProps.setProperty(PropLocation + "/ButtonText", entry.getValue().getButtonText());
-            }
-            MenuItemProps.setProperty(PropLocation + "/Name", entry.getValue().getName());
-            if (entry.getValue().getParent()!=null){
-                MenuItemProps.setProperty(PropLocation + "/Parent", entry.getValue().getParent());
-            }
-            if (entry.getValue().getSortKey()!=null){
-                MenuItemProps.setProperty(PropLocation + "/SortKey", entry.getValue().getSortKey().toString());
-            }
-            if (entry.getValue().getSubMenu()!=null){
-                MenuItemProps.setProperty(PropLocation + "/SubMenu", entry.getValue().getSubMenu());
-            }
-            MenuItemProps.setProperty(PropLocation + "/HasSubMenu", entry.getValue().getHasSubMenu().toString());
-            MenuItemProps.setProperty(PropLocation + "/IsDefault", entry.getValue().getIsDefault().toString());
-            MenuItemProps.setProperty(PropLocation + "/IsActive", entry.getValue().getIsActive().toString());
-            //System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
-        }         
-
-        //if the export file exists then delete it before exporting
-        
-        //write the properties to the properties file
-        try {
-            FileOutputStream out = new FileOutputStream(ExportFilePath);
-            try {
-                MenuItemProps.store(out, PropertyComment);
-                out.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
-        }
-
-        System.out.println("ADM: ExportMenuItems: exported " + MenuItem.MenuItemList.size() + " MenuItems");
-        
-        return;
-    }
     
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
@@ -440,7 +203,7 @@ public class util {
         //Determine valid Edit Options for the passed in MenuItem Name
         EditOptions.add("admEditMenuItem"); //Edit current Menu Item
         EditOptions.add("admAddMenuItem"); //Add current Menu Item below
-        if (MenuItem.GetMenuItemLevel(Name)<3){
+        if (MenuNode.GetMenuItemLevel(Name)<3){
             EditOptions.add("admAddSubMenuItem"); //Add SubMenu to current Menu Item
         }
         EditOptions.add("admDeleteMenuItem"); //Delete current Menu Item
@@ -596,15 +359,7 @@ public class util {
     }
 
     public static Boolean IsSageSubMenu(String SubMenu){
-        return !MenuItem.MenuItemList.containsKey(SubMenu);
-//        if (SubMenu.startsWith("adm", 0)){
-//            System.out.println("ADM: IsSageSubMenu: SubMenu '" + SubMenu + "' NOT a Sage Submenu");
-//            return Boolean.FALSE;
-//        }else{
-//            System.out.println("ADM: IsSageSubMenu: SubMenu '" + SubMenu + "' IS a Sage Submenu");
-//            return Boolean.TRUE;
-//        }
-        //return SageSubMenusKeys.contains(SubMenu);
+        return !MenuNode.MenuNodeList.containsKey(SubMenu);
     }
 
     public static Boolean IsAdvancedMode(){
@@ -663,24 +418,6 @@ public class util {
         return MyUIContext;
     }
 
-    public static String GetNewMenuItemName(){
-        Boolean UniqueName = Boolean.FALSE;
-        String NewName = null;
-        while (!UniqueName){
-            NewName = GenerateRandomadmName();
-            //check to see that the name is unique from other existing MenuItemNames
-            UniqueName = !MenuItem.MenuItemList.containsKey(NewName);
-        }
-        return NewName;
-    }
-
-    private static String GenerateRandomadmName(){
-        char[] buf = new char[10];
-        for (int idx = 0; idx < buf.length; ++idx)
-            buf[idx] = symbols[random.nextInt(symbols.length)];
-        return "adm" + new String(buf);
-    }
-
     public static Float[] GetMenuInsets(){
         Float[] Insets = new Float[]{0f,0f,0f,0f};
         Float[] DiamondInsets = new Float[]{0f,0f,0.015f,0f};
@@ -693,17 +430,17 @@ public class util {
         }
     }
 
-    public static void FixSortOrder(){
-        Integer Counter = 0;
-        for (String Item : MenuItem.GetMenuItemSortedList(Boolean.FALSE)){
-            ++Counter;
-            if (!MenuItem.GetMenuItemSortKey(Item).equals(Counter)){
-                MenuItem.SetMenuItemSortKeyNoCheck(Item, Counter);
-                System.out.println("ADM: FixSortOrder: Name '" + Item + "' changed to SortKey = '" + Counter + "'");
-            }
-        }
-    }
-
+//    public static void FixSortOrder(){
+//        Integer Counter = 0;
+//        for (String Item : MenuItem.GetMenuItemSortedList(Boolean.FALSE)){
+//            ++Counter;
+//            if (!MenuItem.GetMenuItemSortKey(Item).equals(Counter)){
+//                MenuItem.SetMenuItemSortKeyNoCheck(Item, Counter);
+//                System.out.println("ADM: FixSortOrder: Name '" + Item + "' changed to SortKey = '" + Counter + "'");
+//            }
+//        }
+//    }
+//
     public static String EvaluateAttribute(String Attribute){
         System.out.println("ADM: EvaluateAttribute: Attribute = '" + Attribute + "'");
         Object[] passvalue = new Object[1];
@@ -729,15 +466,15 @@ public class util {
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
             System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
-            return MenuItem.GetSubMenuDefault(SubMenu);
+            return MenuNode.GetSubMenuDefault(SubMenu);
         }else{
             //check that the focus item stored in Sage is still valid
-            if (MenuItem.IsSubMenuItem(SubMenu, LastFocus)){
+            if (MenuNode.IsSubMenuItem(SubMenu, LastFocus)){
                 System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
                 return LastFocus;
             }else{
                 System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
-                return MenuItem.GetSubMenuDefault(SubMenu);
+                return MenuNode.GetSubMenuDefault(SubMenu);
             }
         }
     }
