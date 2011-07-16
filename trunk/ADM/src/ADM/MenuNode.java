@@ -5,8 +5,10 @@
 package ADM;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -341,19 +343,20 @@ public class MenuNode {
         this.SortKey = tSortKey;
     }
     
-    @SuppressWarnings("unchecked")
     public static void SortKeyUpdate(){
-        //update all the sortkey values to the index
-        Enumeration<DefaultMutableTreeNode> en = root.preorderEnumeration();
+        SortKeyUpdate(root);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static void SortKeyUpdate(DefaultMutableTreeNode aParent){
+        //update all the sortkey values to the index starting from the aParent
+        Enumeration<DefaultMutableTreeNode> en = aParent.preorderEnumeration();
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            System.out.println("ADM: 1 SortKeyUpdate: Child = '" + child + "'"  );
             if (!tMenu.Name.equals(util.TopMenu)){
                 tMenu.SortKey = child.getParent().getIndex(child);
-                System.out.println("ADM: 2 SortKeyUpdate: Child = '" + child + "'"  );
                 String PropLocation = util.SagePropertyLocation + tMenu.Name + "/" + "SortKey";
-                System.out.println("ADM: 3 SortKeyUpdate: Child = '" + child + "'"  );
                 sagex.api.Configuration.SetProperty(PropLocation, tMenu.SortKey.toString());
                 System.out.println("ADM: SortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
             }
@@ -409,6 +412,125 @@ public class MenuNode {
         }
     }
 
+    //returns the full list of ALL menu items regardless of parent
+    public static Collection<String> GetMenuItemNameList(){
+        return GetMenuItemNameList(util.TopMenu);
+    }
+    
+    //returns only menu items for a specific parent that are active
+    public static Collection<String> GetMenuItemNameList(String Parent){
+        return GetMenuItemNameList(Parent, Boolean.FALSE);
+    }
+
+    //returns menu items for a specific parent
+    @SuppressWarnings("unchecked")
+    public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
+        Collection<String> bNames = new LinkedHashSet<String>();
+        Enumeration<DefaultMutableTreeNode> en = MenuNodeList.get(Parent).NodeItem.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            if (tMenu.IsActive==true || IncludeInactive==true){
+                bNames.add(tMenu.Name);
+            }
+        }         
+        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
+        return bNames;
+    }
+
+    public static Collection<String> GetParentListforMenuItem(String Name){
+        System.out.println("ADMTemp: GetMenuItemSubMenu: for '" + Name + "' ='" + GetMenuItemSubMenu(Name) + "'");
+        if (Name.equals(GetMenuItemSubMenu(Name)) || GetMenuItemSubMenu(Name)==null){
+            return GetMenuItemParentList();
+        }else{
+            return GetMenuItemParentList(GetMenuItemLevel(Name));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static Collection<String> GetMenuItemParentList(){
+        Collection<String> ValidParentList = new LinkedHashSet<String>();
+        Enumeration<DefaultMutableTreeNode> en = root.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            if (tMenu.Level<3){
+                ValidParentList.add(tMenu.Name);
+            }
+        }         
+        System.out.println("ADM: GetMenuItemParentList: '" + ValidParentList + "'");
+        return ValidParentList;
+    }
+    
+    //get valid parent list for only 1 specific level
+    @SuppressWarnings("unchecked")
+    public static Collection<String> GetMenuItemParentList(Integer SpecificLevel){
+        Collection<String> ValidParentList = new LinkedHashSet<String>();
+        Enumeration<DefaultMutableTreeNode> en = root.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            if (tMenu.Level==SpecificLevel-1){
+                ValidParentList.add(tMenu.Name);
+            }
+        }         
+        System.out.println("ADM: GetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
+        return ValidParentList;
+    }
+    
+    //get the specific format based on the Sort style
+    public static String GetMenuItemButtonTextbyStyle(String Name, String SortStyle){
+        String SubMenuText = GetMenuItemSubMenu(Name);
+        if (SubMenuText!=null){
+            if (SubMenuText.equals(Name)){
+                SubMenuText = "";
+            }else{
+                SubMenuText = " <" + util.GetSubMenuListButtonText(SubMenuText, GetMenuItemLevel(Name),Boolean.TRUE) + ">";
+            }
+        }else{
+            SubMenuText = "";
+        }
+        String DefaultIndicator = "";
+        if (MenuNodeList.get(Name).IsDefault){
+            DefaultIndicator = "* ";
+        }
+        if (SortStyle.equals(util.SortStyleDefault)){
+            //return a prefix padded string
+            return GetMenuItemButtonTextFormatted(Name,"     ") + DefaultIndicator + SubMenuText;
+        }else{
+            //return a / delimited path
+            return GetMenuItemButtonTextFormatted(Name,null) + DefaultIndicator + SubMenuText;
+        }
+    }
+
+    //return a path delimited by "/" or the name with prefix padding
+    public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
+        if (PrefixPadding==null){
+            return GetPath(MenuNodeList.get(Name).NodeItem);
+        }else{
+            return PrefixPadding + MenuNodeList.get(Name).ButtonText;
+        }
+    }
+
+    public static int GetMenuItemCount(){
+        return GetMenuItemCount(null);
+    }
+    
+    //Get the count of MenuItems for a parent that are active
+    public static int GetMenuItemCount(String Parent){
+        Collection<String> bNames = GetMenuItemNameList(Parent);
+        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bNames.size());
+        return bNames.size();
+    }
+
+    public static void Execute(String Name){
+        Action.Execute(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+    }
+    
+    public static String GetActionAttributeButtonText(String Name){
+        return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+    }
+
     public static void LoadMenuItemsFromSage(){
         String PropLocation = "";
         
@@ -424,6 +546,7 @@ public class MenuNode {
             MenuNode rootNode = new MenuNode(util.TopMenu);
             root = new DefaultMutableTreeNode(rootNode);
             rootNode.NodeItem = root;
+            rootNode.ButtonText = "Top Level";
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){

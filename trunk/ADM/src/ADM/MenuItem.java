@@ -653,8 +653,6 @@ public class MenuItem {
         return Boolean.FALSE;
     }
     
-//DONE TO HERE //    
-//IN PROGRESS TO HERE //    
     final void AddMenuItemtoList(MenuItem NewMenuItem){
         MenuItemList.put(NewMenuItem.Name, NewMenuItem);
     }
@@ -872,5 +870,7 @@ public class MenuItem {
     public static String GetActionAttributeButtonText(String Name){
         return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
     }
+//DONE TO HERE //    
+//IN PROGRESS TO HERE //    
     
 }
