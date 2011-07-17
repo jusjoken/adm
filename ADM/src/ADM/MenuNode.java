@@ -39,7 +39,6 @@ public class MenuNode {
     private Boolean IsActive = true;
     private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
-    private Integer Level = 0;
     private DefaultMutableTreeNode NodeItem;
     public static Integer SortKeyCounter = 0;
     public static Map<String,MenuNode> MenuNodeList = new LinkedHashMap<String,MenuNode>();
@@ -147,7 +146,7 @@ public class MenuNode {
         if (MenuNodeList.get(Name).ButtonText.equals(util.ButtonTextDefault)){
             return "";
         }else{
-            return MenuNodeList.get(Name).GetMenuItemButtonText(Name);
+            return GetMenuItemButtonText(Name);
         }
     }
 
@@ -308,6 +307,35 @@ public class MenuNode {
         }
     }
 
+    //moves the MenuNode to another parent if valid
+    public static void SetMenuItemParent(String Name, String NewParent){
+        //make sure the parent is not the MenuItem itself
+        if(Name.equals(NewParent) || NewParent.equals(MenuNodeList.get(Name).Parent) || Name.equals(util.TopMenu)){
+            //do nothing as changing the parent here is invalid
+        }else{
+            String OldParent = MenuNodeList.get(Name).NodeItem.getParent().toString();
+            
+            MenuNodeList.get(OldParent).NodeItem.remove(MenuNodeList.get(Name).NodeItem);
+            MenuNodeList.get(NewParent).NodeItem.add(MenuNodeList.get(Name).NodeItem);
+            Save(Name, "Parent", NewParent);
+
+            //update the sort keys for the old and new parents
+            SortKeyUpdate(MenuNodeList.get(OldParent).NodeItem);
+            SortKeyUpdate(MenuNodeList.get(NewParent).NodeItem);
+
+            //check the new parent and set it's SubMenu properly
+            if (!NewParent.equals(util.TopMenu)){
+                SetMenuItemSubMenu(NewParent,util.ListNone);
+                SetMenuItemHasSubMenu(NewParent, Boolean.TRUE);
+            }
+            
+            //make sure the old and new SubMenus have a single default item
+            ValidateSubMenuDefault(OldParent);
+            ValidateSubMenuDefault(NewParent);
+            System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + NewParent + "'");
+        }
+    }
+    
     public static Integer GetMenuItemSortKey(String Name){
         return MenuNodeList.get(Name).SortKey;
     }
@@ -502,7 +530,7 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            if (tMenu.Level<3){
+            if (child.getLevel()<3){
                 ValidParentList.add(tMenu.Name);
             }
         }         
@@ -518,7 +546,7 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            if (tMenu.Level==SpecificLevel-1){
+            if (child.getLevel()==SpecificLevel-1){
                 ValidParentList.add(tMenu.Name);
             }
         }         
@@ -554,14 +582,13 @@ public class MenuNode {
     //return a path delimited by "/" or the name with prefix padding
     public static String GetMenuItemButtonTextFormatted(String Name, String PrefixPadding){
         if (PrefixPadding==null){
-            return GetPath(MenuNodeList.get(Name).NodeItem);
-        }else{
-            String tPadded = "";
-            if(MenuNodeList.get(Name).NodeItem.getLevel()==2){
-                tPadded = PrefixPadding;
-            }else if(MenuNodeList.get(Name).NodeItem.getLevel()==3){
-                tPadded = PrefixPadding + PrefixPadding;
+            if (Name.equals(util.TopMenu)){
+                return MenuNodeList.get(Name).ButtonText;
+            }else{
+                return GetPath(MenuNodeList.get(Name).NodeItem);
             }
+        }else{
+            String tPadded = "" + util.repeat(PrefixPadding,MenuNodeList.get(Name).NodeItem.getLevel()-1 );
             return tPadded + MenuNodeList.get(Name).ButtonText;
         }
     }
@@ -601,7 +628,7 @@ public class MenuNode {
                 NewMenuItem.ButtonText = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/ButtonText", util.ButtonTextDefault);
                 NewMenuItem.Name = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/Name", tMenuItemName);
                 NewMenuItem.Parent = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/Parent", "xTopMenu");
-                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", null));
+                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", "0"));
                 NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", null);
                 NewMenuItem.HasSubMenu = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/HasSubMenu", "false"));
                 NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", "false"));
@@ -1002,6 +1029,8 @@ public class MenuNode {
             MenuNodeList.get(Name).IsDefault = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("SubMenu")){
             MenuNodeList.get(Name).SubMenu = Setting;
+        }else if (PropType.equals("Parent")){
+            MenuNodeList.get(Name).Parent = Setting;
         }
         System.out.println("ADM: Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
     }
