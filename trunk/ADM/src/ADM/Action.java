@@ -376,12 +376,12 @@ public class Action {
 
     public static String GetSageTVRecordingViewsButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
-        return sagex.api.Configuration.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
+        return sagex.api.Configuration.GetProperty(util.GetMyUIContext(),SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
     public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
         //rename the specified TV Recording View 
-        sagex.api.Configuration.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
     }
     
 }

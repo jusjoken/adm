@@ -101,8 +101,6 @@ public class util {
     
     public static void ClearAll(){
 
-//        MenuNode.Test();
-        
         //backup existing MenuItems before clearing settings and menus
         if (MenuNode.MenuNodeList.size()>0){
             MenuNode.ExportMenuItems(PropertyBackupFile);
@@ -120,68 +118,6 @@ public class util {
         
     }
 
-    
-//    public static void DeleteMenuItemChildren(String Name){
-//        
-//        //find all submenus if any and delete them first
-//        Collection<String> Children = MenuItem.GetMenuItemNameList(Name, Boolean.TRUE);
-//        for (String Child:Children){
-//            DeleteMenuItemChildren(Child);
-//        }
-//        //delete this item
-//        MenuItem.MenuItemList.remove(Name);
-//        System.out.println("ADM: DeleteMenuItemChildren: deleted '" + Name + "' and '" + Children.size() + "' Children");
-//    }
-//    
-
-   
-//    public static void LoadMenuItemsFromSage(){
-//        String PropLocation = "";
-//        
-//        //find all MenuItem Name entries from the SageTV properties file
-//        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(SagePropertyLocation);
-//        
-//        if (MenuItemNames.length>0){
-//            //clear the existing MenuItems from the list
-//            MenuItem.MenuItemList.clear();
-//            
-//            //load MenuItems
-//            for (String tMenuItemName : MenuItemNames){
-//                PropLocation = SagePropertyLocation + tMenuItemName;
-//                MenuItem NewMenuItem = new MenuItem(tMenuItemName);
-//                NewMenuItem.setAction(sagex.api.Configuration.GetProperty(PropLocation + "/Action", null));
-//                NewMenuItem.setActionType(sagex.api.Configuration.GetProperty(PropLocation + "/ActionType", ActionTypeDefault));
-//                NewMenuItem.setBGImageFile(sagex.api.Configuration.GetProperty(PropLocation + "/BGImageFile", null));
-//                NewMenuItem.setButtonText(sagex.api.Configuration.GetProperty(PropLocation + "/ButtonText", ButtonTextDefault));
-//                NewMenuItem.setName(sagex.api.Configuration.GetProperty(PropLocation + "/Name", tMenuItemName));
-//                NewMenuItem.setParent(sagex.api.Configuration.GetProperty(PropLocation + "/Parent", "xTopMenu"));
-//                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(PropLocation + "/SortKey", null));
-//                NewMenuItem.setSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/SubMenu", null));
-//                NewMenuItem.setHasSubMenu(sagex.api.Configuration.GetProperty(PropLocation + "/HasSubMenu", "false"));
-//                NewMenuItem.setIsDefault(sagex.api.Configuration.GetProperty(PropLocation + "/IsDefault", "false"));
-//                NewMenuItem.setIsActive(sagex.api.Configuration.GetProperty(PropLocation + "/IsActive", "true"));
-//                //System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
-//            }
-//
-//        }else{
-//            //load a default Menu here.  Load a Diamond Menu if Diamond if active
-//            System.out.println("ADM: LoadMenuItemsFromSage: no MenuItems found - loading default menu.");
-//            LoadMenuItemDefaults();
-//        }
-//        System.out.println("ADM: LoadMenuItemsFromSage: loaded " + MenuItem.MenuItemList.size() + " MenuItems");
-//        
-//        //now that the menus are loaded - set a level for each menu item and store it
-//        MenuItem.SetMenuItemLevels();
-//        //now ensure SortKeys are in order
-//        FixSortOrder();
-//        
-//        return;
-//    }
-
-//DONE TO HERE //    
-//IN PROGRESS TO HERE //    
-
-    
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
@@ -363,7 +299,7 @@ public class util {
     }
 
     public static Boolean IsAdvancedMode(){
-        if ("true".equals(sagex.api.Configuration.GetProperty(AdvancedModePropertyLocation, "false"))){
+        if ("true".equals(sagex.api.Configuration.GetProperty(MyUIContext,AdvancedModePropertyLocation, "false"))){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
@@ -430,17 +366,6 @@ public class util {
         }
     }
 
-//    public static void FixSortOrder(){
-//        Integer Counter = 0;
-//        for (String Item : MenuItem.GetMenuItemSortedList(Boolean.FALSE)){
-//            ++Counter;
-//            if (!MenuItem.GetMenuItemSortKey(Item).equals(Counter)){
-//                MenuItem.SetMenuItemSortKeyNoCheck(Item, Counter);
-//                System.out.println("ADM: FixSortOrder: Name '" + Item + "' changed to SortKey = '" + Counter + "'");
-//            }
-//        }
-//    }
-//
     public static String EvaluateAttribute(String Attribute){
         System.out.println("ADM: EvaluateAttribute: Attribute = '" + Attribute + "'");
         Object[] passvalue = new Object[1];
@@ -458,11 +383,11 @@ public class util {
     //Save the current item that is focused for later retrieval
     public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
         System.out.println("ADM: SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
-        sagex.api.Configuration.SetProperty(SageFocusPropertyLocation + SubMenu, FocusItem);
+        sagex.api.Configuration.SetProperty(MyUIContext,SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
     public static String GetLastFocusForSubMenu(String SubMenu){
-        String LastFocus = sagex.api.Configuration.GetProperty(SageFocusPropertyLocation + SubMenu,OptionNotFound);
+        String LastFocus = sagex.api.Configuration.GetProperty(MyUIContext,SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
             System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
