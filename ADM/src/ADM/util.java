@@ -9,9 +9,12 @@ package ADM;
  * @author jusjoken
  */
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sagex.UIContext;
 import java.util.Properties;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.SortedMap;
@@ -405,5 +408,19 @@ public class util {
        StringBuilder ret = new StringBuilder();
        for(int i = 0;i < times;i++) ret.append(str);
        return ret.toString();
+    }
+
+    //use this to TEST Objects by seeing their member values
+    public static void ListObjectMembers(Object obj){
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true); // if you want to modify private fields
+                System.out.println("ADM: ListObjectMembers: " + field.getName() + " - " + field.getType() + " - " + field.get(obj));
+            } catch (IllegalArgumentException ex) {
+                System.out.println("ADM: ListObjectMembers: ERROR: " + util.class.getName() + ex);
+            } catch (IllegalAccessException ex) {
+                System.out.println("ADM: ListObjectMembers: ERROR: " + util.class.getName() + ex);
+            }
+        }
     }
 }
