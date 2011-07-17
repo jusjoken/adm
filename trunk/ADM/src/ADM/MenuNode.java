@@ -641,7 +641,6 @@ public class MenuNode {
     //saves all MenuItems to Sage properties
     @SuppressWarnings("unchecked")
     public static void SaveMenuItemsToSage(){
-        String PropLocation = "";
         
         //clean up existing MenuItems from the SageTV properties file before writing the new ones
         sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
@@ -653,17 +652,7 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            PropLocation = util.SagePropertyLocation + tMenu.Name;
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Action", tMenu.ActionAttribute);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/ActionType", tMenu.ActionType);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/BGImageFile", tMenu.BGImageFile);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/ButtonText", tMenu.ButtonText);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Name", tMenu.Name);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Parent", tMenu.Parent);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", tMenu.SortKey.toString());
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", tMenu.SubMenu);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsActive", tMenu.IsActive.toString());
+            SaveMenuItemToSage(tMenu);
             //add the item into the MenuNodeList
             MenuNodeList.put(tMenu.Name, tMenu);
         }         
@@ -672,6 +661,21 @@ public class MenuNode {
         return;
     }
  
+    public static void SaveMenuItemToSage(MenuNode tMenu){
+        String PropLocation = "";
+        PropLocation = util.SagePropertyLocation + tMenu.Name;
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Action", tMenu.ActionAttribute);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/ActionType", tMenu.ActionType);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/BGImageFile", tMenu.BGImageFile);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/ButtonText", tMenu.ButtonText);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Name", tMenu.Name);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Parent", tMenu.Parent);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", tMenu.SortKey.toString());
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", tMenu.SubMenu);
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
+        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsActive", tMenu.IsActive.toString());
+    }
+    
     public static void DeleteMenuItem(String Name){
         //store the parent for later cleanup
         String OldParent = GetMenuItemParent(Name);
@@ -708,17 +712,17 @@ public class MenuNode {
     
     public static String NewMenuItem(String Parent, Integer SortKey){
         String tMenuItemName = GetNewMenuItemName();
-        System.out.println("ADM: NewMenuItem 1: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        System.out.println("ADM: NewMenuItem 1: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
 
         //Create a new MenuItem with defaults
         MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
-        System.out.println("ADM: NewMenuItem 2: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        System.out.println("ADM: NewMenuItem 2: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        SaveMenuItemToSage(NewMenuItem);
+        System.out.println("ADM: NewMenuItem 3: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //add the Node to the Tree
-        InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem);
-        System.out.println("ADM: NewMenuItem 3: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
-        //update this parents sortkeys
-        SortKeyUpdate(MenuNodeList.get(Parent).NodeItem);
-        System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem, Boolean.TRUE);
+        System.out.println("ADM: NewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        //util.ListObjectMembers(NewMenuItem);
         return tMenuItemName;
     }
  
@@ -857,13 +861,13 @@ public class MenuNode {
             //check if the current nodes parent exists yet
             if (aNode.Parent.equals(util.TopMenu)){
                 //root.add(new DefaultMutableTreeNode(aNode));
-                InsertNode(root, aNode);
+                InsertNode(root, aNode, Boolean.FALSE);
                 System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
             }else{
                 AddNode(MenuNodeList.get(aNode.Parent));
                 DefaultMutableTreeNode tParent = FindNode(root, aNode.Parent);
                 //tParent.add(new DefaultMutableTreeNode(aNode));
-                InsertNode(tParent, aNode);
+                InsertNode(tParent, aNode, Boolean.FALSE);
                 System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding");
             }
         }else{
@@ -871,10 +875,13 @@ public class MenuNode {
         }
     }
     
-    private static void InsertNode(DefaultMutableTreeNode iParent, MenuNode iNode){
+    private static void InsertNode(DefaultMutableTreeNode iParent, MenuNode iNode, Boolean FixSort){
         //insert the node according to the SortKey value
-        if ( iParent.getChildCount() != 0 ) {
-
+        if ( iParent.getChildCount() == 0 || iNode.SortKey < 0 ) {
+            //no children or forced to bottom (by -1 SortKey) so just do an add
+            InsertNode(iParent,iNode,-1);
+        }else{
+            
             DefaultMutableTreeNode tlastChild = (DefaultMutableTreeNode)iParent.getFirstChild() ;
             MenuNode lastChild = (MenuNode)tlastChild.getUserObject() ;
             //MenuNode newChildA = (MenuNode) iNode ;
@@ -902,9 +909,10 @@ public class MenuNode {
                     InsertNode(iParent,iNode,iParent.getChildCount());
                 }
             }            
-        }else{
-            //no children so just do an add
-            InsertNode(iParent,iNode,-1);
+        }
+        if (FixSort){
+            //fix the sortkeys when a single Insert calls this function
+            SortKeyUpdate(iParent);
         }
     }
     
