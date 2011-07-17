@@ -18,7 +18,7 @@ public class Diamond {
     public static final String PropName="JOrton/CustomViews";
 
 //    public static Object GetCustomViews(){
-//        String views=sagex.api.Configuration.GetProperty(PropName,"");
+//        String views=sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropName,"");
 //        if(views.contains(";")){	
 //            System.out.println("ADM Diamond : GetCustomViews = '" + views.split(";") + "'");
 //            return views.split(";");
@@ -28,7 +28,7 @@ public class Diamond {
 //    }
 //
     public static Collection<String> GetCustomViews(){
-        String views=sagex.api.Configuration.GetProperty(PropName,"");
+        String views=sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropName,"");
         if(views.contains(";")){	
             System.out.println("ADM Diamond : GetCustomViews (split) = '" + views.split(";") + "'");
             return Arrays.asList(views.split(";"));
