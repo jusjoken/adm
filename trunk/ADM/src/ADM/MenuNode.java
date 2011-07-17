@@ -37,7 +37,6 @@ public class MenuNode {
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
     private Boolean IsActive = true;
-    private Boolean HasSubMenu = false;
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
     public static Integer SortKeyCounter = 0;
@@ -46,15 +45,14 @@ public class MenuNode {
 
     public MenuNode(String bName){
         //create a MenuItem with just default values
-        this(util.TopMenu,bName,0,util.ButtonTextDefault,Boolean.FALSE,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
+        this(util.TopMenu,bName,0,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
     }
     
-    public MenuNode(String bParent, String bName, Integer bSortKey, String bButtonText, Boolean bHasSubMenu, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
+    public MenuNode(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
         SubMenu = bSubMenu;
-        HasSubMenu = bHasSubMenu;
         ActionType = bActionType;
         ActionAttribute = bAction;
         SetBGImageFileandPath(bBGImageFile);
@@ -154,16 +152,8 @@ public class MenuNode {
         Save(Name, "ButtonText", Setting);
     }
 
-    public static Boolean GetMenuItemHasChildren(String Name){
-        return !MenuNodeList.get(Name).NodeItem.isLeaf();
-    }
-
     public static Boolean GetMenuItemHasSubMenu(String Name){
-        return MenuNodeList.get(Name).HasSubMenu;
-    }
-
-    public static void SetMenuItemHasSubMenu(String Name, Boolean Setting){
-        Save(Name, "HasSubMenu", Setting.toString());
+        return !MenuNodeList.get(Name).NodeItem.isLeaf();
     }
 
     public static Boolean GetMenuItemIsActive(String Name){
@@ -249,7 +239,6 @@ public class MenuNode {
         }else{
             //no subMenu items so make sure this parent's SubMenu settings are correct
             SetMenuItemSubMenu(bParent, util.ListNone);
-            SetMenuItemHasSubMenu(bParent, Boolean.FALSE);
             System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
         }
     }
@@ -326,7 +315,6 @@ public class MenuNode {
             //check the new parent and set it's SubMenu properly
             if (!NewParent.equals(util.TopMenu)){
                 SetMenuItemSubMenu(NewParent,util.ListNone);
-                SetMenuItemHasSubMenu(NewParent, Boolean.TRUE);
             }
             
             //make sure the old and new SubMenus have a single default item
@@ -404,7 +392,7 @@ public class MenuNode {
     // otherwise, the Name of the MenuItem is returned if the MenuItem has a SubMenu
     public String getSubMenu() {
         if (SubMenu==null){
-            if (HasSubMenu){
+            if (!NodeItem.isLeaf()){
                 return Name;
             }else{
                 return SubMenu;
@@ -427,13 +415,9 @@ public class MenuNode {
         if (Setting.equals(util.ListNone) || Setting==null){
             //set the SubMenu field
             Save(Name, "SubMenu", null);
-            //set the HasSubMenu field
-            Save(Name, "HasSubMenu", Boolean.FALSE.toString());
         }else{
             //set the SubMenu field
             Save(Name, "SubMenu", Setting);
-            //set the HasSubMenu field
-            Save(Name, "HasSubMenu", Boolean.TRUE.toString());
         }
     }
 
@@ -630,7 +614,6 @@ public class MenuNode {
                 NewMenuItem.Parent = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/Parent", "xTopMenu");
                 NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", "0"));
                 NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", null);
-                NewMenuItem.HasSubMenu = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/HasSubMenu", "false"));
                 NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", "false"));
                 NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/IsActive", "true"));
                 System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
@@ -679,7 +662,6 @@ public class MenuNode {
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/Parent", tMenu.Parent);
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SortKey", tMenu.SortKey.toString());
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", tMenu.SubMenu);
-            sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/HasSubMenu", tMenu.HasSubMenu.toString());
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),PropLocation + "/IsActive", tMenu.IsActive.toString());
             //add the item into the MenuNodeList
@@ -726,12 +708,16 @@ public class MenuNode {
     
     public static String NewMenuItem(String Parent, Integer SortKey){
         String tMenuItemName = GetNewMenuItemName();
+        System.out.println("ADM: NewMenuItem 1: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
 
         //Create a new MenuItem with defaults
-        MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,Boolean.FALSE,util.ListNone,util.ActionTypeDefault,null,util.ListNone,Boolean.FALSE,Boolean.TRUE);
+        MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
+        System.out.println("ADM: NewMenuItem 2: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //add the Node to the Tree
         InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem);
-        
+        System.out.println("ADM: NewMenuItem 3: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        //update this parents sortkeys
+        SortKeyUpdate(MenuNodeList.get(Parent).NodeItem);
         System.out.println("ADM: NewMenuItem: created '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         return tMenuItemName;
     }
@@ -837,7 +823,6 @@ public class MenuNode {
                 PropertyAdd(MenuItemProps,PropLocation + "/Parent", GetMenuItemParent(tName));
                 PropertyAdd(MenuItemProps,PropLocation + "/SortKey", GetMenuItemSortKey(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/HasSubMenu", GetMenuItemHasSubMenu(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
                 //System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
@@ -1021,8 +1006,6 @@ public class MenuNode {
             MenuNodeList.get(Name).BGImageFile = Setting;
         }else if (PropType.equals("ButtonText")){
             MenuNodeList.get(Name).ButtonText = Setting;
-        }else if (PropType.equals("HasSubMenu")){
-            MenuNodeList.get(Name).HasSubMenu = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("IsActive")){
             MenuNodeList.get(Name).IsActive = Boolean.parseBoolean(Setting);
         }else if (PropType.equals("IsDefault")){
