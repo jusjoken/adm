@@ -145,14 +145,14 @@ public class util {
         return EditOptions;
     }
     
-    public static String GetEditOptionButtonText(String Option){
+    public static String GetEditOptionButtonText(String Option, String Name){
         String ButtonText = OptionNotFound;
         if("admEditMenuItem".equals(Option)){
             ButtonText = "Edit";
         }else if("admAddMenuItem".equals(Option)){
-            ButtonText = "Add Menu Item below";
+            ButtonText = "Add Menu Item below '" + MenuNode.GetMenuItemButtonText(Name) + "'";
         }else if("admAddSubMenuItem".equals(Option)){
-            ButtonText = "Add Submenu Item below";
+            ButtonText = "Add Child Menu to '" + MenuNode.GetMenuItemButtonText(Name) + "'";
         }else if("admDeleteMenuItem".equals(Option)){
             ButtonText = "Delete";
         }else if("admCloseEdit".equals(Option)){

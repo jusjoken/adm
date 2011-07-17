@@ -68,7 +68,6 @@ public class CopyMode {
         MenuNode.SetMenuItemButtonText(tMenuItemName,GetVideoFolderDetailsButtonText());
         MenuNode.SetMenuItemName(tMenuItemName);
         MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
         MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         
@@ -165,10 +164,8 @@ public class CopyMode {
         MenuNode.SetMenuItemName(tMenuItemName);
         if (GetMenuItemDetailsSubMenu().equals(util.OptionNotFound)){
             MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.FALSE);
         }else{
             MenuNode.SetMenuItemSubMenu(tMenuItemName,GetMenuItemDetailsSubMenu());
-            MenuNode.SetMenuItemHasSubMenu(tMenuItemName,Boolean.TRUE);
         }
         MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
