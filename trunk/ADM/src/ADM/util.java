@@ -10,13 +10,10 @@ package ADM;
  */
 
 import sagex.UIContext;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -402,5 +399,11 @@ public class util {
                 return MenuNode.GetSubMenuDefault(SubMenu);
             }
         }
+    }
+
+    public static String repeat(String str, int times){
+       StringBuilder ret = new StringBuilder();
+       for(int i = 0;i < times;i++) ret.append(str);
+       return ret.toString();
     }
 }
