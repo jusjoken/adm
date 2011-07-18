@@ -423,7 +423,9 @@ public class MenuNode {
 
     public static Boolean IsSubMenuItem(String bParent, String Item){
         //check if Item is a child of bParent
-        //Collection<String> SubMenuItems = GetMenuItemNameList(bParent,Boolean.TRUE);
+        if (bParent==null || Item==null){
+            return Boolean.FALSE;
+        }
         if (MenuNodeList.get(Item).NodeItem.getParent().toString().equals(bParent)){
             System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
             return Boolean.TRUE;
@@ -585,22 +587,30 @@ public class MenuNode {
         return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
     }
 
+    //prepare the environment for a new load or a delete
+    public static void CleanMenuNodeListandTree(){
+        //clear the existing MenuItems from the list
+        MenuNodeList.clear();
+
+        //create and store the top menu node
+        MenuNode rootNode = new MenuNode(util.TopMenu);
+        root = new DefaultMutableTreeNode(rootNode);
+        rootNode.NodeItem = root;
+        rootNode.ButtonText = "Top Level";
+        root.removeAllChildren();
+    }
+    
     public static void LoadMenuItemsFromSage(){
         String PropLocation = "";
+
+        //cleanup the Nodes and the Tree prior to loading
+        CleanMenuNodeListandTree();
         
         //find all MenuItem Name entries from the SageTV properties file
-        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(util.SagePropertyLocation);
+        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(util.GetMyUIContext(),util.SagePropertyLocation);
+
         
         if (MenuItemNames.length>0){
-            //clear the existing MenuItems from the list
-            MenuNodeList.clear();
-            root.removeAllChildren();
-
-            //create and store the top menu node
-            MenuNode rootNode = new MenuNode(util.TopMenu);
-            root = new DefaultMutableTreeNode(rootNode);
-            rootNode.NodeItem = root;
-            rootNode.ButtonText = "Top Level";
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
@@ -616,7 +626,7 @@ public class MenuNode {
                 NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/SubMenu", null);
                 NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/IsDefault", "false"));
                 NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation + "/IsActive", "true"));
-                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "'");
+                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
             }
             if (MenuNodeList.size()>0){
                 //create the tree nodes
@@ -643,7 +653,7 @@ public class MenuNode {
     public static void SaveMenuItemsToSage(){
         
         //clean up existing MenuItems from the SageTV properties file before writing the new ones
-        sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
+        sagex.api.Configuration.RemovePropertyAndChildren(util.GetMyUIContext(),util.SagePropertyLocation);
         //clear the MenuNodeList and rebuild it while saving
         MenuNodeList.clear();
         
@@ -695,32 +705,26 @@ public class MenuNode {
         if (MenuNodeList.size()>0){
             ExportMenuItems(util.PropertyBackupFile);
         }
-        
         //clean up existing MenuItems from the SageTV properties file
-        sagex.api.Configuration.RemovePropertyAndChildren(util.SagePropertyLocation);
-        MenuNodeList.clear();
-        root.removeAllChildren();
-        
+        sagex.api.Configuration.RemovePropertyAndChildren(util.GetMyUIContext(),util.SagePropertyLocation);
+        //clean the environment
+        CleanMenuNodeListandTree();
         //Create 1 new MenuItem at the TopMenu level
         NewMenuItem(util.TopMenu, 1) ;
-
-        //now load the properties from the Sage properties file
-        LoadMenuItemsFromSage();
 
         System.out.println("ADM: DeleteAllMenuItems: completed");
     }
     
     public static String NewMenuItem(String Parent, Integer SortKey){
         String tMenuItemName = GetNewMenuItemName();
-        System.out.println("ADM: NewMenuItem 1: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
 
         //Create a new MenuItem with defaults
         MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
-        System.out.println("ADM: NewMenuItem 2: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         SaveMenuItemToSage(NewMenuItem);
-        System.out.println("ADM: NewMenuItem 3: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //add the Node to the Tree
         InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem, Boolean.TRUE);
+        //ensure there is 1 default item
+        ValidateSubMenuDefault(Parent);
         System.out.println("ADM: NewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //util.ListObjectMembers(NewMenuItem);
         return tMenuItemName;
@@ -862,16 +866,16 @@ public class MenuNode {
             if (aNode.Parent.equals(util.TopMenu)){
                 //root.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(root, aNode, Boolean.FALSE);
-                System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
+                //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
             }else{
                 AddNode(MenuNodeList.get(aNode.Parent));
                 DefaultMutableTreeNode tParent = FindNode(root, aNode.Parent);
                 //tParent.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(tParent, aNode, Boolean.FALSE);
-                System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding");
+                //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding");
             }
         }else{
-            System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' already exists");
+            //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' already exists");
         }
     }
     

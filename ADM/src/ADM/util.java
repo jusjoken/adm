@@ -9,8 +9,6 @@ package ADM;
  * @author jusjoken
  */
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import sagex.UIContext;
 import java.util.Properties;
 import java.io.*;
@@ -83,7 +81,7 @@ public class util {
             SageSubMenusLevel2Keys.add(ListNone);
 
             //clean up existing focus items
-            sagex.api.Configuration.RemovePropertyAndChildren(SageFocusPropertyLocation);
+            sagex.api.Configuration.RemovePropertyAndChildren(util.GetMyUIContext(),SageFocusPropertyLocation);
         
             //generate symbols to be used for new MenuItem names
             for (int idx = 0; idx < 10; ++idx)
@@ -108,7 +106,7 @@ public class util {
         
         //clear all the Sage property settings for ADM
         System.out.println("ADM: ClearAll: clear Sage Properties");
-        sagex.api.Configuration.RemovePropertyAndChildren(SageADMBasePropertyLocation);
+        sagex.api.Configuration.RemovePropertyAndChildren(GetMyUIContext(),SageADMBasePropertyLocation);
         ADMInitComplete = Boolean.FALSE;
         System.out.println("ADM: ClearAll: load default menus");
         MenuNode.LoadMenuItemDefaults();
@@ -161,7 +159,7 @@ public class util {
         }else if("admCloseEdit".equals(Option)){
             ButtonText = "Close";
         }
-        System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
+        //System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
     }
     
@@ -299,7 +297,7 @@ public class util {
     }
 
     public static Boolean IsAdvancedMode(){
-        if ("true".equals(sagex.api.Configuration.GetProperty(MyUIContext,AdvancedModePropertyLocation, "false"))){
+        if ("true".equals(sagex.api.Configuration.GetProperty(GetMyUIContext(),AdvancedModePropertyLocation, "false"))){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
@@ -311,7 +309,7 @@ public class util {
     }
     
     public static String GetSubMenuListButtonText(String Option, Integer Level, Boolean SkipAdvanced){
-        System.out.println("ADM: GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
+        //System.out.println("ADM: GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
         if (Option==null || Option.equals(ListNone)){
             return ListNone;
         }
@@ -383,11 +381,11 @@ public class util {
     //Save the current item that is focused for later retrieval
     public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
         System.out.println("ADM: SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
-        sagex.api.Configuration.SetProperty(MyUIContext,SageFocusPropertyLocation + SubMenu, FocusItem);
+        sagex.api.Configuration.SetProperty(GetMyUIContext(),SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
     public static String GetLastFocusForSubMenu(String SubMenu){
-        String LastFocus = sagex.api.Configuration.GetProperty(MyUIContext,SageFocusPropertyLocation + SubMenu,OptionNotFound);
+        String LastFocus = sagex.api.Configuration.GetProperty(GetMyUIContext(),SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
             System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
@@ -423,4 +421,7 @@ public class util {
             }
         }
     }
+
+    
+
 }
