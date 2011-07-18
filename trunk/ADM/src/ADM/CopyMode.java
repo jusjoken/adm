@@ -1,7 +1,7 @@
 package ADM;
 
 
-import java.io.File;
+import java.io.*;
 import java.util.Collection;
 
 /*
@@ -21,20 +21,22 @@ public class CopyMode {
     public static void SaveVideoFolderDetails(String CurFolder, String FolderName){
         sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "Type", "Folder");
         String FolderPath = "";
-        if (FolderName!=null){
-            FolderPath = FolderName;
+        if (FolderName==null){
+            FolderName="";
+        }
+        if (CurFolder==null || CurFolder.equals("null")){
+            FolderPath = sagex.api.Utility.CreateFilePath(FolderName,"").toString();
+        }else{
+            FolderPath = sagex.api.Utility.CreateFilePath(CurFolder, FolderName).toString();
         }
 
-        if (CurFolder!=null){
-            FolderPath = CurFolder + FolderPath;
-        }
-        //ensure the Folder string ends in a "/"
+        //ensure the Folder string ends in a valid Path Spearator
         if (FolderPath.isEmpty() || !FolderPath.endsWith(File.separator)){
             FolderPath = FolderPath + File.separator;
         }
         sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
         
-        System.out.println("ADM: SaveCurrentVideoFolderDetails: FolderName '" + FolderPath + "'");
+        System.out.println("ADM: SaveVideoFolderDetails: FolderPath '" + FolderPath + "'");
     }
     
     public static String GetVideoFolderDetails(){
@@ -68,7 +70,6 @@ public class CopyMode {
         MenuNode.SetMenuItemButtonText(tMenuItemName,GetVideoFolderDetailsButtonText());
         MenuNode.SetMenuItemName(tMenuItemName);
         MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         
         System.out.println("ADM: CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
@@ -79,7 +80,7 @@ public class CopyMode {
     //save the current item details to sage properties to assist the copy function
     public static void SaveMenuItemDetails(String ButtonText, String SubMenu, String CurrentWidgetSymbol, Integer Level){
         //clear previously stored Menu Item Details
-        sagex.api.Configuration.RemovePropertyAndChildren(SageCurrentMenuItemPropertyLocation);
+        sagex.api.Configuration.RemovePropertyAndChildren(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation);
         //save the current details
         sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "Type", "MenuItem");
         sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "WidgetSymbol", CurrentWidgetSymbol);
@@ -143,8 +144,6 @@ public class CopyMode {
             }
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "Type", FinalType);
             sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
-        }else{
-            //sagex.api.Configuration.RemoveProperty(SageCurrentMenuItemPropertyLocation + "Action");
         }
         System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
@@ -167,7 +166,6 @@ public class CopyMode {
         }else{
             MenuNode.SetMenuItemSubMenu(tMenuItemName,GetMenuItemDetailsSubMenu());
         }
-        MenuNode.SetMenuItemIsDefault(tMenuItemName,Boolean.FALSE);
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
 
         System.out.println("ADM: CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
