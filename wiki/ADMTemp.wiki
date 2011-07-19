@@ -20,6 +20,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * handles Combined and Separate Video Folder views
   * New Action Type to Launch Specific TV Recordings View
     * works for Standard SageTV as well as Diamond TV Views
+  * New Action Type to Launch Default and Custom Diamond Flows (if using Diamond)
   * New ADM Background Manager
     * graphically select a Background for Level 1 Menu Items
     * add your own Custom Backgrounds and associate them to any Level 1 Menu Item
@@ -186,6 +187,14 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * You will have the option to leave them names differently
       * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
 
+    * Diamond Default Flows
+      * Select from a list of Diamond built in Flows
+      * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
+
+    * Diamond Custom Flows
+      * Select from a list of Custom Diamond Flows
+      * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
+
   * Sage Submenu
     * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
     * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
@@ -236,6 +245,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * To finish, press Options/ESC and select Disable ADM Copy Mode
     * The Menus displayed will now be your ADM customized menus including the new ones you created
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
+  * supports copy of TV Recording Menu Items
+    * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
 
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG] _Folder Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
@@ -332,6 +343,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Background Images
     * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
     * Custom Backgrounds can be added and assigned to override this Diamond behaviour
+  * Diamond Movies - Custom and Default Flows
+    * Action types available to launch specific Default and Custom Flows
   * TV Views
     * TV Recordings views which Diamond uses are standard SageTV Recordings View with added customizations
     * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
