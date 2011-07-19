@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
@@ -25,7 +24,6 @@ import javax.swing.tree.TreeNode;
  */
 public class MenuNode {
     public static DefaultMutableTreeNode Testing;
-    private static final Random random = new Random();
 
     private String Parent = "";
     public String Name = "";
@@ -95,25 +93,12 @@ public class MenuNode {
     
     private void SetBGImageFileandPath(String bBGImageFile){
         //see if using a GlobalVariable from a Theme or a path to an image file
-        if (bBGImageFile==null || bBGImageFile.equals("")){
-            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
-            BGImageFile = bBGImageFile;
-            BGImageFilePath = bBGImageFile;
-        }else if (bBGImageFile.contains(File.separator)){
-            //a path to the image file is being used
-            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - path found");
-            BGImageFile = bBGImageFile;
-            BGImageFilePath = bBGImageFile;
-        }else{
-            //expect a Global Variable from the theme
-            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
-            BGImageFile = bBGImageFile;
-            BGImageFilePath = sagex.api.WidgetAPI.EvaluateExpression(util.GetMyUIContext(), bBGImageFile).toString();
-        }
+        BGImageFile = bBGImageFile;
+        BGImageFilePath = util.GetSageBGFile(bBGImageFile);
     }
     
     public static String GetMenuItemBGImageFileButtonText(String Name){
-        return util.GetSageBGVariablesButtonText(MenuNodeList.get(Name).BGImageFile);
+        return util.GetSageBGButtonText(MenuNodeList.get(Name).BGImageFile);
     }
     
     public static String GetMenuItemBGImageFile(String Name){
@@ -130,6 +115,7 @@ public class MenuNode {
         }else{
             Save(Name, "BGImageFile", Setting);
         }
+        MenuNodeList.get(Name).SetBGImageFileandPath(Setting);
     }
 
     public static String GetMenuItemButtonText(String Name){
@@ -346,7 +332,6 @@ public class MenuNode {
         }else{
             System.out.println("ADM: ChangeSortOrder: NOT ABLE to move '" + Name + "' by '" + aDelta.toString() + "'");
         }
-        //TODO: need to save the indexes of all this parents children
     }
     
     public static Boolean moveNode( DefaultMutableTreeNode Node, int aDelta ){
@@ -1034,18 +1019,11 @@ public class MenuNode {
         Boolean UniqueName = Boolean.FALSE;
         String NewName = null;
         while (!UniqueName){
-            NewName = GenerateRandomadmName();
+            NewName = util.GenerateRandomadmName();
             //check to see that the name is unique from other existing MenuItemNames
             UniqueName = !MenuNodeList.containsKey(NewName);
         }
         return NewName;
-    }
-
-    private static String GenerateRandomadmName(){
-        char[] buf = new char[10];
-        for (int idx = 0; idx < buf.length; ++idx)
-            buf[idx] = util.symbols[random.nextInt(util.symbols.length)];
-        return "adm" + new String(buf);
     }
 
 
