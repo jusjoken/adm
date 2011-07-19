@@ -206,7 +206,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * there must be 1 and only 1 default and ADM will enfore this
     * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
 
-  * Background Image
+  ==== Background Image ====
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG] _Select Background_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG] _Custom Background_ || _click to view_ ||
     * Only valid for Level 1 menus (Top menu in SageTV)
     * The ADM Background Manager will be displayed for you to select a Background
     * Select from the built in list of Themed Backgrounds or Add a Custom Background to the list and select it
