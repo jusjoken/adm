@@ -192,8 +192,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
 
     * Diamond Custom Flows
-      * Select from a list of Custom Diamond Flows
-      * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
+      * Select from a list of Custom Diamond Flows. These flows must be created within Diamond using Custom Views Setup.
+      * The selected Custom Flow will launch when the Menu Item is selected within the SageTV menu system
 
   * Sage Submenu
     * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
@@ -208,8 +208,11 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
   * Background Image
     * Only valid for Level 1 menus (Top menu in SageTV)
-    * Select from a list of Themed images 
-    * this function may expand to offer selecting a specific file
+    * The ADM Background Manager will be displayed for you to select a Background
+    * Select from the built in list of Themed Backgrounds or Add a Custom Background to the list and select it
+    * Any image can be selected from a File Dialog using the Add Background button and is then added to the available Backgrounds to select from. 
+    * Settings for Custom Backgrounds added are stored in the Server Properties to make them available for selection on any Client/Extender
+    * Note: make sure you select a path that will be available to the Client/Extender if you plan to export and re-import any menus containing Custom Backgrounds.
 
   * Show Menu Item
     * Hides or Shows the Menu Item in SageTV
