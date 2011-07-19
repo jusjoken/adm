@@ -17,8 +17,17 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
   * Updated ADM Copy
     * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
+    * handles Combined and Separate Video Folder views
   * New Action Type to Launch Specific TV Recordings View
     * works for Standard SageTV as well as Diamond TV Views
+  * New ADM Background Manager
+    * graphically select a Background for Level 1 Menu Items
+    * add your own Custom Backgrounds and associate them to any Level 1 Menu Item
+  * Update for Video Folder Browser
+    * improved support for Linux systems
+    * handles Combined and Separate Video Folder views
+  * Fix for Clients/Extenders having their own Menu Settings
+  * Major refactoring of base code
   * Other minor fixes
 
 == Changes in Version 0.35 ==
@@ -308,7 +317,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === Diamond Specific Functions ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG] _Movies_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG] _Videos_ || _click to view_ ||
   * Default Menu
-    * A Diamond Specific menu will oad on initial run (newly installed) and when Load Default Menus is selected
+    * A Diamond Specific menu will load on initial run (newly installed) and when Load Default Menus is selected
     * This menu will have 2 unique menus at the Top Level
       * Movies - configured to launch the diamond Movies Menu with your customized diamond Movie views
         * This is the menu you create and modify with Diamond tools (not a copy)
@@ -322,6 +331,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
   * Background Images
     * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
+    * Custom Backgrounds can be added and assigned to override this Diamond behaviour
   * TV Views
     * TV Recordings views which Diamond uses are standard SageTV Recordings View with added customizations
     * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
