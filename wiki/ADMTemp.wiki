@@ -58,9 +58,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
-    * Launch specific Diamond Movie Custom flow - not yet available
     * Launch an external program is being considered
-    * Background Image - offer an option to select a specifc file to display (rather than only Themed Images)
+    * Allow background to be assigned and change on Level 2 and 3 Menus
 
 == ADM Manager ==
 
