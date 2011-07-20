@@ -114,6 +114,8 @@ public class util {
         //clear all the Sage property settings for ADM
         System.out.println("ADM: ClearAll: clear Sage Properties");
         sagex.api.Configuration.RemovePropertyAndChildren(GetMyUIContext(),SageADMBasePropertyLocation);
+        System.out.println("ADM: ClearAll: clear Sage Server Properties");
+        sagex.api.Configuration.RemoveServerPropertyAndChildren(GetMyUIContext(),SageADMBasePropertyLocation);
         ADMInitComplete = Boolean.FALSE;
         System.out.println("ADM: ClearAll: load default menus");
         MenuNode.LoadMenuItemDefaults();
@@ -301,18 +303,32 @@ public class util {
 
     public static void LoadSageBGList(){
         SageBackgrounds.clear();
+        //add all the Backgrounds from the available Theme variables
         SageBackgrounds.addAll(SageBGVariablesKeys);
+        //remove none as it may not be where we want it in the list
         SageBackgrounds.remove(ListNone);
         System.out.println("ADM: LoadSageBGList: Loaded BGVariables");
+        //add None to the start of the list
+        SageBackgrounds.add(0,ListNone);
 
         //find all Backgrounds from the SageTV properties file
-        String[] tBackgrounds = sagex.api.Configuration.GetSubpropertiesThatAreLeaves(GetMyUIContext(),SageBackgroundsPropertyLocation);
+        String[] tBackgrounds = sagex.api.Configuration.GetServerSubpropertiesThatAreLeaves(GetMyUIContext(),SageBackgroundsPropertyLocation);
         System.out.println("ADM: LoadSageBGList: Getting '" + tBackgrounds.length + "' backgrounds + UI = '" + sagex.api.Global.GetUIContextName() + "' tBackgrounds = '" + tBackgrounds + "'");
         if (tBackgrounds.length>0){
-            SageBackgrounds.addAll(Arrays.asList(tBackgrounds));
+            for (String BGKey: tBackgrounds){
+                //only add valid backgrounds
+                String PropLocation = util.SageBackgroundsPropertyLocation + BGKey;
+                String tPath = sagex.api.Configuration.GetServerProperty(util.GetMyUIContext(),PropLocation, OptionNotFound);
+                if (!tPath.equals(OptionNotFound)){
+                    SageBackgrounds.add(BGKey);
+                }else{
+                    //remove any invalid backgrounds
+                    sagex.api.Configuration.RemoveServerProperty(GetMyUIContext(), PropLocation);
+                }
+                
+            }
             System.out.println("ADM: LoadSageBGList: Loading Backgrounds");
         }
-        SageBackgrounds.add(ListNone);
     }
 
     public static List<String> GetSageBGList(){
@@ -324,7 +340,12 @@ public class util {
     }
 
     public static Integer GetSageBGListItem(String Option){
-        return SageBackgrounds.indexOf(Option);
+        Integer tItem = SageBackgrounds.indexOf(Option);
+        if (tItem.equals(-1)){
+            return 0;
+        }else{
+            return tItem;
+        }
     }
 
     public static String GetSageBGListElement(Integer Option){
@@ -339,13 +360,15 @@ public class util {
         if (Option.startsWith("adm")){
             //a custom file is being referenced so look up the path from the Sage Properties file
             String PropLocation = util.SageBackgroundsPropertyLocation + Option;
-            String tPath = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation, OptionNotFound);
+            String tPath = sagex.api.Configuration.GetServerProperty(util.GetMyUIContext(),PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
                 File tBackground = sagex.api.Utility.CreateFilePath(tPath, "");
                 String tBackgroundName = sagex.api.Utility.GetFileNameFromPath(tBackground);
                 System.out.println("ADM: GetSageBGButtonText for '" + Option + "' = '" + tBackgroundName + "'");
                 return tBackgroundName;
             }else{
+                //remove the Not Found key if it was created as part of the Get
+                sagex.api.Configuration.RemoveServerProperty(GetMyUIContext(), PropLocation);
                 System.out.println("ADM: GetSageBGButtonText for '" + Option + "' Invalid request passed in");
                 return ListNone;
             }
@@ -369,11 +392,13 @@ public class util {
         if (Option.startsWith("adm")){
             //a custom file is being referenced so look up the path from the Sage Properties file
             String PropLocation = util.SageBackgroundsPropertyLocation + Option;
-            String tPath = sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropLocation, OptionNotFound);
+            String tPath = sagex.api.Configuration.GetServerProperty(util.GetMyUIContext(),PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
                 System.out.println("ADM: GetSageBGFile for '" + Option + "' = '" + tPath + "'");
                 return tPath;
             }else{
+                //remove the Not Found key if it was created as part of the Get
+                sagex.api.Configuration.RemoveServerProperty(GetMyUIContext(), PropLocation);
                 System.out.println("ADM: GetSageBGFile for '" + Option + "' Invalid request passed in");
                 return null;
             }
@@ -400,9 +425,10 @@ public class util {
             File tBackground = sagex.api.Utility.CreateFilePath(BackgroundFile, "");
             String tBackgroundPath = tBackground.toString();
             String tBackgroundKey = GetNewBackgroundKey();
-            sagex.api.Configuration.SetProperty(GetMyUIContext(), SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
+            sagex.api.Configuration.SetServerProperty(GetMyUIContext(), SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
             System.out.println("ADM: SaveSageBackground completed for '" + BackgroundFile + "'");
-            LoadSageBGList();
+            SageBackgrounds.add(tBackgroundKey);
+            //LoadSageBGList();
         }
     }
     
@@ -423,10 +449,15 @@ public class util {
     public static void RemoveSageBackground(String Option){
         //can only remove custom Backgrounds
         if (Option.startsWith("adm")){
-            sagex.api.Configuration.RemoveProperty(GetMyUIContext(), SageBackgroundsPropertyLocation + Option);
+            sagex.api.Configuration.RemoveServerProperty(GetMyUIContext(), SageBackgroundsPropertyLocation + Option);
             SageBackgrounds.remove(Option);
-            //TODO: need to find all MenuNodes using this background and reset them
-            
+            //need to find all MenuNodes using this background and reset them
+            for (String MenuItem: MenuNode.MenuNodeList.keySet()){
+                if(MenuNode.GetMenuItemBGImageFile(MenuItem).equals(Option)){
+                    MenuNode.SetMenuItemBGImageFile(MenuItem,ListNone);
+                    System.out.println("ADM: RemoveSageBackground: Active background removed from '" + MenuItem + "'");
+                }
+            }
             System.out.println("ADM: RemoveSageBackground completed for '" + Option + "'");
         }
     }

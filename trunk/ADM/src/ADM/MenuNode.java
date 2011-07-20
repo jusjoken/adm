@@ -95,6 +95,7 @@ public class MenuNode {
         //see if using a GlobalVariable from a Theme or a path to an image file
         BGImageFile = bBGImageFile;
         BGImageFilePath = util.GetSageBGFile(bBGImageFile);
+        //System.out.println("ADM: SetBGImageFileandPath for '" + Name + "' BGImageFile = '" + BGImageFile + "' BGImageFilePath = '" + BGImageFilePath + "'");
     }
     
     public static String GetMenuItemBGImageFileButtonText(String Name){
@@ -102,10 +103,15 @@ public class MenuNode {
     }
     
     public static String GetMenuItemBGImageFile(String Name){
-        return MenuNodeList.get(Name).BGImageFile;
+        if(MenuNodeList.get(Name).BGImageFile==null){
+            return util.ListNone;
+        }else{
+            return MenuNodeList.get(Name).BGImageFile;
+        }
     }
 
     public static String GetMenuItemBGImageFilePath(String Name){
+        //System.out.println("ADM: GetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList.get(Name).BGImageFilePath + "'");
         return MenuNodeList.get(Name).BGImageFilePath;
     }
 
