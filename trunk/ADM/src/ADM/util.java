@@ -338,7 +338,15 @@ public class util {
     public static Integer GetSageBGListCount(){
         return SageBackgrounds.size();
     }
+    
+    public static Collection<String> GetSageBGMenuItemList(){
+        return MenuNode.GetMenuItemParentList(2);
+    }
 
+    public static String GetSageBGMenuItemButtonText(String Name){
+        return MenuNode.GetMenuItemButtonText(Name) + " = {" + GetSageBGButtonText(MenuNode.GetMenuItemBGImageFile(Name)) + "}";
+    }
+    
     public static Integer GetSageBGListItem(String Option){
         Integer tItem = SageBackgrounds.indexOf(Option);
         if (tItem.equals(-1)){
