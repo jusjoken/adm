@@ -112,7 +112,15 @@ public class MenuNode {
 
     public static String GetMenuItemBGImageFilePath(String Name){
         //System.out.println("ADM: GetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList.get(Name).BGImageFilePath + "'");
-        return MenuNodeList.get(Name).BGImageFilePath;
+        if (MenuNodeList.get(Name).BGImageFilePath==null){
+            if (MenuNodeList.get(Name).Parent.equals(util.TopMenu)){
+                return null;
+            }else{
+                return GetMenuItemBGImageFilePath(MenuNodeList.get(Name).Parent);
+            }
+        }else{
+            return MenuNodeList.get(Name).BGImageFilePath;
+        }
     }
 
     public static void SetMenuItemBGImageFile(String Name, String Setting){

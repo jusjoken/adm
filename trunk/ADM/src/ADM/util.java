@@ -340,11 +340,12 @@ public class util {
     }
     
     public static Collection<String> GetSageBGMenuItemList(){
-        return MenuNode.GetMenuItemParentList(2);
+        return MenuNode.GetMenuItemSortedList(Boolean.TRUE);
+        //return MenuNode.GetMenuItemParentList(2);
     }
 
     public static String GetSageBGMenuItemButtonText(String Name){
-        return MenuNode.GetMenuItemButtonText(Name) + " = {" + GetSageBGButtonText(MenuNode.GetMenuItemBGImageFile(Name)) + "}";
+        return MenuNode.GetMenuItemButtonTextFormatted(Name,null) + " = {" + GetSageBGButtonText(MenuNode.GetMenuItemBGImageFile(Name)) + "}";
     }
     
     public static Integer GetSageBGListItem(String Option){
