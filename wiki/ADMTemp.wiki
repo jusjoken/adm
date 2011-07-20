@@ -22,8 +22,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * works for Standard SageTV as well as Diamond TV Views
   * New Action Type to Launch Default and Custom Diamond Flows (if using Diamond)
   * New ADM Background Manager
-    * graphically select a Background for Level 1 Menu Items
-    * add your own Custom Backgrounds and associate them to any Level 1 Menu Item
+    * graphically select a Background for any Menu Item on any Level
+    * add your own Custom Backgrounds and associate them to any Menu Item
   * Update for Video Folder Browser
     * improved support for Linux systems
     * handles Combined and Separate Video Folder views
@@ -207,12 +207,14 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
   ==== Background Image ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG] _Select Background_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG] _Custom Background_ || _click to view_ ||
-    * Only valid for Level 1 menus (Top menu in SageTV)
+    * Valid for ALL menu levels (as of 0.36+)
     * The ADM Background Manager will be displayed for you to select a Background
     * Select from the built in list of Themed Backgrounds or Add a Custom Background to the list and select it
     * Any image can be selected from a File Dialog using the Add Background button and is then added to the available Backgrounds to select from. 
     * Settings for Custom Backgrounds added are stored in the Server Properties to make them available for selection on any Client/Extender
     * Note: make sure you select a path that will be available to the Client/Extender if you plan to export and re-import any menus containing Custom Backgrounds.
+    * Note: any Menu Item set to 'None' will use it's Parent's Background (or it's Parent's Parent's Background)
+    * See also - [#ADM Background Manager]
 
   * Show Menu Item
     * Hides or Shows the Menu Item in SageTV
@@ -231,6 +233,16 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Will Delete the current Menu Item AND all of it's Children if there are any
   * A confirmation will be displayed
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
+
+=== ADM Background Manager ===
+  * Launches from ADM Manager from the left side menu
+  * Allows you to Add/Remove available Custom Backgrounds without having to go to a menu item directly
+  * Allows you to Assign a Background to one or more Menu Items from a single screen
+    * Select a Background by scrolling LEFT or RIGHT
+    * Select 'Assign' from available options
+    * A list of Menu Items will be offered sorted as Grouped Menus (All Level 1, then Level 2 etc)
+    * Selecting any Menu Item will change that Menu Item to use the Current Background
+  * Note: any Menu Item set to 'None' will use it's Parent's Background (or it's Parent's Parent's Background)
 
 === ADM Copy Mode ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
