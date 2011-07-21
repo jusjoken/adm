@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import sagex.UIContext;
 
 /**
  *
@@ -198,7 +199,7 @@ public class Action {
             if (!GetAttribute(ActionType).equals(Blank)){
                 //Set a Static Context for the Attribute to the ActionAttribute
                 System.out.println("ADM: Execute - Setting Static Context for = '" + GetAttribute(ActionType) + "' to '" + ActionAttribute + "'");
-                sagex.api.Global.AddStaticContext(util.GetMyUIContext(), GetAttribute(ActionType), ActionAttribute);
+                sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), GetAttribute(ActionType), ActionAttribute);
             }
             //either execute the default widget symbol or the one passed in
             if (GetWidgetSymbol(ActionType).equals(Blank)){
@@ -212,7 +213,7 @@ public class Action {
     
     public static Boolean ExecuteWidget(String WidgetSymbol){
         Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), WidgetSymbol);
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
             System.out.println("ADM: ExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
@@ -220,7 +221,7 @@ public class Action {
             System.out.println("ADM: ExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
 
             try {
-                sage.SageTV.apiUI(util.GetMyUIContext().toString(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
+                sage.SageTV.apiUI(new UIContext(sagex.api.Global.GetUIContextName()).toString(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
             } catch (InvocationTargetException ex) {
                 System.out.println("ADM: ExecuteWidget: error executing widget" + util.class.getName() + ex);
                 return Boolean.FALSE;
@@ -234,7 +235,7 @@ public class Action {
 
     public static Boolean IsWidgetValid(String WidgetSymbol){
         Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), WidgetSymbol);
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
             System.out.println("ADM: IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
@@ -247,12 +248,12 @@ public class Action {
     
     public static String GetWidgetName(String WidgetSymbol){
         Object[] passvalue = new Object[1];
-        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), WidgetSymbol);
+        passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
             System.out.println("ADM: GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return util.OptionNotFound;
         }else{
-            String WidgetName = sagex.api.WidgetAPI.GetWidgetName(util.GetMyUIContext(), WidgetSymbol);
+            String WidgetName = sagex.api.WidgetAPI.GetWidgetName(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
             System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
             return WidgetName;
         }
@@ -376,12 +377,12 @@ public class Action {
 
     public static String GetSageTVRecordingViewsButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
-        return sagex.api.Configuration.GetProperty(util.GetMyUIContext(),SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
+        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
     public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
         //rename the specified TV Recording View 
-        sagex.api.Configuration.SetProperty(util.GetMyUIContext(),SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
+        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
     }
     
 }

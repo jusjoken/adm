@@ -6,6 +6,7 @@ package ADM;
 
 import java.util.Arrays;
 import java.util.Collection;
+import sagex.UIContext;
 
 /**
  *
@@ -18,7 +19,7 @@ public class Diamond {
     public static final String PropName="JOrton/CustomViews";
 
 //    public static Object GetCustomViews(){
-//        String views=sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropName,"");
+//        String views=sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropName,"");
 //        if(views.contains(";")){	
 //            System.out.println("ADM Diamond : GetCustomViews = '" + views.split(";") + "'");
 //            return views.split(";");
@@ -28,7 +29,7 @@ public class Diamond {
 //    }
 //
     public static Collection<String> GetCustomViews(){
-        String views=sagex.api.Configuration.GetProperty(util.GetMyUIContext(),PropName,"");
+        String views=sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropName,"");
         if(views.contains(";")){	
             System.out.println("ADM Diamond : GetCustomViews (split) = '" + views.split(";") + "'");
             return Arrays.asList(views.split(";"));
@@ -57,7 +58,7 @@ public class Diamond {
         String DiamondWidgetSymbol = "AOSCS-65";
         // check to see if the Diamond Plugin is installed
         Object[] FoundWidget = new Object[1];
-        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(util.GetMyUIContext(), DiamondWidgetSymbol);
+        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), DiamondWidgetSymbol);
         if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
             return Boolean.TRUE;
         }
