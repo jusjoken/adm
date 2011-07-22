@@ -26,7 +26,6 @@ import sagex.UIContext;
 public class Action {
 
     private static final String Blank = "admActionBlank";
-    //private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
     public static Properties StandardActionProps = new Properties();
@@ -377,12 +376,12 @@ public class Action {
 
     public static String GetSageTVRecordingViewsButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
+        return util.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
     public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
         //rename the specified TV Recording View 
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
+        util.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
     }
     
 }

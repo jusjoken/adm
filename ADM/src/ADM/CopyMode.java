@@ -20,7 +20,7 @@ public class CopyMode {
 
     //save the current Folder item details to sage properties to assist the copy function
     public static void SaveVideoFolderDetails(String CurFolder, String FolderName){
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Type", "Folder");
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "Folder");
         String FolderPath = "";
         if (FolderName==null){
             FolderName="";
@@ -35,18 +35,18 @@ public class CopyMode {
         if (FolderPath.isEmpty() || !FolderPath.endsWith(File.separator)){
             FolderPath = FolderPath + File.separator;
         }
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
         
         System.out.println("ADM: cSaveVideoFolderDetails: FolderPath '" + FolderPath + "'");
     }
     
     public static String GetVideoFolderDetails(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "FolderName", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", util.OptionNotFound);
         
     }
     
     public static String GetVideoFolderDetailsButtonText(){
-        String ButtonText = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "FolderName", util.ButtonTextDefault);
+        String ButtonText = util.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", util.ButtonTextDefault);
         ButtonText = ButtonText.replace(File.separator, " ").trim();
         if (ButtonText.isEmpty()){
             ButtonText = "Root";
@@ -81,13 +81,13 @@ public class CopyMode {
     //save the current item details to sage properties to assist the copy function
     public static void SaveMenuItemDetails(String ButtonText, String SubMenu, String CurrentWidgetSymbol, Integer Level){
         //clear previously stored Menu Item Details
-        sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation);
+        util.RemovePropertyAndChildren(SageCurrentMenuItemPropertyLocation);
         //save the current details
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Type", "MenuItem");
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "WidgetSymbol", CurrentWidgetSymbol);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "ButtonText", ButtonText);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "SubMenu", SubMenu);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "MenuItem");
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", CurrentWidgetSymbol);
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", ButtonText);
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", SubMenu);
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "Level", Level.toString());
         
         //determine if there is an Action Widget for this Menu Item
         String ActionWidget = null;
@@ -143,8 +143,8 @@ public class CopyMode {
                 FinalType = Action.DiamondDefaultFlows;
             }else{
             }
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Type", FinalType);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", FinalType);
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
         }
         System.out.println("ADM: cSaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
@@ -188,21 +188,21 @@ public class CopyMode {
     }
     
     public static String GetMenuItemDetailsButtonText(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "ButtonText", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "ButtonText", util.OptionNotFound);
     }
     
     public static String GetMenuItemDetailsAction(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Action", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "Action", util.OptionNotFound);
     }
     
     public static String GetMenuItemDetailsType(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Type", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "Type", util.OptionNotFound);
     }
     
     public static Integer GetMenuItemDetailsLevel(){
         Integer tLevel = 0;
         try {
-            tLevel = Integer.valueOf(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Level", "0"));
+            tLevel = Integer.valueOf(util.GetProperty(SageCurrentMenuItemPropertyLocation + "Level", "0"));
         } catch (NumberFormatException ex) {
             System.out.println("ADM: cGetCurrentMenuItemDetailsLevel: error loading level: " + util.class.getName() + ex);
             tLevel = 0;
@@ -212,11 +212,11 @@ public class CopyMode {
     }
     
     public static String GetMenuItemDetailsWidgetSymbol(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "WidgetSymbol", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "WidgetSymbol", util.OptionNotFound);
     }
     
     public static String GetMenuItemDetailsSubMenu(){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "SubMenu", util.OptionNotFound);
+        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "SubMenu", util.OptionNotFound);
     }
     
     

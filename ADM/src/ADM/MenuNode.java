@@ -381,7 +381,7 @@ public class MenuNode {
             if (!tMenu.Name.equals(util.TopMenu)){
                 tMenu.SortKey = child.getParent().getIndex(child);
                 String PropLocation = util.SagePropertyLocation + tMenu.Name + "/" + "SortKey";
-                sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, tMenu.SortKey.toString());
+                util.SetProperty(PropLocation, tMenu.SortKey.toString());
                 //System.out.println("ADM: mSortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
             }
         }         
@@ -618,16 +618,16 @@ public class MenuNode {
                 if (!tMenuItemName.equals(util.TopMenu)){
                     PropLocation = util.SagePropertyLocation + tMenuItemName;
                     MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                    NewMenuItem.ActionAttribute = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", null);
-                    NewMenuItem.ActionType = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", util.ActionTypeDefault);
-                    NewMenuItem.SetBGImageFileandPath(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", null));
-                    NewMenuItem.ButtonText = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", util.ButtonTextDefault);
-                    NewMenuItem.Name = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenuItemName);
-                    NewMenuItem.Parent = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", "xTopMenu");
-                    NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", "0"));
-                    NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", null);
-                    NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", "false"));
-                    NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", "true"));
+                    NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
+                    NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
+                    NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
+                    NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                    NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
+                    NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
+                    NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
+                    NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
+                    NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
+                    NewMenuItem.IsActive = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsActive", "true"));
                     System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                 }else{
                     System.out.println("ADM: mLoadMenuItemsFromSage: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
@@ -658,7 +658,7 @@ public class MenuNode {
     public static void SaveMenuItemsToSage(){
         
         //clean up existing MenuItems from the SageTV properties file before writing the new ones
-        sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation);
+        util.RemovePropertyAndChildren(util.SagePropertyLocation);
         //clear the MenuNodeList and rebuild it while saving
         MenuNodeList.clear();
         
@@ -682,16 +682,16 @@ public class MenuNode {
         if (!tMenu.Name.equals(util.TopMenu)){
             String PropLocation = "";
             PropLocation = util.SagePropertyLocation + tMenu.Name;
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", tMenu.ActionAttribute);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", tMenu.ActionType);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", tMenu.BGImageFile);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", tMenu.ButtonText);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenu.Name);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", tMenu.Parent);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", tMenu.SortKey.toString());
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", tMenu.SubMenu);
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", tMenu.IsActive.toString());
+            util.SetProperty(PropLocation + "/Action", tMenu.ActionAttribute);
+            util.SetProperty(PropLocation + "/ActionType", tMenu.ActionType);
+            util.SetProperty(PropLocation + "/BGImageFile", tMenu.BGImageFile);
+            util.SetProperty(PropLocation + "/ButtonText", tMenu.ButtonText);
+            util.SetProperty(PropLocation + "/Name", tMenu.Name);
+            util.SetProperty(PropLocation + "/Parent", tMenu.Parent);
+            util.SetProperty(PropLocation + "/SortKey", tMenu.SortKey.toString());
+            util.SetProperty(PropLocation + "/SubMenu", tMenu.SubMenu);
+            util.SetProperty(PropLocation + "/IsDefault", tMenu.IsDefault.toString());
+            util.SetProperty(PropLocation + "/IsActive", tMenu.IsActive.toString());
         }
     }
     
@@ -715,7 +715,7 @@ public class MenuNode {
             ExportMenuItems(util.PropertyBackupFile);
         }
         //clean up existing MenuItems from the SageTV properties file
-        sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation);
+        util.RemovePropertyAndChildren(util.SagePropertyLocation);
         //clean the environment
         CleanMenuNodeListandTree();
         //Create 1 new MenuItem at the TopMenu level
@@ -758,7 +758,7 @@ public class MenuNode {
         //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
         if (Diamond.IsDiamond()){
             //admSageTVVideos
-            if ("true".equals(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),DiamondVideoMenuCheckProp, "false"))){
+            if ("true".equals(util.GetProperty(DiamondVideoMenuCheckProp, "false"))){
                 //show the Videos Menu
                 SetMenuItemIsActive(DiamondMenuMovies, Boolean.TRUE);
                 SetMenuItemIsActive(DiamondMenuVideos, Boolean.FALSE);
@@ -808,7 +808,7 @@ public class MenuNode {
             
             //load MenuItems from the properties file and write to the Sage properties
             for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
-                sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
+                util.SetProperty(tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
                 
                 //System.out.println("ADM: mImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
             }
@@ -1018,7 +1018,7 @@ public class MenuNode {
     private static void Save(String Name, String PropType, String Setting){
         if (!Name.equals(util.TopMenu)){
             String PropLocation = util.SagePropertyLocation + Name;
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/" + PropType, Setting);
+            util.SetProperty(PropLocation + "/" + PropType, Setting);
             //no save the specifc node field change
             if (PropType.equals("Action")){
                 MenuNodeList.get(Name).ActionAttribute = Setting;

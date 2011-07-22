@@ -24,7 +24,6 @@ import java.util.TreeMap;
 public class util {
 
     public static String Version = "0.365";
-    //private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -86,7 +85,7 @@ public class util {
             SageSubMenusLevel2Keys.add(ListNone);
 
             //clean up existing focus items
-            sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageFocusPropertyLocation);
+            RemovePropertyAndChildren(SageFocusPropertyLocation);
         
             //generate symbols to be used for new MenuItem names
             for (int idx = 0; idx < 10; ++idx)
@@ -115,9 +114,9 @@ public class util {
         
         //clear all the Sage property settings for ADM
         System.out.println("ADM: uClearAll: clear Sage Properties");
-        sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageADMBasePropertyLocation);
+        RemovePropertyAndChildren(SageADMBasePropertyLocation);
         System.out.println("ADM: uClearAll: clear Sage Server Properties");
-        sagex.api.Configuration.RemoveServerPropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageADMBasePropertyLocation);
+        RemoveServerPropertyAndChildren(SageADMBasePropertyLocation);
         ADMInitComplete = Boolean.FALSE;
         System.out.println("ADM: uClearAll: load default menus");
         MenuNode.LoadMenuItemDefaults();
@@ -320,12 +319,12 @@ public class util {
             for (String BGKey: tBackgrounds){
                 //only add valid backgrounds
                 String PropLocation = util.SageBackgroundsPropertyLocation + BGKey;
-                String tPath = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, OptionNotFound);
+                String tPath = GetServerProperty(PropLocation, OptionNotFound);
                 if (!tPath.equals(OptionNotFound)){
                     SageBackgrounds.add(BGKey);
                 }else{
                     //remove any invalid backgrounds
-                    sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), PropLocation);
+                    RemoveServerProperty(PropLocation);
                 }
                 
             }
@@ -371,7 +370,7 @@ public class util {
         if (Option.startsWith("adm")){
             //a custom file is being referenced so look up the path from the Sage Properties file
             String PropLocation = util.SageBackgroundsPropertyLocation + Option;
-            String tPath = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, OptionNotFound);
+            String tPath = GetServerProperty(PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
                 File tBackground = sagex.api.Utility.CreateFilePath(tPath, "");
                 String tBackgroundName = sagex.api.Utility.GetFileNameFromPath(tBackground);
@@ -379,7 +378,7 @@ public class util {
                 return tBackgroundName;
             }else{
                 //remove the Not Found key if it was created as part of the Get
-                sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), PropLocation);
+                RemoveServerProperty(PropLocation);
                 System.out.println("ADM: uGetSageBGButtonText for '" + Option + "' Invalid request passed in");
                 return ListNone;
             }
@@ -403,13 +402,13 @@ public class util {
         if (Option.startsWith("adm")){
             //a custom file is being referenced so look up the path from the Sage Properties file
             String PropLocation = util.SageBackgroundsPropertyLocation + Option;
-            String tPath = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, OptionNotFound);
+            String tPath = GetServerProperty(PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
                 //System.out.println("ADM: uGetSageBGFile for '" + Option + "' = '" + tPath + "'");
                 return tPath;
             }else{
                 //remove the Not Found key if it was created as part of the Get
-                sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), PropLocation);
+                RemoveServerProperty(PropLocation);
                 //System.out.println("ADM: uGetSageBGFile for '" + Option + "' Invalid request passed in");
                 return null;
             }
@@ -436,7 +435,7 @@ public class util {
             File tBackground = sagex.api.Utility.CreateFilePath(BackgroundFile, "");
             String tBackgroundPath = tBackground.toString();
             String tBackgroundKey = GetNewBackgroundKey();
-            sagex.api.Configuration.SetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
+            SetServerProperty(SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
             System.out.println("ADM: uSaveSageBackground completed for '" + BackgroundFile + "'");
             SageBackgrounds.add(tBackgroundKey);
             //LoadSageBGList();
@@ -460,7 +459,7 @@ public class util {
     public static void RemoveSageBackground(String Option){
         //can only remove custom Backgrounds
         if (Option.startsWith("adm")){
-            sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), SageBackgroundsPropertyLocation + Option);
+            RemoveServerProperty(SageBackgroundsPropertyLocation + Option);
             SageBackgrounds.remove(Option);
             //need to find all MenuNodes using this background and reset them
             for (String MenuItem: MenuNode.MenuNodeList.keySet()){
@@ -478,7 +477,7 @@ public class util {
     }
 
     public static Boolean IsAdvancedMode(){
-        if ("true".equals(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),AdvancedModePropertyLocation, "false"))){
+        if ("true".equals(GetProperty(AdvancedModePropertyLocation, "false"))){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
@@ -558,11 +557,11 @@ public class util {
     //Save the current item that is focused for later retrieval
     public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
         System.out.println("ADM: uSetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageFocusPropertyLocation + SubMenu, FocusItem);
+        SetProperty(SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
     public static String GetLastFocusForSubMenu(String SubMenu){
-        String LastFocus = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageFocusPropertyLocation + SubMenu,OptionNotFound);
+        String LastFocus = GetProperty(SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
             System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
@@ -617,6 +616,33 @@ public class util {
         return "adm" + new String(buf);
     }
 
-    
+    public static String GetProperty(String Property, String DefaultValue){
+        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
+    }
 
+    public static String GetServerProperty(String Property, String DefaultValue){
+        return sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
+    }
+
+    public static void SetProperty(String Property, String Value){
+        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+    }
+
+    public static void SetServerProperty(String Property, String Value){
+        sagex.api.Configuration.SetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+    }
+
+    public static void RemoveServerProperty(String Property){
+        sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+    }
+
+    public static void RemovePropertyAndChildren(String Property){
+        sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+    }
+
+    public static void RemoveServerPropertyAndChildren(String Property){
+        sagex.api.Configuration.RemoveServerPropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+    }
+
+    
 }
