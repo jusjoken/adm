@@ -456,6 +456,19 @@ public class util {
         return IsCustomSageBackground(GetSageBGListElement(Option));
     }
     
+    public static void RemoveAllSageBackgrounds(){
+        //find all Backgrounds from the SageTV properties file
+        String[] tBackgrounds = sagex.api.Configuration.GetServerSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),SageBackgroundsPropertyLocation);
+        if (tBackgrounds.length>0){
+            for (String BGKey: tBackgrounds){
+                //remove each background
+                RemoveSageBackground(BGKey);
+            }
+            System.out.println("ADM: uLoadSageBGList: Loading Backgrounds");
+        }
+        System.out.println("ADM: uRemoveAllSageBackgrounds: Removed '" + tBackgrounds.length + "' backgrounds");
+    }
+    
     public static void RemoveSageBackground(String Option){
         //can only remove custom Backgrounds
         if (Option.startsWith("adm")){

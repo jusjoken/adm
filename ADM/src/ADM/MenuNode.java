@@ -82,12 +82,12 @@ public class MenuNode {
     public static void SetMenuItemAction(String Name, String Setting){
         if (GetMenuItemActionType(Name).equals(Action.BrowseVideoFolder)){
             //ensure the Folder string ends in a "/" (File.separator) unless it's blank
-            if (Setting.isEmpty() || !Setting.endsWith(File.separator)){
-                Setting = Setting + File.separator;
-            }
-            if (Setting.equals(File.separator)){
-                Setting = null;
-            }
+//            if (Setting.isEmpty() || !Setting.endsWith(File.separator)){
+//                Setting = Setting + File.separator;
+//            }
+//            if (Setting.equals(File.separator)){
+//                Setting = null;
+//            }
         }
         Save(Name, "Action", Setting);
     }
@@ -1155,6 +1155,7 @@ public class MenuNode {
         return NewName;
     }
 
+    @SuppressWarnings("unchecked")
     public static Map<String,MenuNode> MenuNodeList(){
         String UIContext = sagex.api.Global.GetUIContextName();
         if (!UIMenuNodeList.containsKey(UIContext)){
