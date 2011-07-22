@@ -37,7 +37,7 @@ public class CopyMode {
         }
         sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
         
-        System.out.println("ADM: SaveVideoFolderDetails: FolderPath '" + FolderPath + "'");
+        System.out.println("ADM: cSaveVideoFolderDetails: FolderPath '" + FolderPath + "'");
     }
     
     public static String GetVideoFolderDetails(){
@@ -73,7 +73,7 @@ public class CopyMode {
         MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
         
-        System.out.println("ADM: CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        System.out.println("ADM: cCreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
         
     }
@@ -93,7 +93,7 @@ public class CopyMode {
         String ActionWidget = null;
         Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(new UIContext(sagex.api.Global.GetUIContextName()), CurrentWidgetSymbol);
         for (Object Child : Children){
-            //System.out.println("ADM: SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
+            //System.out.println("ADM: cSaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
             if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(new UIContext(sagex.api.Global.GetUIContextName()),Child))){
                 //found an action so save it and leave
                 ActionWidget = sagex.api.WidgetAPI.GetWidgetSymbol(new UIContext(sagex.api.Global.GetUIContextName()),Child);
@@ -146,7 +146,7 @@ public class CopyMode {
             sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Type", FinalType);
             sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
         }
-        System.out.println("ADM: SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
+        System.out.println("ADM: cSaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
     
     //create a new Menu Item from the current Menu Item details
@@ -169,7 +169,7 @@ public class CopyMode {
         }
         MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
 
-        System.out.println("ADM: CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        System.out.println("ADM: cCreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
         
     }
@@ -204,10 +204,10 @@ public class CopyMode {
         try {
             tLevel = Integer.valueOf(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageCurrentMenuItemPropertyLocation + "Level", "0"));
         } catch (NumberFormatException ex) {
-            System.out.println("ADM: GetCurrentMenuItemDetailsLevel: error loading level: " + util.class.getName() + ex);
+            System.out.println("ADM: cGetCurrentMenuItemDetailsLevel: error loading level: " + util.class.getName() + ex);
             tLevel = 0;
         }
-        //System.out.println("ADM: GetCurrentMenuItemDetailsLevel: returning level = '" + tLevel + "'");
+        //System.out.println("ADM: cGetCurrentMenuItemDetailsLevel: returning level = '" + tLevel + "'");
         return tLevel;
     }
     

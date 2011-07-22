@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.364";
+    public static String Version = "0.365";
     //private static final UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
@@ -67,11 +67,11 @@ public class util {
             try{
                 boolean success = (new File(ADMLocation)).mkdirs();
                 if (success) {
-                    System.out.println("ADM: InitADM - Directories created for '" + ADMLocation + "'");
+                    System.out.println("ADM: uInitADM - Directories created for '" + ADMLocation + "'");
                    }
 
                 }catch (Exception ex){//Catch exception if any
-                    System.out.println("ADM: InitADM - error creating '" + ADMLocation + "'" + ex.getMessage());
+                    System.out.println("ADM: uInitADM - error creating '" + ADMLocation + "'" + ex.getMessage());
                 }
             
             //also load the BGVariables for BG Images on Top Level Menus
@@ -96,12 +96,12 @@ public class util {
             
             ADMInitComplete = true;
 
-            System.out.println("ADM: InitADM - One Time initialization complete.");
+            System.out.println("ADM: uInitADM - One Time initialization complete.");
 
         }
         //initiate items that may differ per UIContext - the UI needs to ensure this only gets loaded once
         MenuNode.LoadMenuItemsFromSage();
-        System.out.println("ADM: InitADM - UI level initialization complete.");
+        System.out.println("ADM: uInitADM - UI level initialization complete.");
            
 
     }
@@ -114,31 +114,31 @@ public class util {
         }
         
         //clear all the Sage property settings for ADM
-        System.out.println("ADM: ClearAll: clear Sage Properties");
+        System.out.println("ADM: uClearAll: clear Sage Properties");
         sagex.api.Configuration.RemovePropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageADMBasePropertyLocation);
-        System.out.println("ADM: ClearAll: clear Sage Server Properties");
+        System.out.println("ADM: uClearAll: clear Sage Server Properties");
         sagex.api.Configuration.RemoveServerPropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),SageADMBasePropertyLocation);
         ADMInitComplete = Boolean.FALSE;
-        System.out.println("ADM: ClearAll: load default menus");
+        System.out.println("ADM: uClearAll: load default menus");
         MenuNode.LoadMenuItemDefaults();
-        System.out.println("ADM: ClearAll: initialize settings");
+        System.out.println("ADM: uClearAll: initialize settings");
         InitADM();
-        System.out.println("ADM: ClearAll: complete - settings restored to defaults");
+        System.out.println("ADM: uClearAll: complete - settings restored to defaults");
         
     }
 
     public static String GetElement(Collection<String> List, Integer element){
-        System.out.println("ADM: GetElement: looking for element " + element + " in:" + List);
+        System.out.println("ADM: uGetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
         for (String CurElement:List){
             counter++;
-            System.out.println("ADM: GetElement: checking element '" + counter + "' = '" + CurElement + "'");
+            System.out.println("ADM: uGetElement: checking element '" + counter + "' = '" + CurElement + "'");
             if (counter.equals(element)){
-                System.out.println("ADM: GetElement: found '" + CurElement + "'");
+                System.out.println("ADM: uGetElement: found '" + CurElement + "'");
                 return CurElement;
             }
         }
-        System.out.println("ADM: GetElement: not found.");
+        System.out.println("ADM: uGetElement: not found.");
         return null;
     }
     
@@ -153,7 +153,7 @@ public class util {
         }
         EditOptions.add("admDeleteMenuItem"); //Delete current Menu Item
         EditOptions.add("admCloseEdit"); //Close the Edit Menu
-        System.out.println("ADM: GetEditOptionsList - Loaded list for '" + Name + "' :" + EditOptions);
+        System.out.println("ADM: uGetEditOptionsList - Loaded list for '" + Name + "' :" + EditOptions);
         return EditOptions;
     }
     
@@ -170,7 +170,7 @@ public class util {
         }else if("admCloseEdit".equals(Option)){
             ButtonText = "Close";
         }
-        //System.out.println("ADM: GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
+        //System.out.println("ADM: uGetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
     }
     
@@ -184,11 +184,11 @@ public class util {
                 SageSubMenusLevel1Props.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: LoadSubMenuListLevel1: IO exception loading standard actions " + util.class.getName() + ex);
+                System.out.println("ADM: uLoadSubMenuListLevel1: IO exception loading standard actions " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadSubMenuListLevel1: file not found loading standard actions " + util.class.getName() + ex);
+            System.out.println("ADM: uLoadSubMenuListLevel1: file not found loading standard actions " + util.class.getName() + ex);
             return;
         }
 
@@ -209,7 +209,7 @@ public class util {
         //Add in a -None- option to the list
         SageSubMenusLevel1Props.put(ListNone,ListNone);
         
-        System.out.println("ADM: LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
+        System.out.println("ADM: uLoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
         return;
     }
 
@@ -223,11 +223,11 @@ public class util {
                 SageSubMenusLevel2Props.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: LoadSubMenuListLevel2: IO exception loading standard actions " + util.class.getName() + ex);
+                System.out.println("ADM: uLoadSubMenuListLevel2: IO exception loading standard actions " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadSubMenuListLevel2: file not found loading standard actions " + util.class.getName() + ex);
+            System.out.println("ADM: uLoadSubMenuListLevel2: file not found loading standard actions " + util.class.getName() + ex);
             return;
         }
 
@@ -248,7 +248,7 @@ public class util {
         //Add in a -None- option to the list
         SageSubMenusLevel2Props.put(ListNone,ListNone);
         
-        System.out.println("ADM: LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
+        System.out.println("ADM: uLoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
         return;
     }
 
@@ -262,11 +262,11 @@ public class util {
                 SageBGVariablesProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: LoadSageBGVariablesList: IO exception loading SageBGVariables " + util.class.getName() + ex);
+                System.out.println("ADM: uLoadSageBGVariablesList: IO exception loading SageBGVariables " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadSageBGVariablesList: file not found loading SageBGVariables " + util.class.getName() + ex);
+            System.out.println("ADM: uLoadSageBGVariablesList: file not found loading SageBGVariables " + util.class.getName() + ex);
             return;
         }
 
@@ -283,7 +283,7 @@ public class util {
             SageBGVariablesKeys.add(ActionValuesList.get(ActionValue));
         }
         
-        System.out.println("ADM: LoadSageBGVariablesList: completed for '" + StandardActionPropsPath + "'");
+        System.out.println("ADM: uLoadSageBGVariablesList: completed for '" + StandardActionPropsPath + "'");
         return;
     }
 
@@ -309,13 +309,13 @@ public class util {
         SageBackgrounds.addAll(SageBGVariablesKeys);
         //remove none as it may not be where we want it in the list
         SageBackgrounds.remove(ListNone);
-        System.out.println("ADM: LoadSageBGList: Loaded BGVariables");
+        System.out.println("ADM: uLoadSageBGList: Loaded BGVariables");
         //add None to the start of the list
         SageBackgrounds.add(0,ListNone);
 
         //find all Backgrounds from the SageTV properties file
         String[] tBackgrounds = sagex.api.Configuration.GetServerSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),SageBackgroundsPropertyLocation);
-        System.out.println("ADM: LoadSageBGList: Getting '" + tBackgrounds.length + "' backgrounds + UI = '" + sagex.api.Global.GetUIContextName() + "' tBackgrounds = '" + tBackgrounds + "'");
+        System.out.println("ADM: uLoadSageBGList: Getting '" + tBackgrounds.length + "' backgrounds + UI = '" + sagex.api.Global.GetUIContextName() + "' tBackgrounds = '" + tBackgrounds + "'");
         if (tBackgrounds.length>0){
             for (String BGKey: tBackgrounds){
                 //only add valid backgrounds
@@ -329,7 +329,7 @@ public class util {
                 }
                 
             }
-            System.out.println("ADM: LoadSageBGList: Loading Backgrounds");
+            System.out.println("ADM: uLoadSageBGList: Loading Backgrounds");
         }
     }
 
@@ -375,12 +375,12 @@ public class util {
             if (!tPath.equals(OptionNotFound)){
                 File tBackground = sagex.api.Utility.CreateFilePath(tPath, "");
                 String tBackgroundName = sagex.api.Utility.GetFileNameFromPath(tBackground);
-                System.out.println("ADM: GetSageBGButtonText for '" + Option + "' = '" + tBackgroundName + "'");
+                System.out.println("ADM: uGetSageBGButtonText for '" + Option + "' = '" + tBackgroundName + "'");
                 return tBackgroundName;
             }else{
                 //remove the Not Found key if it was created as part of the Get
                 sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), PropLocation);
-                System.out.println("ADM: GetSageBGButtonText for '" + Option + "' Invalid request passed in");
+                System.out.println("ADM: uGetSageBGButtonText for '" + Option + "' Invalid request passed in");
                 return ListNone;
             }
         }else{
@@ -396,8 +396,8 @@ public class util {
     public static String GetSageBGFile(String Option){
         //see if using a GlobalVariable from a Theme or a path to an image file
         if (Option==null || Option.equals("") || Option.equals(ListNone)){
-            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - null found");
-            System.out.println("ADM: GetSageBGFile for '" + Option + "' Invalid request passed in");
+            //System.out.println("ADM: uSetBGImageFileandPath for '" + bBGImageFile + "' - null found");
+            //System.out.println("ADM: uGetSageBGFile for '" + Option + "' Invalid request passed in");
             return null;
         }
         if (Option.startsWith("adm")){
@@ -405,24 +405,24 @@ public class util {
             String PropLocation = util.SageBackgroundsPropertyLocation + Option;
             String tPath = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
-                System.out.println("ADM: GetSageBGFile for '" + Option + "' = '" + tPath + "'");
+                //System.out.println("ADM: uGetSageBGFile for '" + Option + "' = '" + tPath + "'");
                 return tPath;
             }else{
                 //remove the Not Found key if it was created as part of the Get
                 sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), PropLocation);
-                System.out.println("ADM: GetSageBGFile for '" + Option + "' Invalid request passed in");
+                //System.out.println("ADM: uGetSageBGFile for '" + Option + "' Invalid request passed in");
                 return null;
             }
         }else{
             //expect a Global Variable from the theme
-            //System.out.println("ADM: SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
+            //System.out.println("ADM: uSetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
             String BGImageFilePath = "";
             BGImageFilePath = EvaluateAttribute(Option);
             if (BGImageFilePath.equals(OptionNotFound)){
-                System.out.println("ADM: GetSageBGFile for '" + Option + "' Evaluate Failed");
+                System.out.println("ADM: uGetSageBGFile for '" + Option + "' Evaluate Failed");
                 return null;
             }else{
-                System.out.println("ADM: GetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
+                System.out.println("ADM: uGetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
                 return BGImageFilePath;
             }
         }
@@ -431,13 +431,13 @@ public class util {
     public static void SaveSageBackground(String BackgroundFile){
         if (BackgroundFile==null || BackgroundFile.equals("") || BackgroundFile.equals(ListNone)){
             //do nothing
-            System.out.println("ADM: SaveSageBackground for '" + BackgroundFile + "' NOTHING FOUND");
+            System.out.println("ADM: uSaveSageBackground for '" + BackgroundFile + "' NOTHING FOUND");
         }else{
             File tBackground = sagex.api.Utility.CreateFilePath(BackgroundFile, "");
             String tBackgroundPath = tBackground.toString();
             String tBackgroundKey = GetNewBackgroundKey();
             sagex.api.Configuration.SetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()), SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
-            System.out.println("ADM: SaveSageBackground completed for '" + BackgroundFile + "'");
+            System.out.println("ADM: uSaveSageBackground completed for '" + BackgroundFile + "'");
             SageBackgrounds.add(tBackgroundKey);
             //LoadSageBGList();
         }
@@ -466,10 +466,10 @@ public class util {
             for (String MenuItem: MenuNode.MenuNodeList.keySet()){
                 if(MenuNode.GetMenuItemBGImageFile(MenuItem).equals(Option)){
                     MenuNode.SetMenuItemBGImageFile(MenuItem,ListNone);
-                    System.out.println("ADM: RemoveSageBackground: Active background removed from '" + MenuItem + "'");
+                    System.out.println("ADM: uRemoveSageBackground: Active background removed from '" + MenuItem + "'");
                 }
             }
-            System.out.println("ADM: RemoveSageBackground completed for '" + Option + "'");
+            System.out.println("ADM: uRemoveSageBackground completed for '" + Option + "'");
         }
     }
     
@@ -490,7 +490,7 @@ public class util {
     }
     
     public static String GetSubMenuListButtonText(String Option, Integer Level, Boolean SkipAdvanced){
-        //System.out.println("ADM: GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
+        //System.out.println("ADM: uGetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
         if (Option==null || Option.equals(ListNone)){
             return ListNone;
         }
@@ -533,23 +533,23 @@ public class util {
         Float[] Insets = new Float[]{0f,0f,0f,0f};
         Float[] DiamondInsets = new Float[]{0f,0f,0.015f,0f};
         if (Diamond.IsDiamond()){
-            System.out.println("ADM: GetMenuInsets: Diamond");
+            System.out.println("ADM: uGetMenuInsets: Diamond");
             return DiamondInsets;
         }else{
-            System.out.println("ADM: GetMenuInsets:");
+            System.out.println("ADM: uGetMenuInsets:");
             return Insets;
         }
     }
 
     public static String EvaluateAttribute(String Attribute){
-        System.out.println("ADM: EvaluateAttribute: Attribute = '" + Attribute + "'");
+        //System.out.println("ADM: uEvaluateAttribute: Attribute = '" + Attribute + "'");
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), Attribute);
         if (passvalue[0]==null){
-            System.out.println("ADM: EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
+            System.out.println("ADM: uEvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
             return OptionNotFound;
         }else{
-            System.out.println("ADM: EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
+            System.out.println("ADM: uEvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
             return passvalue[0].toString();
         }
         
@@ -557,7 +557,7 @@ public class util {
 
     //Save the current item that is focused for later retrieval
     public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
-        System.out.println("ADM: SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
+        System.out.println("ADM: uSetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
         sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
@@ -565,15 +565,15 @@ public class util {
         String LastFocus = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
-            System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
+            System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
             return MenuNode.GetSubMenuDefault(SubMenu);
         }else{
             //check that the focus item stored in Sage is still valid
             if (MenuNode.IsSubMenuItem(SubMenu, LastFocus)){
-                System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
+                System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
                 return LastFocus;
             }else{
-                System.out.println("ADM: GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
+                System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
                 return MenuNode.GetSubMenuDefault(SubMenu);
             }
         }
@@ -590,11 +590,11 @@ public class util {
         for (Field field : obj.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true); // if you want to modify private fields
-                System.out.println("ADM: ListObjectMembers: " + field.getName() + " - " + field.getType() + " - " + field.get(obj));
+                System.out.println("ADM: uListObjectMembers: " + field.getName() + " - " + field.getType() + " - " + field.get(obj));
             } catch (IllegalArgumentException ex) {
-                System.out.println("ADM: ListObjectMembers: ERROR: " + util.class.getName() + ex);
+                System.out.println("ADM: uListObjectMembers: ERROR: " + util.class.getName() + ex);
             } catch (IllegalAccessException ex) {
-                System.out.println("ADM: ListObjectMembers: ERROR: " + util.class.getName() + ex);
+                System.out.println("ADM: uListObjectMembers: ERROR: " + util.class.getName() + ex);
             }
         }
     }

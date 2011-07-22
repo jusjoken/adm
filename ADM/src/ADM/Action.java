@@ -153,10 +153,10 @@ public class Action {
 
     public static Boolean IsValidAction(String Type){
         if (Type.equals(ActionTypeDefault)){
-            System.out.println("ADM: IsValidAction - FALSE for = '" + Type + "'");
+            System.out.println("ADM: aIsValidAction - FALSE for = '" + Type + "'");
             return Boolean.FALSE;
         }else{
-            System.out.println("ADM: IsValidAction - Lookup for = '" + Type + "' = '" + ActionList.containsKey(Type) + "'");
+            System.out.println("ADM: aIsValidAction - Lookup for = '" + Type + "' = '" + ActionList.containsKey(Type) + "'");
             return ActionList.containsKey(Type);
         }
     }
@@ -194,11 +194,11 @@ public class Action {
     
     
     public static void Execute(String ActionType, String ActionAttribute){
-        System.out.println("ADM: Execute - ActionType = '" + ActionType + "' Action = '" + ActionAttribute + "'");
+        System.out.println("ADM: aExecute - ActionType = '" + ActionType + "' Action = '" + ActionAttribute + "'");
         if (!ActionType.equals(ActionTypeDefault)){
             if (!GetAttribute(ActionType).equals(Blank)){
                 //Set a Static Context for the Attribute to the ActionAttribute
-                System.out.println("ADM: Execute - Setting Static Context for = '" + GetAttribute(ActionType) + "' to '" + ActionAttribute + "'");
+                System.out.println("ADM: aExecute - Setting Static Context for = '" + GetAttribute(ActionType) + "' to '" + ActionAttribute + "'");
                 sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), GetAttribute(ActionType), ActionAttribute);
             }
             //either execute the default widget symbol or the one passed in
@@ -215,15 +215,15 @@ public class Action {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            System.out.println("ADM: ExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: aExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
         }else{
-            System.out.println("ADM: ExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: aExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
 
             try {
                 sage.SageTV.apiUI(new UIContext(sagex.api.Global.GetUIContextName()).toString(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
             } catch (InvocationTargetException ex) {
-                System.out.println("ADM: ExecuteWidget: error executing widget" + util.class.getName() + ex);
+                System.out.println("ADM: aExecuteWidget: error executing widget" + util.class.getName() + ex);
                 return Boolean.FALSE;
             }
             return Boolean.TRUE;
@@ -237,10 +237,10 @@ public class Action {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: aIsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
         }else{
-            System.out.println("ADM: IsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: aIsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.TRUE;
         }
                
@@ -250,11 +250,11 @@ public class Action {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            System.out.println("ADM: GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            System.out.println("ADM: aGetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return util.OptionNotFound;
         }else{
             String WidgetName = sagex.api.WidgetAPI.GetWidgetName(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
-            System.out.println("ADM: GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
+            System.out.println("ADM: aGetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
             return WidgetName;
         }
                
@@ -270,11 +270,11 @@ public class Action {
                 DiamondDefaultFlowsProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: LoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
+                System.out.println("ADM: aLoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
+            System.out.println("ADM: aLoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
             return;
         }
 
@@ -291,7 +291,7 @@ public class Action {
             DiamondDefaultFlowsKeys.add(ActionValuesList.get(ActionValue));
         }
         
-        System.out.println("ADM: LoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
+        System.out.println("ADM: aLoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
         return;
     }
 
@@ -305,11 +305,11 @@ public class Action {
                 StandardActionProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: LoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
+                System.out.println("ADM: aLoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: LoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
+            System.out.println("ADM: aLoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
             return;
         }
 
@@ -326,7 +326,7 @@ public class Action {
             StandardActionKeys.add(ActionValuesList.get(ActionValue));
         }
         
-        System.out.println("ADM: LoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
+        System.out.println("ADM: aLoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
         return;
     }
 
