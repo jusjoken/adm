@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.365";
+    public static String Version = "0.366";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -108,7 +108,7 @@ public class util {
     public static void ClearAll(){
 
         //backup existing MenuItems before clearing settings and menus
-        if (MenuNode.MenuNodeList.size()>0){
+        if (MenuNode.MenuNodeList().size()>0){
             MenuNode.ExportMenuItems(PropertyBackupFile);
         }
         
@@ -462,7 +462,7 @@ public class util {
             RemoveServerProperty(SageBackgroundsPropertyLocation + Option);
             SageBackgrounds.remove(Option);
             //need to find all MenuNodes using this background and reset them
-            for (String MenuItem: MenuNode.MenuNodeList.keySet()){
+            for (String MenuItem: MenuNode.MenuNodeList().keySet()){
                 if(MenuNode.GetMenuItemBGImageFile(MenuItem).equals(Option)){
                     MenuNode.SetMenuItemBGImageFile(MenuItem,ListNone);
                     System.out.println("ADM: uRemoveSageBackground: Active background removed from '" + MenuItem + "'");
@@ -473,7 +473,7 @@ public class util {
     }
     
     public static Boolean IsSageSubMenu(String SubMenu){
-        return !MenuNode.MenuNodeList.containsKey(SubMenu);
+        return !MenuNode.MenuNodeList().containsKey(SubMenu);
     }
 
     public static Boolean IsAdvancedMode(){
