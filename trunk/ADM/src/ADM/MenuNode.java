@@ -67,7 +67,7 @@ public class MenuNode {
     }
 
     public static String GetMenuItemAction(String Name){
-        //System.out.println("ADM: GetMenuItemAction for '" + Name + "' = '" + MenuNodeList.get(Name).ActionAttribute + "'");
+        //System.out.println("ADM: mGetMenuItemAction for '" + Name + "' = '" + MenuNodeList.get(Name).ActionAttribute + "'");
         return MenuNodeList.get(Name).ActionAttribute;
     }
 
@@ -96,7 +96,7 @@ public class MenuNode {
         //see if using a GlobalVariable from a Theme or a path to an image file
         BGImageFile = bBGImageFile;
         BGImageFilePath = util.GetSageBGFile(bBGImageFile);
-        //System.out.println("ADM: SetBGImageFileandPath for '" + Name + "' BGImageFile = '" + BGImageFile + "' BGImageFilePath = '" + BGImageFilePath + "'");
+        //System.out.println("ADM: mSetBGImageFileandPath for '" + Name + "' BGImageFile = '" + BGImageFile + "' BGImageFilePath = '" + BGImageFilePath + "'");
     }
     
     public static String GetMenuItemBGImageFileButtonText(String Name){
@@ -112,7 +112,7 @@ public class MenuNode {
     }
 
     public static String GetMenuItemBGImageFilePath(String Name){
-        //System.out.println("ADM: GetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList.get(Name).BGImageFilePath + "'");
+        //System.out.println("ADM: mGetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList.get(Name).BGImageFilePath + "'");
         if (MenuNodeList.get(Name).BGImageFilePath==null){
             if (MenuNodeList.get(Name).Parent.equals(util.TopMenu)){
                 return null;
@@ -177,11 +177,11 @@ public class MenuNode {
             DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
             MenuNode tMenu = (MenuNode)pathnodea.getUserObject();
             if (!tMenu.IsActive){
-                //System.out.println("ADM: GetMenuItemIsActiveIncludingParent for '" + Name + "' NOTACTIVE for item = '" + tMenu.Name + "'");
+                //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' NOTACTIVE for item = '" + tMenu.Name + "'");
                 return Boolean.FALSE;
             }
         }
-        //System.out.println("ADM: GetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
+        //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
         return Boolean.TRUE;
     }
 
@@ -194,14 +194,14 @@ public class MenuNode {
     }
 
     public static void SetMenuItemIsDefault(String Name, Boolean Setting){
-        //System.out.println("ADM: SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
+        //System.out.println("ADM: mSetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
         if (Setting==Boolean.TRUE){
-            //System.out.println("ADM: SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
+            //System.out.println("ADM: mSetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
             //first clear existing Default settings for Menu Items with the same parent 
             ClearSubMenuDefaults(MenuNodeList.get(Name).Parent);
             Save(Name, "IsDefault", Setting.toString());
         }else{
-            //System.out.println("ADM: SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
+            //System.out.println("ADM: mSetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
             Save(Name, "IsDefault", Setting.toString());
             //ensure at least 1 item remaining is a default
             ValidateSubMenuDefault(MenuNodeList.get(Name).Parent);
@@ -232,15 +232,15 @@ public class MenuNode {
                 //no default found so set the first item as the default
                 DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode)MenuNodeList.get(bParent).NodeItem.getFirstChild();
                 MenuNode tMenu = (MenuNode)firstChild.getUserObject();
-                System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + tMenu.Name + "'");
+                System.out.println("ADM: mValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + tMenu.Name + "'");
                 Save(tMenu.Name, "IsDefault", Boolean.TRUE.toString());
             }else {
-                System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : Default already set");
+                System.out.println("ADM: mValidateSubMenuDefault for '" + bParent + "' : Default already set");
             }
         }else{
             //no subMenu items so make sure this parent's SubMenu settings are correct
             SetMenuItemSubMenu(bParent, util.ListNone);
-            System.out.println("ADM: ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
+            System.out.println("ADM: mValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
         }
     }
         
@@ -258,7 +258,7 @@ public class MenuNode {
                 }
             }         
         }
-        System.out.println("ADM: ClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList.get(bParent).NodeItem.getChildCount() + "' cleared");
+        System.out.println("ADM: mClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList.get(bParent).NodeItem.getChildCount() + "' cleared");
     }
     
     @SuppressWarnings("unchecked")
@@ -269,12 +269,12 @@ public class MenuNode {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
                 if (tMenu.IsDefault){
-                    System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
+                    System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
                     return tMenu.Name;
                 }
             }         
         }
-        System.out.println("ADM: GetSubMenuDefault for '" + bParent + "' - none found");
+        System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' - none found");
         return "";
     }
 
@@ -289,10 +289,10 @@ public class MenuNode {
     public static String GetMenuItemParent(String Name){
         //get the parent from the Tree structure
         if (Name.equals(util.TopMenu)){
-            //System.out.println("ADM: GetMenuItemParent for '" + Name + "' returning null");
+            //System.out.println("ADM: mGetMenuItemParent for '" + Name + "' returning null");
             return null;
         }else{
-            //System.out.println("ADM: GetMenuItemParent for '" + Name + "' = '" + MenuNodeList.get(Name).NodeItem.getParent().toString() + "'");
+            //System.out.println("ADM: mGetMenuItemParent for '" + Name + "' = '" + MenuNodeList.get(Name).NodeItem.getParent().toString() + "'");
             return MenuNodeList.get(Name).NodeItem.getParent().toString();
         }
     }
@@ -321,7 +321,7 @@ public class MenuNode {
             //make sure the old and new SubMenus have a single default item
             ValidateSubMenuDefault(OldParent);
             ValidateSubMenuDefault(NewParent);
-            System.out.println("ADM: SetMenuItemParent: Parent changed for '" + Name + "' to = '" + NewParent + "'");
+            System.out.println("ADM: mSetMenuItemParent: Parent changed for '" + Name + "' to = '" + NewParent + "'");
         }
     }
     
@@ -334,7 +334,7 @@ public class MenuNode {
         try {
             tSortKey = Integer.valueOf(SortKey);
         } catch (NumberFormatException ex) {
-            System.out.println("ADM: setSortKey: error converting '" + SortKey + "' " + util.class.getName() + ex);
+            System.out.println("ADM: msetSortKey: error converting '" + SortKey + "' " + util.class.getName() + ex);
             tSortKey = SortKeyCounter++;
         }
         this.SortKey = tSortKey;
@@ -343,9 +343,9 @@ public class MenuNode {
     public static void ChangeSortOrder(String Name, Integer aDelta){
         if (moveNode(MenuNodeList.get(Name).NodeItem, aDelta)){
             SortKeyUpdate((DefaultMutableTreeNode)MenuNodeList.get(Name).NodeItem.getParent());
-            System.out.println("ADM: ChangeSortOrder: moving '" + Name + "' by '" + aDelta.toString() + "'");
+            System.out.println("ADM: mChangeSortOrder: moving '" + Name + "' by '" + aDelta.toString() + "'");
         }else{
-            System.out.println("ADM: ChangeSortOrder: NOT ABLE to move '" + Name + "' by '" + aDelta.toString() + "'");
+            System.out.println("ADM: mChangeSortOrder: NOT ABLE to move '" + Name + "' by '" + aDelta.toString() + "'");
         }
     }
     
@@ -382,10 +382,10 @@ public class MenuNode {
                 tMenu.SortKey = child.getParent().getIndex(child);
                 String PropLocation = util.SagePropertyLocation + tMenu.Name + "/" + "SortKey";
                 sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation, tMenu.SortKey.toString());
-                //System.out.println("ADM: SortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
+                //System.out.println("ADM: mSortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
             }
         }         
-        System.out.println("ADM: SortKeyUpdate: completed for Parent = '" + aParent + "'"  );
+        System.out.println("ADM: mSortKeyUpdate: completed for Parent = '" + aParent + "'"  );
     }
     
     //the SubMenu field is only filled in if using a built in Sage SubMenu
@@ -411,7 +411,7 @@ public class MenuNode {
     }
 
     public static void SetMenuItemSubMenu(String Name, String Setting){
-        //System.out.println("ADM: SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
+        //System.out.println("ADM: mSetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
         if (Setting.equals(util.ListNone) || Setting==null){
             //set the SubMenu field
             Save(Name, "SubMenu", null);
@@ -427,10 +427,10 @@ public class MenuNode {
             return Boolean.FALSE;
         }
         if (MenuNodeList.get(Item).NodeItem.getParent().toString().equals(bParent)){
-            System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+            System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
             return Boolean.TRUE;
         }else{
-            System.out.println("ADM: IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
+            System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
             return Boolean.FALSE;
         }
     }
@@ -459,7 +459,7 @@ public class MenuNode {
                 }
             }         
         }
-        System.out.println("ADM: GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
+        System.out.println("ADM: mGetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
         return bNames;
     }
     
@@ -471,7 +471,7 @@ public class MenuNode {
     //Get the count of MenuItems for a parent that are active
     public static int GetMenuItemCount(String Parent){
         Collection<String> bNames = GetMenuItemNameList(Parent);
-        System.out.println("ADM: GetMenuItemCount for '" + Parent + "' :" + bNames.size());
+        System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
         return bNames.size();
     }
 
@@ -496,7 +496,7 @@ public class MenuNode {
                 FinalList.add(tMenu.Name);
             }
         }         
-        System.out.println("ADM: GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
+        System.out.println("ADM: mGetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
         return FinalList;
     }
 
@@ -520,7 +520,7 @@ public class MenuNode {
                 ValidParentList.add(tMenu.Name);
             }
         }         
-        System.out.println("ADM: GetMenuItemParentList: '" + ValidParentList + "'");
+        System.out.println("ADM: mGetMenuItemParentList: '" + ValidParentList + "'");
         return ValidParentList;
     }
     
@@ -536,7 +536,7 @@ public class MenuNode {
                 ValidParentList.add(tMenu.Name);
             }
         }         
-        System.out.println("ADM: GetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
+        System.out.println("ADM: mGetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
         return ValidParentList;
     }
     
@@ -614,19 +614,24 @@ public class MenuNode {
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
-                PropLocation = util.SagePropertyLocation + tMenuItemName;
-                MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                NewMenuItem.ActionAttribute = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", null);
-                NewMenuItem.ActionType = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", util.ActionTypeDefault);
-                NewMenuItem.SetBGImageFileandPath(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", null));
-                NewMenuItem.ButtonText = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", util.ButtonTextDefault);
-                NewMenuItem.Name = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenuItemName);
-                NewMenuItem.Parent = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", "xTopMenu");
-                NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", "0"));
-                NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", null);
-                NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", "false"));
-                NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", "true"));
-                System.out.println("ADM: LoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                //make sure you do not load a TopMenu item - it should never be saved but this is just an extra check
+                if (!tMenuItemName.equals(util.TopMenu)){
+                    PropLocation = util.SagePropertyLocation + tMenuItemName;
+                    MenuNode NewMenuItem = new MenuNode(tMenuItemName);
+                    NewMenuItem.ActionAttribute = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", null);
+                    NewMenuItem.ActionType = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", util.ActionTypeDefault);
+                    NewMenuItem.SetBGImageFileandPath(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", null));
+                    NewMenuItem.ButtonText = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", util.ButtonTextDefault);
+                    NewMenuItem.Name = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenuItemName);
+                    NewMenuItem.Parent = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", "xTopMenu");
+                    NewMenuItem.setSortKey(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", "0"));
+                    NewMenuItem.SubMenu = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", null);
+                    NewMenuItem.IsDefault = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", "false"));
+                    NewMenuItem.IsActive = Boolean.parseBoolean(sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", "true"));
+                    System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                }else{
+                    System.out.println("ADM: mLoadMenuItemsFromSage: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
+                }
             }
             if (MenuNodeList.size()>0){
                 //create the tree nodes
@@ -640,10 +645,10 @@ public class MenuNode {
             
         }else{
             //load a default Menu here.  Load a Diamond Menu if Diamond if active
-            System.out.println("ADM: LoadMenuItemsFromSage: no MenuItems found - loading default menu.");
+            System.out.println("ADM: mLoadMenuItemsFromSage: no MenuItems found - loading default menu.");
             LoadMenuItemDefaults();
         }
-        System.out.println("ADM: LoadMenuItemsFromSage: loaded " + MenuNodeList.size() + " MenuItems");
+        System.out.println("ADM: mLoadMenuItemsFromSage: loaded " + MenuNodeList.size() + " MenuItems");
         
         return;
     }
@@ -662,28 +667,32 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
-            SaveMenuItemToSage(tMenu);
+            if (!tMenu.Name.equals(util.TopMenu)){
+                SaveMenuItemToSage(tMenu);
+            }
             //add the item into the MenuNodeList
             MenuNodeList.put(tMenu.Name, tMenu);
         }         
-        System.out.println("ADM: SaveMenuItemsToSage: saved " + MenuNodeList.size() + " MenuItems");
+        System.out.println("ADM: mSaveMenuItemsToSage: saved " + MenuNodeList.size() + " MenuItems");
         
         return;
     }
  
     public static void SaveMenuItemToSage(MenuNode tMenu){
-        String PropLocation = "";
-        PropLocation = util.SagePropertyLocation + tMenu.Name;
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", tMenu.ActionAttribute);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", tMenu.ActionType);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", tMenu.BGImageFile);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", tMenu.ButtonText);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenu.Name);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", tMenu.Parent);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", tMenu.SortKey.toString());
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", tMenu.SubMenu);
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", tMenu.IsActive.toString());
+        if (!tMenu.Name.equals(util.TopMenu)){
+            String PropLocation = "";
+            PropLocation = util.SagePropertyLocation + tMenu.Name;
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Action", tMenu.ActionAttribute);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ActionType", tMenu.ActionType);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/BGImageFile", tMenu.BGImageFile);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/ButtonText", tMenu.ButtonText);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Name", tMenu.Name);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/Parent", tMenu.Parent);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SortKey", tMenu.SortKey.toString());
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/SubMenu", tMenu.SubMenu);
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsDefault", tMenu.IsDefault.toString());
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/IsActive", tMenu.IsActive.toString());
+        }
     }
     
     public static void DeleteMenuItem(String Name){
@@ -696,7 +705,7 @@ public class MenuNode {
         ValidateSubMenuDefault(OldParent);
         //rebuild any lists
         SaveMenuItemsToSage();
-        System.out.println("ADM: DeleteMenuItem: deleted '" + Name + "'");
+        System.out.println("ADM: mDeleteMenuItem: deleted '" + Name + "'");
     }
     
     public static void DeleteAllMenuItems(){
@@ -712,7 +721,7 @@ public class MenuNode {
         //Create 1 new MenuItem at the TopMenu level
         NewMenuItem(util.TopMenu, 1) ;
 
-        System.out.println("ADM: DeleteAllMenuItems: completed");
+        System.out.println("ADM: mDeleteAllMenuItems: completed");
     }
     
     public static String NewMenuItem(String Parent, Integer SortKey){
@@ -725,7 +734,7 @@ public class MenuNode {
         InsertNode(MenuNodeList.get(Parent).NodeItem, NewMenuItem, Boolean.TRUE);
         //ensure there is 1 default item
         ValidateSubMenuDefault(Parent);
-        System.out.println("ADM: NewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        System.out.println("ADM: mNewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //util.ListObjectMembers(NewMenuItem);
         return tMenuItemName;
     }
@@ -759,13 +768,13 @@ public class MenuNode {
                 SetMenuItemIsActive(DiamondMenuVideos, Boolean.TRUE);
             }
         }
-        System.out.println("ADM: LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
+        System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
 
     public static Boolean ImportMenuItems(String ImportPath){
 
         if (ImportPath==null){
-            System.out.println("ADM: ImportMenuItems: null ImportPath passed.");
+            System.out.println("ADM: mImportMenuItems: null ImportPath passed.");
             return false;
         }
         
@@ -778,19 +787,19 @@ public class MenuNode {
                 MenuItemProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: ImportMenuItems: IO exception inporting menus " + util.class.getName() + ex);
+                System.out.println("ADM: mImportMenuItems: IO exception inporting menus " + util.class.getName() + ex);
                 return false;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: ImportMenuItems: file not found inporting menus " + util.class.getName() + ex);
+            System.out.println("ADM: mImportMenuItems: file not found inporting menus " + util.class.getName() + ex);
             return false;
         }
         
         //backup existing MenuItems before processing the import if any exist
         if (MenuNodeList.size()>0){
-            System.out.println("ADM: ImportMenuItems: called Export");
+            System.out.println("ADM: mImportMenuItems: called Export");
             ExportMenuItems(util.PropertyBackupFile);
-            System.out.println("ADM: ImportMenuItems: Export returned to Import");
+            System.out.println("ADM: mImportMenuItems: Export returned to Import");
         }
         
         if (MenuItemProps.size()>0){
@@ -801,21 +810,21 @@ public class MenuNode {
             for (String tPropertyKey : MenuItemProps.stringPropertyNames()){
                 sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),tPropertyKey, MenuItemProps.getProperty(tPropertyKey));
                 
-                //System.out.println("ADM: ImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
+                //System.out.println("ADM: mImportMenuItems: imported - '" + tPropertyKey + "' = '" + MenuItemProps.getProperty(tPropertyKey) + "'");
             }
             
             //now load the properties from the Sage properties file
             LoadMenuItemsFromSage();
 
         }
-        System.out.println("ADM: ImportMenuItems: completed for '" + ImportPath + "'");
+        System.out.println("ADM: mImportMenuItems: completed for '" + ImportPath + "'");
         return true;
     }
  
     public static void ExportMenuItems(String ExportFile){
         String PropLocation = "";
         String ExportFilePath = util.ADMLocation + File.separator + ExportFile;
-        //System.out.println("ADM: ExportMenuItems: Full Path = '" + ExportFilePath + "'");
+        //System.out.println("ADM: mExportMenuItems: Full Path = '" + ExportFilePath + "'");
         
         //iterate through all the MenuItems and save to a Property Collection
         Properties MenuItemProps = new Properties();
@@ -833,7 +842,7 @@ public class MenuNode {
                 PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
                 PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
-                //System.out.println("ADM: ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
+                //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
             }
         }
         //write the properties to the properties file
@@ -843,13 +852,13 @@ public class MenuNode {
                 MenuItemProps.store(out, util.PropertyComment);
                 out.close();
             } catch (IOException ex) {
-                System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
+                System.out.println("ADM: mExportMenuItems: error exporting menus " + util.class.getName() + ex);
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: ExportMenuItems: error exporting menus " + util.class.getName() + ex);
+            System.out.println("ADM: mExportMenuItems: error exporting menus " + util.class.getName() + ex);
         }
 
-        System.out.println("ADM: ExportMenuItems: exported " + MenuNodeList.size() + " MenuItems");
+        System.out.println("ADM: mExportMenuItems: exported " + MenuNodeList.size() + " MenuItems");
         
         return;
     }
@@ -866,16 +875,16 @@ public class MenuNode {
             if (aNode.Parent.equals(util.TopMenu)){
                 //root.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(root, aNode, Boolean.FALSE);
-                //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
+                //System.out.println("ADM: mAddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
             }else{
                 AddNode(MenuNodeList.get(aNode.Parent));
                 DefaultMutableTreeNode tParent = FindNode(root, aNode.Parent);
                 //tParent.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(tParent, aNode, Boolean.FALSE);
-                //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' not found so adding");
+                //System.out.println("ADM: mAddNode: node '" + aNode.ButtonText + "' not found so adding");
             }
         }else{
-            //System.out.println("ADM: AddNode: node '" + aNode.ButtonText + "' already exists");
+            //System.out.println("ADM: mAddNode: node '" + aNode.ButtonText + "' already exists");
         }
     }
     
@@ -940,11 +949,11 @@ public class MenuNode {
             if(child.equals(Node)) 
             { 
                 //tree node with string found 
-                //System.out.println("ADM: FindNode: '" + Node + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //System.out.println("ADM: mFindNode: '" + Node + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return child;                          
             } 
         }         
-        //System.out.println("ADM: FindNode: '" + Node + "' not found.");
+        //System.out.println("ADM: mFindNode: '" + Node + "' not found.");
         return null;
     }
     
@@ -956,11 +965,11 @@ public class MenuNode {
             if(NodeKey.equals(child.getUserObject().toString())) 
             { 
                 //tree node with string found 
-                //System.out.println("ADM: FindNode: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //System.out.println("ADM: mFindNode: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return child;                          
             } 
         }         
-        //System.out.println("ADM: FindNode: '" + NodeKey + "' not found.");
+        //System.out.println("ADM: mFindNode: '" + NodeKey + "' not found.");
         return null;
     }
     
@@ -972,11 +981,11 @@ public class MenuNode {
             if(NodeKey.equals(child.getUserObject().toString())) 
             { 
                 //tree node with string found 
-                //System.out.println("ADM: NodeExists: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //System.out.println("ADM: mNodeExists: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return Boolean.TRUE;                          
             } 
         }         
-        //System.out.println("ADM: NodeExists: '" + NodeKey + "' not found.");
+        //System.out.println("ADM: mNodeExists: '" + NodeKey + "' not found.");
         return Boolean.FALSE;
     }
     
@@ -1003,33 +1012,35 @@ public class MenuNode {
         DefaultMutableTreeNode oldParent = (DefaultMutableTreeNode)Node.getParent();   
         oldParent.remove(Node);   
         newParent.add(Node);  
-        System.out.println("ADM: setParent: node = '" + Node + "' oldParent = '" + oldParent +"' newParent = '" + newParent + "'");
+        System.out.println("ADM: msetParent: node = '" + Node + "' oldParent = '" + oldParent +"' newParent = '" + newParent + "'");
     }
     
     private static void Save(String Name, String PropType, String Setting){
-        String PropLocation = util.SagePropertyLocation + Name;
-        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/" + PropType, Setting);
-        //no save the specifc node field change
-        if (PropType.equals("Action")){
-            MenuNodeList.get(Name).ActionAttribute = Setting;
-        }else if (PropType.equals("ActionType")){
-            MenuNodeList.get(Name).ActionType = Setting;
-        }else if (PropType.equals("BGImageFile")){
-            MenuNodeList.get(Name).BGImageFile = Setting;
-        }else if (PropType.equals("ButtonText")){
-            MenuNodeList.get(Name).ButtonText = Setting;
-        }else if (PropType.equals("IsActive")){
-            MenuNodeList.get(Name).IsActive = Boolean.parseBoolean(Setting);
-        }else if (PropType.equals("IsDefault")){
-            MenuNodeList.get(Name).IsDefault = Boolean.parseBoolean(Setting);
-        }else if (PropType.equals("SubMenu")){
-            MenuNodeList.get(Name).SubMenu = Setting;
-        }else if (PropType.equals("Parent")){
-            MenuNodeList.get(Name).Parent = Setting;
-        }else{
-            System.out.println("ADM: Save - invalid option passed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
+        if (!Name.equals(util.TopMenu)){
+            String PropLocation = util.SagePropertyLocation + Name;
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation + "/" + PropType, Setting);
+            //no save the specifc node field change
+            if (PropType.equals("Action")){
+                MenuNodeList.get(Name).ActionAttribute = Setting;
+            }else if (PropType.equals("ActionType")){
+                MenuNodeList.get(Name).ActionType = Setting;
+            }else if (PropType.equals("BGImageFile")){
+                MenuNodeList.get(Name).BGImageFile = Setting;
+            }else if (PropType.equals("ButtonText")){
+                MenuNodeList.get(Name).ButtonText = Setting;
+            }else if (PropType.equals("IsActive")){
+                MenuNodeList.get(Name).IsActive = Boolean.parseBoolean(Setting);
+            }else if (PropType.equals("IsDefault")){
+                MenuNodeList.get(Name).IsDefault = Boolean.parseBoolean(Setting);
+            }else if (PropType.equals("SubMenu")){
+                MenuNodeList.get(Name).SubMenu = Setting;
+            }else if (PropType.equals("Parent")){
+                MenuNodeList.get(Name).Parent = Setting;
+            }else{
+                System.out.println("ADM: mSave - invalid option passed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
+            }
+            //System.out.println("ADM: mSave completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
         }
-        //System.out.println("ADM: Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
     }
     
     public static String GetNewMenuItemName(){
