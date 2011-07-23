@@ -172,7 +172,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
         * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
-        * The Folder name is case sensitive and should have the trailing "/" (but it will be added by ADM if you miss it)
+        * The Folder name is case sensitive and should have the trailing "/"
+        * Note: SageTV uses a different process for the Path between Separate and Combined Folder settings. If you have a working Video Folder menu item and change the Combined/Separate Video Folder setting the menu item may not go to the proper Folder and may need to be edited.
         * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
       
     * Launch Specific TV Recordings View
@@ -243,6 +244,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * A list of Menu Items will be offered sorted as Grouped Menus (All Level 1, then Level 2 etc)
     * Selecting any Menu Item will change that Menu Item to use the Current Background
   * Note: any Menu Item set to 'None' will use it's Parent's Background (or it's Parent's Parent's Background)
+  * Remove Custom Background
+    * Select this option while displaying a Custom Background to get a prompt to remove it
+    * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
 
 === ADM Copy Mode ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
