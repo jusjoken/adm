@@ -1,7 +1,6 @@
 package ADM;
 
 
-import java.io.*;
 import java.util.Collection;
 import sagex.UIContext;
 
@@ -19,35 +18,43 @@ public class CopyMode {
     public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
 
     //save the current Folder item details to sage properties to assist the copy function
-    public static void SaveVideoFolderDetails(String CurFolder, String FolderName){
+    public static void SaveVideoFolderDetails(String CurFolder, String VideoItem){
         util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "Folder");
-        String FolderPath = "";
-        if (FolderName==null){
-            FolderName="";
-        }
-        if (CurFolder==null || CurFolder.equals("null")){
-            FolderPath = sagex.api.Utility.CreateFilePath(FolderName,"").toString();
-        }else{
-            FolderPath = sagex.api.Utility.CreateFilePath(CurFolder, FolderName).toString();
-        }
 
-        //ensure the Folder string ends in a valid Path Spearator
-        if (FolderPath.isEmpty() || !FolderPath.endsWith(File.separator)){
-            FolderPath = FolderPath + File.separator;
+        if (CurFolder==null || CurFolder.equals("null")){
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "CurFolder", null);
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "VideoItem", VideoItem);
+        }else{
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "CurFolder", CurFolder);
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "VideoItem", VideoItem);
         }
-        util.SetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", FolderPath);
-        
-        System.out.println("ADM: cSaveVideoFolderDetails: FolderPath '" + FolderPath + "'");
+        System.out.println("ADM: cSaveVideoFolderDetails: CurFolder '" + CurFolder + "' VideoItem '" + VideoItem + "'");
     }
     
     public static String GetVideoFolderDetails(){
-        return util.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", util.OptionNotFound);
+        //determine if Combined mode is on as the path is created differently
+        String CurFolder = util.GetProperty(SageCurrentMenuItemPropertyLocation + "CurFolder", util.OptionNotFound);
+        String VideoItem = util.GetProperty(SageCurrentMenuItemPropertyLocation + "VideoItem", util.OptionNotFound);
         
+        if (util.GetProperty("video_lib/folder_style", "xCombined").equals("xCombined")){
+            if(CurFolder==null || CurFolder.equals(util.OptionNotFound)){
+                return VideoItem + "/";
+            }else{
+                return CurFolder + VideoItem + "/";
+            }
+        }else{
+            if(CurFolder==null || CurFolder.equals(util.OptionNotFound)){
+                return VideoItem;
+            }else{
+                return sagex.api.Utility.CreateFilePath( CurFolder, VideoItem ).toString();
+            }
+        }
     }
     
     public static String GetVideoFolderDetailsButtonText(){
-        String ButtonText = util.GetProperty(SageCurrentMenuItemPropertyLocation + "FolderName", util.ButtonTextDefault);
-        ButtonText = ButtonText.replace(File.separator, " ").trim();
+        String ButtonText = GetVideoFolderDetails();
+        ButtonText = ButtonText.replace("/", " ").trim();
+        ButtonText = ButtonText.replace("\\", " ").trim();
         if (ButtonText.isEmpty()){
             ButtonText = "Root";
         }
