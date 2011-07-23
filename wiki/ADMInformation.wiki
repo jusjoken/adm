@@ -8,11 +8,29 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu-small.JPG] _click to view_
 
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="4" />
 
 [http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.JPG http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.JPG] _click to view_
 
 = Details =
+
+== Changes in Version 0.36 ==
+
+  * Updated ADM Copy
+    * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
+    * handles Combined and Separate Video Folder views
+  * New Action Type to Launch Specific TV Recordings View
+    * works for Standard SageTV as well as Diamond TV Views
+  * New Action Type to Launch Default and Custom Diamond Flows (if using Diamond)
+  * New ADM Background Manager
+    * graphically select a Background for any Menu Item on any Level
+    * add your own Custom Backgrounds and associate them to any Menu Item
+  * Update for Video Folder Browser
+    * improved support for Linux systems
+    * handles Combined and Separate Video Folder views
+  * Fix for Clients/Extenders having their own Menu Settings
+  * Major refactoring of base code
+  * Other minor fixes
 
 == Changes in Version 0.35 ==
 
@@ -41,11 +59,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
-    * Launch specific Diamond Movie Custom flow - not yet available
-    * Launch specific Diamond Custom TV view - not yet available
-      * this function in Diamond actually uses the SageTV built in custom TV views - so once I add this function then this will be available for both Diamond and Standard SageTV
-    * Launch an external program is being considered
-    * Background Image - offer an option to select a specifc file to display (rather than only Themed Images)
+    * Launch an external program is being considered - need some user feedback on what this would be used for and expected results.
+    * Launch specific Folder in the File Browser - may be complex but considering it
+    * Other user suggestions if a feature is missing
 
 == ADM Manager ==
 
@@ -112,8 +128,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 === Clear All ADM Settings ===
   * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
-  * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
+  * Resets all settings to pre-installed values (removes all ADM settings in the sage Client and Server .properties file)
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  * removes all Custom Backgrounds
   * Loads the Default Menus (see above)
   * Enables ADM
   * Disables Advanced Options
@@ -139,7 +156,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
     * Note: if you select a Parent that is using a Sage Submenu then the Submenu setting for that Parent will be cleared.
     
-  * Action Types / Action
+  ==== Action Types / Action ====
     ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard-ppc.JPG] _Standard Action_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol-ppc.JPG] _By Widget Symbol_ || _click to view_ ||
     
     * Execute Standard Sage Menu Action
@@ -158,22 +175,52 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
         * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
-        * The Folder name is case sensitive and should have the trailing "/" (but it will be added by ADM if you miss it)
+        * The Folder name is case sensitive and should have the trailing "/"
+        * Note: SageTV uses a different process for the Path between Separate and Combined Folder settings. If you have a working Video Folder menu item and change the Combined/Separate Video Folder setting the menu item may not go to the proper Folder and may need to be edited.
+        * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
       
+    * Launch Specific TV Recordings View
+      * Select from a list of SageTV built in Recordings Views
+      * The selected Recordings View will launch when the Menu Item is selected within the SageTV menu system
+      * Special features
+        * After selecting a Recordings View you may be prompted to Rename the View or the Menu Item so they match
+        * The View name is always displayed at the Top Left of the Recordings View
+        * Renaming the view is at the SageTV level and is the same as using the Rename function in the Menu Options while displaying the specific Recordings View
+        * If you change the Display Name for the Menu Item you may also be prompted to rename either the Menu Item or the Recordings View so they match.
+        * You will have the option to leave them names differently
+      * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
+
+    * Diamond Default Flows
+      * Select from a list of Diamond built in Flows
+      * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
+
+    * Diamond Custom Flows
+      * Select from a list of Custom Diamond Flows. These flows must be created within Diamond using Custom Views Setup.
+      * The selected Custom Flow will launch when the Menu Item is selected within the SageTV menu system
+
   * Sage Submenu
     * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
     * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
     * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
+    * See also [#Children/Submenus]
 
   * Default Menu Item
     * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
     * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
     * there must be 1 and only 1 default and ADM will enfore this
+    * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
 
-  * Background Image
-    * Only valid for Level 1 menus (Top menu in SageTV)
-    * Select from a list of Themed images 
-    * this function may expand to offer selecting a specific file
+  ==== Background Image ====
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG] _Select Background_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG] _Custom Background_ || _click to view_ ||
+    * Valid for ALL menu levels (as of 0.36+)
+    * The ADM Background Manager will be displayed for you to select a Background
+    * Select from the built in list of Themed Backgrounds or Add a Custom Background to the list and select it
+    * Any image can be selected from a File Dialog using the Add Background button and is then added to the available Backgrounds to select from. 
+    * Settings for Custom Backgrounds added are stored in the Server Properties to make them available for selection on any Client/Extender
+    * Note: make sure you select a path that will be available to the Client/Extender if you plan to export and re-import any menus containing Custom Backgrounds.
+    * Note: any Menu Item set to 'None' will use it's Parent's Background (or it's Parent's Parent's Background)
+    * Note: as Sage Submenu items are internal Sage Menus, they can not have a custom background assigned to the individual menu items in the submenu. They will use the background of the parent item that has the Sage Submenu setting.
+    * See also - [#ADM Background Manager]
 
   * Show Menu Item
     * Hides or Shows the Menu Item in SageTV
@@ -193,6 +240,20 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * A confirmation will be displayed
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
 
+=== ADM Background Manager ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd-ppc.JPG] _Add Custom_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign-ppc.JPG] _Assign Custom_ || _click to view_ ||
+  * Launches from ADM Manager from the left side menu
+  * Allows you to Add/Remove available Custom Backgrounds without having to go to a menu item directly
+  * Allows you to Assign a Background to one or more Menu Items from a single screen
+    * Select a Background by scrolling LEFT or RIGHT
+    * Select 'Assign' from available options
+    * A list of Menu Items will be offered sorted as Grouped Menus (All Level 1, then Level 2 etc)
+    * Selecting any Menu Item will change that Menu Item to use the Current Background
+  * Note: any Menu Item set to 'None' will use it's Parent's Background (or it's Parent's Parent's Background)
+  * Remove Custom Background
+    * Select this option while displaying a Custom Background to get a prompt to remove it
+    * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
+
 === ADM Copy Mode ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
@@ -209,6 +270,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * To finish, press Options/ESC and select Disable ADM Copy Mode
     * The Menus displayed will now be your ADM customized menus including the new ones you created
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
+  * supports copy of TV Recording Menu Items
+    * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
 
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG] _Folder Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
@@ -225,13 +288,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
 
-=== Menu Structure Terms ===
+== Menu Structure Terms ==
   [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
-  * Top Level
+  === Top Level ===
     * Also known as Level 0
     * Holds no menu items but all Level 1 menus have this as their parent
 
-  * Level 1
+  === Level 1 ===
     * Also known as Top Level menu content area in Studio
     * Holds the Left Side Menu Options
     * Standard examples - TV, Videos, Music, Photos, Search etc
@@ -241,7 +304,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * or
       * Can set a Standard Sage Level 2 Submenu to be displayed
 
-  * Level 2
+  === Level 2 ===
     * Also known as Secondary Level menu content area in Studio
     * Holds the Middle Menu Options
     * Parents are Level 1 Items
@@ -251,12 +314,21 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * or
       * Can set a Standard Sage Level 3 Submenu to be displayed
     
-  * Level 3
+  === Level 3 ===
     * Also known as Tertiary Level menu content area in Studio
     * Holds the Right Side Menu Options
     * Parents are Level 2 Items
     * Standard examples - TV Airings Level 2 has the following Level 3 menu items - Search Titles, Search People etc
     * Cannot have Children/Submenus
+    
+  === Children/Submenus ===
+    * Children and Submenus are mutually exclusive. A Menu Item either has a Submenu set for it OR it has Children associated to it.
+    * Children
+      * assigned by creating Submenu items on a Parent Menu Item
+      * changing a Menu Item's Parent will make the current Menu Item a Child of that Parent. (it will also remove any Submenu settings for the Parent)
+    * Submenus
+      * assigned by setting a Menu Item's Submenu setting in the Edit dialog
+      * if a Menu Item has Children assigned then the Submenu setting is not offered.  You must delete the Children first.
   
 == Plugin Compatibilities ==
 === General ===
@@ -266,6 +338,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   
 === Diamond ===
   * see [#Diamond_Notes]
+
 === MyTV ===
   * Should work with ADM disabled
   * Tested with Diamond MyTV
@@ -280,7 +353,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === Diamond Specific Functions ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG] _Movies_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG] _Videos_ || _click to view_ ||
   * Default Menu
-    * A Diamond Specific menu will oad on initial run (newly installed) and when Load Default Menus is selected
+    * A Diamond Specific menu will load on initial run (newly installed) and when Load Default Menus is selected
     * This menu will have 2 unique menus at the Top Level
       * Movies - configured to launch the diamond Movies Menu with your customized diamond Movie views
         * This is the menu you create and modify with Diamond tools (not a copy)
@@ -294,6 +367,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
   * Background Images
     * Some Diamond themes use a single image for all Top Level menus so selecting a Background image will not affect the Diamond Menus
+    * Custom Backgrounds can be added and assigned to override this Diamond behaviour
+  * Diamond Movies - Custom and Default Flows
+    * Action types available to launch specific Default and Custom Flows
+  * TV Views
+    * TV Recordings views which Diamond uses are standard SageTV Recordings View with added customizations
+    * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
+    * ADM Copy mode can be used to create these Menu Items as well
   * Future !ToDos to support Diamond
     * Check out the [#ToDo_List]
       
