@@ -127,8 +127,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 === Clear All ADM Settings ===
   * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
-  * Resets all settings to pre-installed values (removes all ADM settings in the sage .properties file)
+  * Resets all settings to pre-installed values (removes all ADM settings in the sage Client and Server .properties file)
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
+  * removes all Custom Backgrounds
   * Loads the Default Menus (see above)
   * Enables ADM
   * Disables Advanced Options
@@ -200,6 +201,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
     * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
     * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
+    * See also [#Children/Submenus]
 
   * Default Menu Item
     * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
@@ -238,6 +240,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
 
 === ADM Background Manager ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd-ppc.JPG] _Add Custom_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign-ppc.JPG] _Assign Custom_ || _click to view_ ||
   * Launches from ADM Manager from the left side menu
   * Allows you to Add/Remove available Custom Backgrounds without having to go to a menu item directly
   * Allows you to Assign a Background to one or more Menu Items from a single screen
