@@ -149,7 +149,7 @@ public class MenuNode {
 
     public static void SetMenuItemBGImageFile(String Name, String Setting){
         if (Setting.equals(util.ListNone) || Setting==null){
-            Save(Name, "BGImageFile", null);
+            Save(Name, "BGImageFile", util.ListNone);
         }else{
             Save(Name, "BGImageFile", Setting);
         }
@@ -1013,7 +1013,7 @@ public class MenuNode {
 
                     DefaultMutableTreeNode tnextChild = (DefaultMutableTreeNode)iParent.getChildAt(i) ;
                     MenuNode nextChild = (MenuNode)tnextChild.getUserObject() ;
-                    if (( iNode.SortKey > lastChild.SortKey ) && ( iNode.SortKey < nextChild.SortKey ) ){
+                    if (( iNode.SortKey >= lastChild.SortKey ) && ( iNode.SortKey < nextChild.SortKey ) ){
                         // Ok it needs to go between these two
                         InsertNode(iParent,iNode,i);
                         done = Boolean.TRUE;
@@ -1163,12 +1163,12 @@ public class MenuNode {
             System.out.println("ADM: mMenuNodeList: creating MenuNodeList for '" + UIContext + "'");
             UIMenuNodeList.put(UIContext, new LinkedHashMap<String,MenuNode>());
         }
-        System.out.println("ADM: mMenuNodeList: '" + UIContext + "'");
+        //System.out.println("ADM: mMenuNodeList: '" + UIContext + "'");
         Map<String,MenuNode> tMenuNodeList = null;
         try {
             tMenuNodeList = UIMenuNodeList.get(UIContext);
         } catch (Exception e) {
-            System.out.println("ADM: mMenuNodeList ERROR: '" + UIContext + "' = '" + e + "'");
+            //System.out.println("ADM: mMenuNodeList ERROR: '" + UIContext + "' = '" + e + "'");
         }
         return tMenuNodeList;
     }
@@ -1182,7 +1182,7 @@ public class MenuNode {
             rootNode.NodeItem = UIroot.get(UIContext);
             rootNode.ButtonText = "Top Level";
         }
-        System.out.println("ADM: mroot: '" + UIContext + "'");
+        //System.out.println("ADM: mroot: '" + UIContext + "'");
         return UIroot.get(UIContext);
     }
     

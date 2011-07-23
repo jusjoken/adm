@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.366";
+    public static String Version = "0.367";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -54,6 +54,8 @@ public class util {
     private static final Random random = new Random();
     public static List<String> SageBackgrounds = new LinkedList<String>();    
 
+    public static String GetListNone(){ return ListNone; }
+    
     public static void InitADM(){
         
         if (!ADMInitComplete) {
@@ -438,8 +440,25 @@ public class util {
             SetServerProperty(SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
             System.out.println("ADM: uSaveSageBackground completed for '" + BackgroundFile + "'");
             SageBackgrounds.add(tBackgroundKey);
-            //LoadSageBGList();
         }
+    }
+    
+    public static Boolean CustomSageBackgroundExits(String Option){
+        //find all Backgrounds from the SageTV properties file and check them against the passed in path
+        String[] tBackgrounds = sagex.api.Configuration.GetServerSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),SageBackgroundsPropertyLocation);
+        if (tBackgrounds.length>0){
+            for (String BGKey: tBackgrounds){
+                //find each background and compare it
+                String PropLocation = util.SageBackgroundsPropertyLocation + BGKey;
+                String tPath = GetServerProperty(PropLocation, OptionNotFound);
+                if (tPath.equals(Option)){
+                    System.out.println("ADM: uCustomSageBackgroundExits: Background found - '" + Option + "'");
+                    return Boolean.TRUE;
+                }
+            }
+        }
+        System.out.println("ADM: uCustomSageBackgroundExits: Background not found - '" + Option + "'");
+        return Boolean.FALSE;
     }
     
     public static Boolean IsCustomSageBackground(String Option){
