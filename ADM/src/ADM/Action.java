@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
@@ -39,6 +41,11 @@ public class Action {
     private String Attribute = Blank;
     private String WidgetSymbol = Blank;
     private String FieldTitle = "";
+    private static final ActionVariable BlankActionVariable = new ActionVariable(Blank, Blank, Blank);
+    private ActionVariable EvalExpression = BlankActionVariable;
+    private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
+    private static final String VarTypeGlobal = "VarTypeGlobal";
+    private static final String VarTypeSetProp = "VarTypeSetProp";
     private Boolean AdvancedOnly = Boolean.FALSE;
     private Boolean DiamondOnly = Boolean.FALSE;
     private static Map<String,Action> ActionList = new LinkedHashMap<String,Action>();
@@ -49,6 +56,7 @@ public class Action {
     public static final String TVRecordingView = "ExecuteTVRecordingView";
     public static final String DiamondDefaultFlows = "ExecuteDiamondDefaultFlow";
     public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
+    public static final String BrowseFileFolderLocal = "ExecuteBrowseFileFolderLocal";
     public static final String ActionTypeDefault = "DoNothing";
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -71,6 +79,7 @@ public class Action {
         this.FieldTitle = FieldTitle;
         this.WidgetSymbol = WidgetSymbol;
         this.Attribute = Attribute;
+        this.EvalExpression = EvalExpression;
     }
     
     public static void Init(){
@@ -85,6 +94,10 @@ public class Action {
             ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116", "ViewFilter"));
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
             ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216", "ViewCell"));
+            ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local Folder","Local File Folder","BASE-51703","CurFolderLocal"));
+            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xLocal"));
+            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/local", Blank));
 
             //also load the actions lists - only needs loaded at startup
             LoadStandardActionList();
@@ -103,6 +116,7 @@ public class Action {
     public static String GetTVRecordingView(){ return TVRecordingView; }
     public static String GetDiamondCustomFlows(){ return DiamondCustomFlows; }
     public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
+    public static String GetBrowseFileFolderLocal(){ return BrowseFileFolderLocal; }
         
     public static String GetButtonText(String Type){
         return ActionList.get(Type).ButtonText;
@@ -126,6 +140,10 @@ public class Action {
     
     public static String GetAttribute(String Type){
         return ActionList.get(Type).Attribute;
+    }
+    
+    public static ActionVariable GetEvalExpression(String Type){
+        return ActionList.get(Type).EvalExpression;
     }
     
     public static Collection<String> GetTypes(){
@@ -186,6 +204,12 @@ public class Action {
             }
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
+        }else if(Type.equals(BrowseFileFolderLocal)){
+            if (Attribute==null){
+                return "Choose";
+            }else{
+                return Attribute;
+            }
         }else{
             return util.OptionNotFound;
         }
@@ -199,6 +223,15 @@ public class Action {
                 //Set a Static Context for the Attribute to the ActionAttribute
                 System.out.println("ADM: aExecute - Setting Static Context for = '" + GetAttribute(ActionType) + "' to '" + ActionAttribute + "'");
                 sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), GetAttribute(ActionType), ActionAttribute);
+            }
+            //see if the is an additional Expression that needs to be evaluated
+            if (!GetEvalExpression(ActionType).equals(BlankActionVariable)){
+                //Set a Static Context for the Attribute to the ActionAttribute
+                System.out.println("ADM: aExecute - Setting Static Context for = '" + GetEvalExpression(ActionType).Var + "' to '" + GetEvalExpression(ActionType).Val + "'");
+                sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), GetEvalExpression(ActionType).Var, GetEvalExpression(ActionType).Val);
+                //TODO: hardcoded as a test
+                util.SetProperty("file_browser/last_folder/local", ActionAttribute);
+                util.SetProperty("file_browser/last_style", "xLocal");
             }
             //either execute the default widget symbol or the one passed in
             if (GetWidgetSymbol(ActionType).equals(Blank)){
@@ -356,6 +389,8 @@ public class Action {
             return Boolean.TRUE;
         }else if(Type.equals(DiamondCustomFlows)){
             return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderLocal)){
+            return Boolean.FALSE;
         }else{
             return Boolean.FALSE;
         }
@@ -382,6 +417,28 @@ public class Action {
     public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
         //rename the specified TV Recording View 
         util.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
+    }
+
+    public static class ActionVariable{
+        private String Var = "";
+        private String Val = "";
+        private String VarType = VarTypeGlobal;
+
+        public ActionVariable(String VarType, String Var, String Val ){
+            this.VarType = VarType;
+            this.Var = Var;
+            this.Val = Val;
+        }
+        
+        public String getVarType(){
+            return this.VarType;
+        }
+        public String getVar(){
+            return this.Var;
+        }
+        public String getVal(){
+            return this.Val;
+        }
     }
     
 }
