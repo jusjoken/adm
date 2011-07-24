@@ -396,6 +396,26 @@ public class Action {
         }
     }
 
+    public static Boolean UseGenericEditBox(String Type){
+        if (Type.equals(BrowseVideoFolder)){
+            return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderLocal)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+
+    public static String GetGenericEditBoxMessage(String Type){
+        if (Type.equals(BrowseVideoFolder)){
+            return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the 'Video by Folder' view next to 'Folder (case sensitive):'";
+        }else if(Type.equals(BrowseFileFolderLocal)){
+            return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the 'File System Browser' (case sensitive):'";
+        }else{
+            return "";
+        }
+    }
+
     private static void LoadSageTVRecordingViews(){
         //put the ViewType and Default View Name into a list
         SageTVRecordingViews.put("xAll","All Recordings");
