@@ -98,12 +98,13 @@ public class CopyMode {
         
         //determine if there is an Action Widget for this Menu Item
         String ActionWidget = null;
-        Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(new UIContext(sagex.api.Global.GetUIContextName()), CurrentWidgetSymbol);
+        UIContext tUIContext = new UIContext(sagex.api.Global.GetUIContextName());
+        Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(tUIContext, CurrentWidgetSymbol);
         for (Object Child : Children){
             //System.out.println("ADM: cSaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
-            if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(new UIContext(sagex.api.Global.GetUIContextName()),Child))){
+            if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child)) || "OptionsMenu".equals(sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child))){
                 //found an action so save it and leave
-                ActionWidget = sagex.api.WidgetAPI.GetWidgetSymbol(new UIContext(sagex.api.Global.GetUIContextName()),Child);
+                ActionWidget = sagex.api.WidgetAPI.GetWidgetSymbol(tUIContext,Child);
                 break;
             }
         }
