@@ -18,6 +18,73 @@ public class CopyMode {
     public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
 
     //save the current Folder item details to sage properties to assist the copy function
+    public static void SaveFileFolderDetails(String CurFolderStyle, String BrowserFileCell){
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "FileFolder");
+
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "CurFolderStyle", CurFolderStyle);
+        util.SetProperty(SageCurrentMenuItemPropertyLocation + "BrowserFileCell", BrowserFileCell);
+        System.out.println("ADM: cSaveFileFolderDetails: CurFolderStyle '" + CurFolderStyle + "' BrowserFileCell '" + BrowserFileCell + "'");
+    }
+    
+    public static String GetFileFolderDetails(){
+        //determine if Combined mode is on as the path is created differently
+        String BrowserFileCell = util.GetProperty(SageCurrentMenuItemPropertyLocation + "BrowserFileCell", util.OptionNotFound);
+        return BrowserFileCell;
+    }
+    
+    public static Boolean IsFileFolderStyleValid(){
+        //determine if Combined mode is on as the path is created differently
+        String CurFolderStyle = util.GetProperty(SageCurrentMenuItemPropertyLocation + "CurFolderStyle", util.OptionNotFound);
+        if (Action.GetFileBrowserType(CurFolderStyle).equals(util.OptionNotFound)){
+            System.out.println("ADM: cIsFileFolderStyleValid: invalid Style = '" + CurFolderStyle + "'");
+            return Boolean.FALSE;
+        }else{
+            System.out.println("ADM: cIsFileFolderStyleValid: valid Style = '" + CurFolderStyle + "'");
+            return Boolean.TRUE;
+        }
+    }
+    
+    public static String GetFileFolderDetailsButtonText(){
+        String ButtonText = GetFileFolderDetails();
+        ButtonText = ButtonText.replace("/", " ").trim();
+        ButtonText = ButtonText.replace("\\", " ").trim();
+        if (ButtonText.isEmpty()){
+            ButtonText = "Root";
+        }
+        return ButtonText;
+    }
+    
+    public static Collection<String> GetFileFolderDetailsParentList(){
+        return MenuNode.GetMenuItemParentList();
+    }
+    
+    //create a new Menu Item from the current Video Folder Menu Item details
+    public static String CreateMenuItemfromFileFolderCopyDetails(String Parent){
+        //Create a new MenuItem with defaults
+        String CurFolderStyle = util.GetProperty(SageCurrentMenuItemPropertyLocation + "CurFolderStyle", util.OptionNotFound);
+        if (!Action.GetFileBrowserType(CurFolderStyle).equals(util.OptionNotFound)){
+            String tMenuItemName = MenuNode.NewMenuItem(Parent, 0);
+
+            //set all the copy details
+            MenuNode.SetMenuItemAction(tMenuItemName,GetFileFolderDetails());
+            MenuNode.SetMenuItemActionType(tMenuItemName,Action.GetFileBrowserType(CurFolderStyle));
+
+            MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemButtonText(tMenuItemName,GetFileFolderDetailsButtonText());
+            MenuNode.SetMenuItemName(tMenuItemName);
+            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+
+            System.out.println("ADM: cCreateMenuItemfromFileFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+            return tMenuItemName;
+            
+        }else{
+            System.out.println("ADM: cCreateMenuItemfromFileFolderCopyDetails: invalid CurFolderStyle '" + CurFolderStyle + "'");
+            return util.OptionNotFound;
+        }
+    }
+    
+    //save the current Folder item details to sage properties to assist the copy function
     public static void SaveVideoFolderDetails(String CurFolder, String VideoItem){
         util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", "Folder");
 

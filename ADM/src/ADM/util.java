@@ -560,6 +560,10 @@ public class util {
         return ADMDefaultsLocation;
     }
 
+    public static String GetOptionNotFound(){
+        return util.OptionNotFound;
+    }
+    
     public static Float[] GetMenuInsets(){
         Float[] Insets = new Float[]{0f,0f,0f,0f};
         Float[] DiamondInsets = new Float[]{0f,0f,0.015f,0f};
