@@ -58,6 +58,7 @@ public class Action {
     public static final String DiamondDefaultFlows = "ExecuteDiamondDefaultFlow";
     public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
     public static final String BrowseFileFolderLocal = "ExecuteBrowseFileFolderLocal";
+    public static final String BrowseFileFolderServer = "ExecuteBrowseFileFolderServer";
     public static final String ActionTypeDefault = "DoNothing";
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -75,7 +76,6 @@ public class Action {
         this.ButtonText = ButtonText;
         this.FieldTitle = FieldTitle;
         this.WidgetSymbol = WidgetSymbol;
-        this.Attribute = Attribute;
     }
     
     public static void Init(){
@@ -84,6 +84,7 @@ public class Action {
             ActionList.clear();
             //Create the Actions for ADM to use
             ActionList.put(ActionTypeDefault, new Action(ActionTypeDefault,Boolean.FALSE,Boolean.FALSE,"None"));
+            
             ActionList.put(WidgetbySymbol, new Action(WidgetbySymbol,Boolean.FALSE,Boolean.TRUE,"Execute Widget by Symbol", "Action"));
             
             ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637"));
@@ -91,19 +92,25 @@ public class Action {
             
 
             ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
+            
             ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
             ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
             
             
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
+            
             ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
             ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
             
-            ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local Folder","Local File Folder","BASE-51703"));
+            ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
             ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
             ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xLocal"));
             ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/local", UseAttributeValue));
 
+            ActionList.put(BrowseFileFolderServer, new Action(BrowseFileFolderServer,Boolean.FALSE,Boolean.FALSE,"File Browser: Server","Server File Path","BASE-51703"));
+            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xServer"));
+            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/server", UseAttributeValue));
             //also load the actions lists - only needs loaded at startup
             LoadStandardActionList();
             LoadDiamondDefaultFlowsList();
@@ -122,6 +129,7 @@ public class Action {
     public static String GetDiamondCustomFlows(){ return DiamondCustomFlows; }
     public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
     public static String GetBrowseFileFolderLocal(){ return BrowseFileFolderLocal; }
+    public static String GetBrowseFileFolderServer(){ return BrowseFileFolderServer; }
         
     public static String GetButtonText(String Type){
         return ActionList.get(Type).ButtonText;
@@ -143,10 +151,10 @@ public class Action {
         return ActionList.get(Type).DiamondOnly;
     }
     
-    public static String GetAttribute(String Type){
-        return ActionList.get(Type).Attribute;
-    }
-    
+//    public static String GetAttribute(String Type){
+//        return ActionList.get(Type).Attribute;
+//    }
+//    
     public static List<ActionVariable> GetActionVariables(String Type){
         return ActionList.get(Type).ActionVariables;
     }
@@ -209,7 +217,7 @@ public class Action {
             }
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
-        }else if(Type.equals(BrowseFileFolderLocal)){
+        }else if(IsFileBrowserType(Type)){
             if (Attribute==null){
                 return "Choose";
             }else{
@@ -379,18 +387,12 @@ public class Action {
     public static Boolean HasActionList(String Type){
         if (Type.equals(StandardMenuAction)){
             return Boolean.TRUE;
-        }else if(Type.equals(WidgetbySymbol)){
-            return Boolean.FALSE;
-        }else if(Type.equals(BrowseVideoFolder)){
-            return Boolean.FALSE;
         }else if(Type.equals(TVRecordingView)){
             return Boolean.TRUE;
         }else if(Type.equals(DiamondDefaultFlows)){
             return Boolean.TRUE;
         }else if(Type.equals(DiamondCustomFlows)){
             return Boolean.TRUE;
-        }else if(Type.equals(BrowseFileFolderLocal)){
-            return Boolean.FALSE;
         }else{
             return Boolean.FALSE;
         }
@@ -399,18 +401,38 @@ public class Action {
     public static Boolean UseGenericEditBox(String Type){
         if (Type.equals(BrowseVideoFolder)){
             return Boolean.TRUE;
-        }else if(Type.equals(BrowseFileFolderLocal)){
+        }else if(IsFileBrowserType(Type)){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
         }
     }
 
+    public static Boolean IsFileBrowserType(String Type){
+        if (Type.equals(BrowseFileFolderLocal)){
+            return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderServer)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+
+    public static String GetFileBrowserType(String Style){
+        if (Style.equals("xLocal")){
+            return BrowseFileFolderLocal;
+        }else if(Style.equals("xServer")){
+            return BrowseFileFolderServer;
+        }else{
+            return util.OptionNotFound;
+        }
+    }
+
     public static String GetGenericEditBoxMessage(String Type){
         if (Type.equals(BrowseVideoFolder)){
             return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the 'Video by Folder' view next to 'Folder (case sensitive):'";
-        }else if(Type.equals(BrowseFileFolderLocal)){
-            return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the 'File System Browser' (case sensitive):'";
+        }else if(IsFileBrowserType(Type)){
+            return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the File Browser";
         }else{
             return "";
         }
