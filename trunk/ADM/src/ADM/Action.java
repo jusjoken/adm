@@ -59,6 +59,9 @@ public class Action {
     public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
     public static final String BrowseFileFolderLocal = "ExecuteBrowseFileFolderLocal";
     public static final String BrowseFileFolderServer = "ExecuteBrowseFileFolderServer";
+    public static final String BrowseFileFolderImports = "ExecuteBrowseFileFolderImports";
+    public static final String BrowseFileFolderRecDir = "ExecuteBrowseFileFolderRecDir";
+    public static final String BrowseFileFolderNetwork = "ExecuteBrowseFileFolderNetwork";
     public static final String ActionTypeDefault = "DoNothing";
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -111,6 +114,22 @@ public class Action {
             ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
             ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xServer"));
             ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/server", UseAttributeValue));
+
+            ActionList.put(BrowseFileFolderImports, new Action(BrowseFileFolderImports,Boolean.FALSE,Boolean.FALSE,"File Browser: Imports","Imports File Path","BASE-51703"));
+            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xImports"));
+            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/imports", UseAttributeValue));
+
+            ActionList.put(BrowseFileFolderRecDir, new Action(BrowseFileFolderRecDir,Boolean.FALSE,Boolean.FALSE,"File Browser: Recordings","Recording File Path","BASE-51703"));
+            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xRecDirs"));
+            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/rec_dirs", UseAttributeValue));
+
+            ActionList.put(BrowseFileFolderNetwork, new Action(BrowseFileFolderNetwork,Boolean.FALSE,Boolean.FALSE,"File Browser: Network","Network File Path","BASE-51703"));
+            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xNetwork"));
+            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/network", UseAttributeValue));
+
             //also load the actions lists - only needs loaded at startup
             LoadStandardActionList();
             LoadDiamondDefaultFlowsList();
@@ -130,6 +149,10 @@ public class Action {
     public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
     public static String GetBrowseFileFolderLocal(){ return BrowseFileFolderLocal; }
     public static String GetBrowseFileFolderServer(){ return BrowseFileFolderServer; }
+    public static String GetBrowseFileFolderImports(){ return BrowseFileFolderImports; }
+    public static String GetBrowseFileFolderRecDir(){ return BrowseFileFolderRecDir; }
+    public static String GetBrowseFileFolderNetwork(){ return BrowseFileFolderNetwork; }
+    
         
     public static String GetButtonText(String Type){
         return ActionList.get(Type).ButtonText;
@@ -232,11 +255,6 @@ public class Action {
     public static void Execute(String ActionType, String ActionAttribute){
         System.out.println("ADM: aExecute - ActionType = '" + ActionType + "' Action = '" + ActionAttribute + "'");
         if (!ActionType.equals(ActionTypeDefault)){
-//            if (!GetAttribute(ActionType).equals(Blank)){
-//                //Set a Static Context for the Attribute to the ActionAttribute
-//                System.out.println("ADM: aExecute - Setting Static Context for = '" + GetAttribute(ActionType) + "' to '" + ActionAttribute + "'");
-//                sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), GetAttribute(ActionType), ActionAttribute);
-//            }
             //see if there are any ActionVariables that need to be evaluated
             for (ActionVariable tActionVar : GetActionVariables(ActionType)){
                 tActionVar.EvaluateVariable(ActionAttribute);
@@ -413,6 +431,12 @@ public class Action {
             return Boolean.TRUE;
         }else if(Type.equals(BrowseFileFolderServer)){
             return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderImports)){
+            return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderNetwork)){
+            return Boolean.TRUE;
+        }else if(Type.equals(BrowseFileFolderRecDir)){
+            return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
         }
@@ -423,6 +447,12 @@ public class Action {
             return BrowseFileFolderLocal;
         }else if(Style.equals("xServer")){
             return BrowseFileFolderServer;
+        }else if(Style.equals("xImports")){
+            return BrowseFileFolderImports;
+        }else if(Style.equals("xRecDirs")){
+            return BrowseFileFolderRecDir;
+        }else if(Style.equals("xNetwork")){
+            return BrowseFileFolderNetwork;
         }else{
             return util.OptionNotFound;
         }
