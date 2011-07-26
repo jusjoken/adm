@@ -276,6 +276,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
 
 === ADM Copy Mode ===
+==== Copy Sage Menu Items ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -294,6 +295,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * supports copy of TV Recording Menu Items
     * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
 
+==== Copy Video Folder Browser Items ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG] _Folder Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for a specific Folder
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -308,6 +310,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * To finish, press Options/ESC and select Disable ADM Copy Mode
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
+==== Copy File Browser Items ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders-ppc.JPG] _File Browser Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the creation of ADM Menu Items directly from the File Browser for a specific File Path
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
