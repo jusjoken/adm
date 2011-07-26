@@ -19,6 +19,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * actions available for Local, Network, Server, Imports and Recording Directories
   * Updated ADM Copy
     * now recognizes File Browser Views 
+    * will allow copy of custom Plugin Menu items that launch a Dialog Menu such as the "Restart Sage from Setup Menu" Plugin
   * Other minor fixes
 
 == Changes in Version 0.36 ==
@@ -382,6 +383,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * ADM Enabled
     * Add a custom Submenu (2nd level menu) and specify the MyTV submenu as it's Sage Submenu
     * The Auto Open function will not work yet (perhaps in a future release)
+
+=== Other Plugins ===
+  * Works with "Restart Sage from Setup Menu" Plugin (try the ADM Copy Mode for this one)
+ 
 
 == Diamond Notes ==
   * This plugin has been designed to work combined with Diamond if it is installed
