@@ -14,6 +14,15 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.37 ==
+
+  * New Action Type to Launch Specific File Browser Views
+    * actions available for Local, Network, Server, Imports and Recording Directories
+  * Updated ADM Copy
+    * now recognizes File Browser Views 
+    * will allow copy of custom Plugin Menu items that launch a Dialog Menu such as the "Restart Sage from Setup Menu" Plugin
+  * Other minor fixes
+
 == Changes in Version 0.36 ==
 
   * Updated ADM Copy
@@ -60,7 +69,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
     * Launch an external program is being considered - need some user feedback on what this would be used for and expected results.
-    * Launch specific Folder in the File Browser - may be complex but considering it
     * Other user suggestions if a feature is missing
 
 == ADM Manager ==
@@ -175,7 +183,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
         * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
       [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG] _click to view_
-        * The Folder name is case sensitive and should have the trailing "/"
+        * The Folder name is case sensitive and should have the trailing "/" or "\"
         * Note: SageTV uses a different process for the Path between Separate and Combined Folder settings. If you have a working Video Folder menu item and change the Combined/Separate Video Folder setting the menu item may not go to the proper Folder and may need to be edited.
         * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
       
@@ -189,6 +197,20 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * If you change the Display Name for the Menu Item you may also be prompted to rename either the Menu Item or the Recordings View so they match.
         * You will have the option to leave them names differently
       * see [#ADM_Copy_Mode] for information on creating this action type through a Copy function
+
+    * File Browser: Local/Server/Imports/Network/Recordings
+      ||[http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem-ppc.JPG] _File Browser Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult.JPG http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult-ppc.JPG] _File Browser_ || _click to view_ ||
+
+        * Set this option and enter a valid Path and this menu item will jump to that specific Path when selected
+        * The Path entered is free form and will not be validated, but if invalid will result in a Path Not Found error in the File Browser
+        * Use the ADM Copy Mode to improve accuracy when creating this type of action
+        * The following File Browser Action Types are available to support the similar File Browser
+          * Local - local file system browser
+          * Server - browses the file system on the SageTV Server
+          * Network - specific Network browse functions
+          * Imports - browser for SageTV Import Paths
+          * Recordings - browser for SageTV Recording Directories
+          * Note: many of these are "interchangeable" in that they act similarily and may launch the same Action Path as another type.  The main difference will be seen after launching the Menu Item and getting to the Path the different types may present different Options and Back button behavior.  Experiment with the Action Types to get your desired resutls.
 
     * Diamond Default Flows
       * Select from a list of Diamond built in Flows
@@ -254,7 +276,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Select this option while displaying a Custom Background to get a prompt to remove it
     * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
 
-=== ADM Copy Mode ===
+== ADM Copy Mode ==
+=== Copy Sage Menu Items ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
   * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -273,10 +296,11 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * supports copy of TV Recording Menu Items
     * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
 
+=== Copy Video Folder Browser Items ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG] _Folder Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
-  * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for an specific Folder
+  * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for a specific Folder
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
-    * select Folder Browser from the dialog which will Enable Copy Mode and jump to the Folder Browser
+    * select Video Folder Browser from the dialog which will Enable Copy Mode and jump to the Video Folder Browser
     * move the focus to any folder item you want to create a menu item for
     * press Options/ESC
     * select Create Menu Item for xxxxx
@@ -287,6 +311,21 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * To finish, press Options/ESC and select Disable ADM Copy Mode
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
+=== Copy File Browser Items ===
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders-ppc.JPG] _File Browser Item_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem-ppc.JPG] _Change Settings_ || _click to view_ ||
+  * allows for the creation of ADM Menu Items directly from the File Browser for a specific File Path
+    * From ADM Manager select Copy Mode is Disabled from the left hand menu
+    * select File Browser from the dialog which will Enable Copy Mode and jump to the File Browser
+    * move the focus to any folder item you want to create a menu item for
+    * Note: selecting a File rather than a Folder allow a copy but will not be a valid Menu Item Action for the File Browser
+    * press Options/ESC
+    * select Create Menu Item for xxxxx
+    * Select a Parent Menu to attach this new Menu Item to
+    * Edit any of the fields such as the Display Name. See [#Editing_current_Menu_Items] for more info
+    * Close the Edit Dialog and the menu item has been created.
+    * Continue repeating these steps for any other File Browser Menu Items you want to create
+    * To finish, press Options/ESC and select Disable ADM Copy Mode
+    * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
 == Menu Structure Terms ==
   [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG] _click to view_
@@ -345,6 +384,10 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * ADM Enabled
     * Add a custom Submenu (2nd level menu) and specify the MyTV submenu as it's Sage Submenu
     * The Auto Open function will not work yet (perhaps in a future release)
+
+=== Other Plugins ===
+  * Works with "Restart Sage from Setup Menu" Plugin (try the ADM Copy Mode for this one)
+ 
 
 == Diamond Notes ==
   * This plugin has been designed to work combined with Diamond if it is installed
