@@ -67,7 +67,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
     * Launch an external program is being considered - need some user feedback on what this would be used for and expected results.
-    * Launch specific Folder in the File Browser - may be complex but considering it
     * Other user suggestions if a feature is missing
 
 == ADM Manager ==
