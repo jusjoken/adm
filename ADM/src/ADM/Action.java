@@ -4,10 +4,13 @@
  */
 package ADM;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
@@ -621,12 +624,10 @@ public class Action {
                 Runtime rt = Runtime.getRuntime();
                 Process proc = rt.exec(cmd);
                 // any error message?
-                StreamGobbler errorGobbler = new 
-                StreamGobbler(proc.getErrorStream(), "ERROR");            
+                StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(), "ERROR");            
 
                 // any output?
-                StreamGobbler outputGobbler = new 
-                StreamGobbler(proc.getInputStream(), "OUTPUT");
+                StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(), "OUTPUT");
 
                 // kick them off
                 errorGobbler.start();
@@ -643,6 +644,37 @@ public class Action {
             
         }
         
+        //StreamGobbler class from
+        //http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html
+
+        public static class StreamGobbler extends Thread
+        {
+            InputStream is;
+            String type;
+
+            StreamGobbler(InputStream is, String type)
+            {
+                this.is = is;
+                this.type = type;
+            }
+
+            public void run()
+            {
+                try
+                {
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader br = new BufferedReader(isr);
+                    String line=null;
+                    while ( (line = br.readLine()) != null)
+                        System.out.println(type + ">" + line);
+                } catch (IOException ioe)
+                {
+                    System.out.println("ADM: aExternalAction.StreamGobbler: ERROR - Exception = '" + ioe + "'"); 
+                    //ioe.printStackTrace();
+                }
+            }
+        }
+
     }
     
     
