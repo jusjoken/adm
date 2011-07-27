@@ -273,7 +273,8 @@ public class Action {
             //determine what to execute
             if (tActionType.equals(LaunchExternalApplication)){
                 //launch external application
-                
+                ExternalAction tExtApp = new ExternalAction(tActionAttribute, 0, "", Boolean.TRUE, ExternalAction.SageStatusSleep);
+                tExtApp.Execute();
             }else{
                 //either execute the default widget symbol or the one for the Menu Item passed in
                 if (GetWidgetSymbol(tActionType).equals(Blank)){
@@ -438,6 +439,8 @@ public class Action {
             return Boolean.TRUE;
         }else if(IsFileBrowserType(Type)){
             return Boolean.TRUE;
+        }else if(Type.equals(LaunchExternalApplication)){
+            return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
         }
@@ -480,6 +483,8 @@ public class Action {
             return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the 'Video by Folder' view next to 'Folder (case sensitive):'";
         }else if(IsFileBrowserType(Type)){
             return "Enter a Folder Name/Path:\nHint: use the same text as displayed\nin the File Browser";
+        }else if(Type.equals(LaunchExternalApplication)){
+            return "Enter a command";
         }else{
             return "";
         }
@@ -549,6 +554,7 @@ public class Action {
         private String command;
         private String arguments;
         private Boolean waitForExit;
+        private String sageStatus;
 
         static public final String[] windowTypeStrings = { 
             "Normal",
@@ -560,14 +566,20 @@ public class Action {
         static public final int WINDOW_MAXIMISED=1;
         static public final int WINDOW_MINIMISED=2;
         static public final int WINDOW_HIDDEN=3;
+
+        static public final String SageStatusExit = "SageStatusExit";
+        static public final String SageStatusSleep = "SageStatusSleep";
+        static public final String SageStatusNothing = "SageStatusNothing";
         
         public ExternalAction(){
             this.command="";
             this.windowType=0;
             this.arguments="";
             this.waitForExit=Boolean.FALSE;
+            this.sageStatus = SageStatusNothing;
         }
-        public ExternalAction(String command, Integer windowType, String arguments, Boolean waitForExit ){
+        
+        public ExternalAction(String command, Integer windowType, String arguments, Boolean waitForExit, String sageStatus ){
             this.command=command;
             
             //validate windowType
@@ -578,9 +590,11 @@ public class Action {
             }
             this.arguments=arguments;
             this.waitForExit=waitForExit;
+            this.sageStatus = sageStatus;
         }
         
         public void Execute(){
+            UIContext MyUIContext = new UIContext(sagex.api.Global.GetUIContextName());
             try{            
                 String osName = System.getProperty("os.name");
                 String[] cmd = null;
@@ -621,6 +635,20 @@ public class Action {
                     System.out.println("ADM: aExternalAction.Execute: for unknown OS '" + osName + "' Command = '" + cmd[0] + " " + cmd[1] + "'" );
 
                 }
+                //determine what to do with Sage - before
+                Boolean tFullScreen = sagex.api.Global.IsFullScreen(MyUIContext);
+                if (sageStatus.equals(SageStatusSleep)){
+                    if (tFullScreen){
+                        sagex.api.Global.SetFullScreen(MyUIContext, Boolean.FALSE);
+                    }
+                    sagex.api.Global.SageCommand(MyUIContext,"Power Off");
+                }else if (sageStatus.equals(SageStatusExit)){
+                    //the exit command would only occur AFTER the External Application is executed - see below
+                    //sagex.api.Global.Exit(new UIContext(sagex.api.Global.GetUIContextName()));
+                }else{
+                    //do thing assumed
+                }
+                
                 Runtime rt = Runtime.getRuntime();
                 Process proc = rt.exec(cmd);
                 // any error message?
@@ -636,6 +664,21 @@ public class Action {
                 // any error???
                 int exitVal = proc.waitFor();
                 System.out.println("ADM: aExternalAction.Execute: ExitValue: '" + exitVal + "'"); 
+
+                //determine what to do with Sage - after
+                if (sageStatus.equals(SageStatusSleep)){
+                    sagex.api.Global.SageCommand(MyUIContext,"Power On");
+                    if (tFullScreen){
+                        sagex.api.Global.SetFullScreen(MyUIContext, Boolean.TRUE);
+                    }
+                }else if (sageStatus.equals(SageStatusExit)){
+                    //exit Sage after starting the External Application
+                    sagex.api.Global.Exit(new UIContext(sagex.api.Global.GetUIContextName()));
+                }else{
+                    //do thing assumed
+                }
+                
+                
             } catch (Throwable t)
             {
                 System.out.println("ADM: aExternalAction.Execute: ERROR - Exception = '" + t + "'"); 
@@ -658,6 +701,7 @@ public class Action {
                 this.type = type;
             }
 
+            @Override
             public void run()
             {
                 try
