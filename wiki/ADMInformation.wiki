@@ -386,8 +386,23 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * The Auto Open function will not work yet (perhaps in a future release)
 
 === Other Plugins ===
-  * Works with "Restart Sage from Setup Menu" Plugin (try the ADM Copy Mode for this one)
- 
+  * Works with the following Plugins Installed...
+    * CVF
+    * Diamond (of course)
+    * Restart Sage from Setup Menu (try the ADM Copy Mode for this one)
+    * Diamond MyTV
+    * Caption and Subtitle Mods
+    * Comskip Playback
+    * EPG Back-On-Guide
+    * No Default Action in Main Menu
+    * Save EPG channel selection on Exit
+    * BMT
+    * GKusnick's Studio Tools
+    * Jetty Web Server
+    * Name Timed Recording General
+    * SJQ
+    * SageTV Web Interface
+    * SJQ UI
 
 == Diamond Notes ==
   * This plugin has been designed to work combined with Diamond if it is installed
