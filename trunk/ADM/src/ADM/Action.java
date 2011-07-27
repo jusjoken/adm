@@ -273,7 +273,7 @@ public class Action {
             //determine what to execute
             if (tActionType.equals(LaunchExternalApplication)){
                 //launch external application
-                ExternalAction tExtApp = new ExternalAction(tActionAttribute, 0, "", Boolean.TRUE, ExternalAction.SageStatusSleep);
+                ExternalAction tExtApp = new ExternalAction(tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
                 tExtApp.Execute();
             }else{
                 //either execute the default widget symbol or the one for the Menu Item passed in
