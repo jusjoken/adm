@@ -674,7 +674,7 @@ public class MenuNode {
     }
 
     public static void Execute(String Name){
-        Action.Execute(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+        Action.Execute(Name);
     }
     
     public static String GetActionAttributeButtonText(String Name){
