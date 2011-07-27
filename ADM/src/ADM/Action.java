@@ -62,6 +62,7 @@ public class Action {
     public static final String BrowseFileFolderImports = "ExecuteBrowseFileFolderImports";
     public static final String BrowseFileFolderRecDir = "ExecuteBrowseFileFolderRecDir";
     public static final String BrowseFileFolderNetwork = "ExecuteBrowseFileFolderNetwork";
+    public static final String LaunchExternalApplication = "LaunchExternalApplication";
     public static final String ActionTypeDefault = "DoNothing";
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -130,6 +131,8 @@ public class Action {
             ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xNetwork"));
             ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/network", UseAttributeValue));
 
+            ActionList.put(LaunchExternalApplication, new Action(LaunchExternalApplication,Boolean.FALSE,Boolean.FALSE,"Launch External Application", "Application Settings"));
+
             //also load the actions lists - only needs loaded at startup
             LoadStandardActionList();
             LoadDiamondDefaultFlowsList();
@@ -152,6 +155,7 @@ public class Action {
     public static String GetBrowseFileFolderImports(){ return BrowseFileFolderImports; }
     public static String GetBrowseFileFolderRecDir(){ return BrowseFileFolderRecDir; }
     public static String GetBrowseFileFolderNetwork(){ return BrowseFileFolderNetwork; }
+    public static String GetLaunchExternalApplication(){ return LaunchExternalApplication; }
     
         
     public static String GetButtonText(String Type){
@@ -240,6 +244,8 @@ public class Action {
             }
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
+        }else if(Type.equals(LaunchExternalApplication)){
+            return "Configure Settings";
         }else if(IsFileBrowserType(Type)){
             if (Attribute==null){
                 return "Choose";
@@ -251,19 +257,27 @@ public class Action {
         }
     }
     
-    
-    public static void Execute(String ActionType, String ActionAttribute){
-        System.out.println("ADM: aExecute - ActionType = '" + ActionType + "' Action = '" + ActionAttribute + "'");
-        if (!ActionType.equals(ActionTypeDefault)){
+    //execute the Action based on the Menu Item ActionType value
+    public static void Execute(String MenuItemName){
+        String tActionType = MenuNode.GetMenuItemActionType(MenuItemName);
+        String tActionAttribute = MenuNode.GetMenuItemAction(MenuItemName);
+        System.out.println("ADM: aExecute - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
+        if (!tActionType.equals(ActionTypeDefault)){
             //see if there are any ActionVariables that need to be evaluated
-            for (ActionVariable tActionVar : GetActionVariables(ActionType)){
-                tActionVar.EvaluateVariable(ActionAttribute);
+            for (ActionVariable tActionVar : GetActionVariables(tActionType)){
+                tActionVar.EvaluateVariable(tActionAttribute);
             }
-            //either execute the default widget symbol or the one passed in
-            if (GetWidgetSymbol(ActionType).equals(Blank)){
-                ExecuteWidget(ActionAttribute);
+            //determine what to execute
+            if (tActionType.equals(LaunchExternalApplication)){
+                //launch external application
+                
             }else{
-                ExecuteWidget(GetWidgetSymbol(ActionType));
+                //either execute the default widget symbol or the one for the Menu Item passed in
+                if (GetWidgetSymbol(tActionType).equals(Blank)){
+                    ExecuteWidget(tActionAttribute);
+                }else{
+                    ExecuteWidget(GetWidgetSymbol(tActionType));
+                }
             }
         }
         //else do nothing
@@ -525,5 +539,111 @@ public class Action {
             }
         }
     }
+    
+    public static class ExternalAction{
+        //portions borrowed from NielM ExtCommand.java code
+        private Integer windowType; // (maximised | minimised | hidden | normal | console )
+        private String command;
+        private String arguments;
+        private Boolean waitForExit;
+
+        static public final String[] windowTypeStrings = { 
+            "Normal",
+            "Maximised",
+            "Minimised",
+            "Hidden"
+        };
+        static public final int WINDOW_NORMAL =0;
+        static public final int WINDOW_MAXIMISED=1;
+        static public final int WINDOW_MINIMISED=2;
+        static public final int WINDOW_HIDDEN=3;
+        
+        public ExternalAction(){
+            this.command="";
+            this.windowType=0;
+            this.arguments="";
+            this.waitForExit=Boolean.FALSE;
+        }
+        public ExternalAction(String command, Integer windowType, String arguments, Boolean waitForExit ){
+            this.command=command;
+            
+            //validate windowType
+            if (windowType<0 || windowType>3){
+                this.windowType=0;  //default to Normal
+            }else{
+                this.windowType=windowType;
+            }
+            this.arguments=arguments;
+            this.waitForExit=waitForExit;
+        }
+        
+        public void Execute(){
+            try{            
+                String osName = System.getProperty("os.name");
+                String[] cmd = null;
+
+                if ( osName.toLowerCase().startsWith("windows")) {
+                    cmd = new String[3];
+                    if( osName.equals( "Windows 95" ) || osName.equals( "Windows 98" ) ){
+                        cmd[0] = "command.com" ;
+                        cmd[1] = "/C" ;
+                    } else if( osName.toLowerCase().contains("win")){//any newer Windows OS
+                        cmd[0] = "cmd.exe" ;
+                        cmd[1] = "/C" ;
+                    }else {
+                        System.out.println("ADM: aExternalAction.Execute: unknown OS:"+osName+" assuming newer Windows OS");
+                        cmd[0] = "cmd.exe" ;
+                        cmd[1] = "/C" ;
+                    }
+                    cmd[2] = "start \"console\" ";
+                    if ( waitForExit ){
+                        cmd[2]=cmd[2] + "/wait ";
+                    }
+                    //Window Types
+                    if ( windowType == WINDOW_MAXIMISED ){
+                        cmd[2] = cmd[2] +"/max ";
+                    }else if ( windowType == WINDOW_MINIMISED ){
+                        cmd[2] = cmd[2] +"/min ";
+                    }else if ( windowType == WINDOW_HIDDEN ){
+                        cmd[2] = cmd[2] +"/b ";
+                    }
+
+                    // append command -- first for window title, second for exe name
+                    cmd[2]=cmd[2]+"\""+command+"\" " + arguments;
+                    System.out.println("ADM: aExternalAction.Execute: Command = '" + cmd[0] + " " + cmd[1] + " " + cmd[2] + "'");
+                } else {
+                    cmd = new String[2];
+                    cmd[0]=command;
+                    cmd[1]=arguments;
+                    System.out.println("ADM: aExternalAction.Execute: for unknown OS '" + osName + "' Command = '" + cmd[0] + " " + cmd[1] + "'" );
+
+                }
+                Runtime rt = Runtime.getRuntime();
+                Process proc = rt.exec(cmd);
+                // any error message?
+                StreamGobbler errorGobbler = new 
+                StreamGobbler(proc.getErrorStream(), "ERROR");            
+
+                // any output?
+                StreamGobbler outputGobbler = new 
+                StreamGobbler(proc.getInputStream(), "OUTPUT");
+
+                // kick them off
+                errorGobbler.start();
+                outputGobbler.start();
+
+                // any error???
+                int exitVal = proc.waitFor();
+                System.out.println("ADM: aExternalAction.Execute: ExitValue: '" + exitVal + "'"); 
+            } catch (Throwable t)
+            {
+                System.out.println("ADM: aExternalAction.Execute: ERROR - Exception = '" + t + "'"); 
+                //t.printStackTrace();
+            }
+            
+        }
+        
+    }
+    
     
 }
