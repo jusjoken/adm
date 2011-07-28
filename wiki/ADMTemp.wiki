@@ -13,6 +13,11 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.38 ==
+
+  * New Action Type to Launch an External Application
+  * Fixed copy of Menu Items that used a Menu Widget (like the Recipe viewer)
+
 == Changes in Version 0.37 ==
 
   * New Action Type to Launch Specific File Browser Views
@@ -211,6 +216,22 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
           * Recordings - browser for SageTV Recording Directories
           * Note: many of these are "interchangeable" in that they act similarily and may launch the same Action Path as another type.  The main difference will be seen after launching the Menu Item and getting to the Path the different types may present different Options and Back button behavior.  Experiment with the Action Types to get your desired resutls.
 
+    * Launch External Application
+      ||[http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem-ppc.JPG] _External App_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure-ppc.JPG] _Configure_ || _click to view_ ||
+
+        * Select this option and then on the Configure Dialog set each of the appropriate settings
+          * Application: enter a free form application name including the path required to launch this application
+          * Arguments: include any arguments (if any) to be passed to the application when it it launched
+          * Window Type: Select from the valid Window Type by pressing ENTER, LEFT or RIGHT
+            * Normal, Maximized, Minimized, Hidden
+          * Wait For Exit: determines if Sage will Wait for the application to complete (spinning circle wait) or be available again once the application is launched
+            * Wait until Application Exits
+            * Do not wait
+          * Sage Status: determines what Sage will do on launch
+            * Put Sage in Sleep Mode
+            * Exit Sage after application launch
+            * Do nothing with Sage
+
     * Diamond Default Flows
       * Select from a list of Diamond built in Flows
       * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
@@ -385,8 +406,23 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * The Auto Open function will not work yet (perhaps in a future release)
 
 === Other Plugins ===
-  * Works with "Restart Sage from Setup Menu" Plugin (try the ADM Copy Mode for this one)
- 
+  * Works with the following Plugins Installed...
+    * CVF
+    * Diamond (of course)
+    * Restart Sage from Setup Menu (try the ADM Copy Mode for this one)
+    * Diamond MyTV
+    * Caption and Subtitle Mods
+    * Comskip Playback
+    * EPG Back-On-Guide
+    * No Default Action in Main Menu
+    * Save EPG channel selection on Exit
+    * BMT
+    * GKusnick's Studio Tools
+    * Jetty Web Server
+    * Name Timed Recording General
+    * SJQ
+    * SageTV Web Interface
+    * SJQ UI
 
 == Diamond Notes ==
   * This plugin has been designed to work combined with Diamond if it is installed
