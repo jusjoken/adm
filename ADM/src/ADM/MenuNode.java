@@ -38,6 +38,7 @@ public class MenuNode {
     private Boolean IsActive = true;
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
+    private Action.ExternalAction ActionExternal = null;
     public static Integer SortKeyCounter = 0;
     public static Map<String,MenuNode> InternalMenuNodeList = new LinkedHashMap<String,MenuNode>();
     public static Map<String,LinkedHashMap> UIMenuNodeList = new LinkedHashMap<String,LinkedHashMap>();
@@ -60,6 +61,7 @@ public class MenuNode {
         IsDefault = bIsDefault;
         IsActive = bIsActive;
         SortKey = bSortKey;
+        ActionExternal = new Action.ExternalAction(Name);
         MenuNodeList().put(Name, this);
     }
     
@@ -80,15 +82,6 @@ public class MenuNode {
     }
 
     public static void SetMenuItemAction(String Name, String Setting){
-        if (GetMenuItemActionType(Name).equals(Action.BrowseVideoFolder)){
-            //ensure the Folder string ends in a "/" (File.separator) unless it's blank
-//            if (Setting.isEmpty() || !Setting.endsWith(File.separator)){
-//                Setting = Setting + File.separator;
-//            }
-//            if (Setting.equals(File.separator)){
-//                Setting = null;
-//            }
-        }
         Save(Name, "Action", Setting);
     }
 
@@ -103,6 +96,76 @@ public class MenuNode {
 
     public static void SetMenuItemActionType(String Name, String Setting){
         Save(Name, "ActionType", Setting);
+    }
+
+    public static Action.ExternalAction GetMenuItemActionExternal(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal;
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+    public static String GetMenuItemActionExternalApplication(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal.GetApplication();
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+    public static String GetMenuItemActionExternalArguments(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal.GetArguments();
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+    public static String GetMenuItemActionExternalWindowType(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal.GetWindowType();
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+    public static String GetMenuItemActionExternalWaitForExit(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal.GetWaitForExit();
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+    public static String GetMenuItemActionExternalSageStatus(String Name){
+        try {
+            return MenuNodeList().get(Name).ActionExternal.GetSageStatus();
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+
+    public static void SetMenuItemActionExternalApplication(String Name, String Setting){
+        //change the setting to the next +1, previous -1, or dont change it and then save
+        MenuNodeList().get(Name).ActionExternal.SetApplication(Setting);
+    }
+    public static void SetMenuItemActionExternalArguments(String Name, String Setting){
+        //change the setting to the next +1, previous -1, or dont change it and then save
+        MenuNodeList().get(Name).ActionExternal.SetArguments(Setting);
+    }
+    public static void SetMenuItemActionExternalWindowType(String Name, Integer Delta){
+        //change the setting to the next +1, previous -1, or dont change it and then save
+        MenuNodeList().get(Name).ActionExternal.ChangeWindowType(Delta);
+    }
+    public static void SetMenuItemActionExternalWaitForExit(String Name){
+        //change the setting to the next +1, previous -1, or dont change it and then save
+        MenuNodeList().get(Name).ActionExternal.ChangeWaitForExit();
+    }
+    public static void SetMenuItemActionExternalSageStatus(String Name, Integer Delta){
+        //change the setting to the next +1, previous -1, or dont change it and then save
+        MenuNodeList().get(Name).ActionExternal.ChangeSageStatus(Delta);
     }
     
     private void SetBGImageFileandPath(String bBGImageFile){
@@ -1120,7 +1183,7 @@ public class MenuNode {
         if (!Name.equals(util.TopMenu)){
             String PropLocation = util.SagePropertyLocation + Name;
             util.SetProperty(PropLocation + "/" + PropType, Setting);
-            //no save the specifc node field change
+            //now save the specifc node field change
             if (PropType.equals("Action")){
                 MenuNodeList().get(Name).ActionAttribute = Setting;
             }else if (PropType.equals("ActionType")){

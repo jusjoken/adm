@@ -655,6 +655,32 @@ public class util {
     public static String GetProperty(String Property, String DefaultValue){
         return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
     }
+    
+    public static Boolean GetPropertyAsBoolean(String Property, Boolean DefaultValue){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, util.OptionNotFound);
+        if (tValue.equals(util.OptionNotFound)){
+            return DefaultValue;
+        }else{
+            return Boolean.parseBoolean(tValue);
+        }
+    }
+    
+    public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
+        //read in the Sage Property and force convert it to an Integer
+        Integer tInteger = DefaultValue;
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, util.OptionNotFound);
+        if (tValue.equals(util.OptionNotFound)){
+            return DefaultValue;
+        }
+        try {
+            tInteger = Integer.valueOf(tValue);
+        } catch (NumberFormatException ex) {
+            //use DefaultValue
+            return DefaultValue;
+        }
+        return tInteger;
+    }
+    
 
     public static String GetServerProperty(String Property, String DefaultValue){
         return sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
