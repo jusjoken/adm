@@ -273,7 +273,7 @@ public class Action {
             //determine what to execute
             if (tActionType.equals(LaunchExternalApplication)){
                 //launch external application
-                ExternalAction tExtApp = new ExternalAction(tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
+                ExternalAction tExtApp = new ExternalAction("TestOnly", tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
                 tExtApp.Execute();
             }else{
                 //either execute the default widget symbol or the one for the Menu Item passed in
@@ -554,7 +554,8 @@ public class Action {
         private String command;
         private String arguments;
         private Boolean waitForExit;
-        private String sageStatus;
+        private Integer sageStatus;
+        private String MenuItemName;
 
         static public final String[] windowTypeStrings = { 
             "Normal",
@@ -567,11 +568,17 @@ public class Action {
         static public final int WINDOW_MINIMISED=2;
         static public final int WINDOW_HIDDEN=3;
 
-        static public final String SageStatusExit = "SageStatusExit";
-        static public final String SageStatusSleep = "SageStatusSleep";
-        static public final String SageStatusNothing = "SageStatusNothing";
+        static public final String[] sageStatusStrings = { 
+            "Do nothing with Sage",
+            "Put Sage in Sleep Mode",
+            "Exit Sage after application launch"
+        };
+        static public final Integer SageStatusNothing = 0;
+        static public final Integer SageStatusSleep = 1;
+        static public final Integer SageStatusExit = 2;
         
-        public ExternalAction(){
+        public ExternalAction(String MenuItemName){
+            this.MenuItemName = MenuItemName;
             this.command="";
             this.windowType=0;
             this.arguments="";
@@ -579,18 +586,106 @@ public class Action {
             this.sageStatus = SageStatusNothing;
         }
         
-        public ExternalAction(String command, Integer windowType, String arguments, Boolean waitForExit, String sageStatus ){
+        public ExternalAction(String MenuItemName, String command, Integer windowType, String arguments, Boolean waitForExit, Integer sageStatus ){
+            this.MenuItemName = MenuItemName;
             this.command=command;
             
             //validate windowType
-            if (windowType<0 || windowType>3){
+            if (windowType<0 || windowType>windowTypeStrings.length){
                 this.windowType=0;  //default to Normal
             }else{
                 this.windowType=windowType;
             }
             this.arguments=arguments;
             this.waitForExit=waitForExit;
-            this.sageStatus = sageStatus;
+            if (sageStatus<0 || sageStatus>sageStatusStrings.length){
+                this.sageStatus = SageStatusNothing;
+            }else{
+                this.sageStatus = sageStatus;
+            }
+        }
+        
+        public String GetApplication(){
+            return this.command;
+        }
+        public void SetApplication(String bApplication){
+            this.command = bApplication;
+        }
+        public String GetArguments(){
+            return this.arguments;
+        }
+        public void SetArguments(String bArguments){
+            this.arguments = bArguments;
+        }
+        public String GetWindowType(){
+            return windowTypeStrings[windowType];
+        }
+        public void SetWindowType(String bWindowType){
+            Boolean windowTypeFound = Boolean.FALSE;
+            for ( int i=0; i < windowTypeStrings.length ; i ++ ){
+                if ( windowTypeStrings[i].equals(bWindowType) ) {
+                    windowType=i;
+                    windowTypeFound = Boolean.TRUE;
+                    break;
+                }
+            }
+            if ( !windowTypeFound ){
+                this.windowType = 0;
+            }
+        }
+        public void ChangeWindowType(Integer Delta){
+            this.windowType = this.windowType + Delta;
+            if (windowType>windowTypeStrings.length){
+                this.windowType = 0;
+            }else if(windowType<0){
+                this.windowType = windowTypeStrings.length;
+            }
+        }
+        
+//        public Boolean GetWaitForExit(){
+//            return waitForExit;
+//        }
+        public String GetWaitForExit(){
+            if (waitForExit){
+                return "Wait until Application Exits";
+            }else{
+                return "Do not wait";
+            }
+        }
+        public void ChangeWaitForExit(){
+            this.waitForExit = !this.waitForExit;
+        }
+
+        public String GetSageStatus(){
+            return sageStatusStrings[sageStatus];
+        }
+        public void ChangeSageStatus(Integer Delta){
+            this.sageStatus = this.sageStatus + Delta;
+            if (sageStatus>sageStatusStrings.length){
+                this.sageStatus = 0;
+            }else if(sageStatus<0){
+                this.sageStatus = sageStatusStrings.length;
+            }
+        }
+        
+        public void Save(){
+            //save all variables to the sage Properties
+            String PropLocation = util.SagePropertyLocation + MenuItemName + "/ExternalAction/";
+            util.SetProperty(PropLocation + "Application", command);
+            util.SetProperty(PropLocation + "Arguments", arguments);
+            util.SetProperty(PropLocation + "WindowType", windowType.toString());
+            util.SetProperty(PropLocation + "WaitForExit", waitForExit.toString());
+            util.SetProperty(PropLocation + "SageStatus", sageStatus.toString());
+        }
+        
+        public void Load(){
+            //save all variables to the sage Properties
+            String PropLocation = util.SagePropertyLocation + MenuItemName + "/ExternalAction/";
+            this.command = util.GetProperty(PropLocation + "Application", "");
+            this.arguments = util.GetProperty(PropLocation + "Arguments", "");
+            this.windowType = util.GetPropertyAsInteger(PropLocation + "WindowType", 0);
+            this.waitForExit = util.GetPropertyAsBoolean(PropLocation + "WaitForExit", Boolean.FALSE);
+            this.sageStatus = util.GetPropertyAsInteger(PropLocation + "SageStatus", 0);
         }
         
         public void Execute(){
