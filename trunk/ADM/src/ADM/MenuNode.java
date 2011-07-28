@@ -792,6 +792,7 @@ public class MenuNode {
                     NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
                     NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
                     NewMenuItem.IsActive = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsActive", "true"));
+                    NewMenuItem.ActionExternal.Load();
                     System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                 }else{
                     System.out.println("ADM: mLoadMenuItemsFromSage: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
@@ -1006,6 +1007,7 @@ public class MenuNode {
                 PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
                 PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
+                GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
                 //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
             }
         }

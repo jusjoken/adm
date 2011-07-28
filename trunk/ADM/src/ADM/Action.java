@@ -610,12 +610,14 @@ public class Action {
         }
         public void SetApplication(String bApplication){
             this.command = bApplication;
+            this.Save();
         }
         public String GetArguments(){
             return this.arguments;
         }
         public void SetArguments(String bArguments){
             this.arguments = bArguments;
+            this.Save();
         }
         public String GetWindowType(){
             return windowTypeStrings[windowType];
@@ -632,6 +634,7 @@ public class Action {
             if ( !windowTypeFound ){
                 this.windowType = 0;
             }
+            this.Save();
         }
         public void ChangeWindowType(Integer Delta){
             this.windowType = this.windowType + Delta;
@@ -640,6 +643,7 @@ public class Action {
             }else if(windowType<0){
                 this.windowType = windowTypeStrings.length;
             }
+            this.Save();
         }
         
 //        public Boolean GetWaitForExit(){
@@ -654,6 +658,7 @@ public class Action {
         }
         public void ChangeWaitForExit(){
             this.waitForExit = !this.waitForExit;
+            this.Save();
         }
 
         public String GetSageStatus(){
@@ -666,6 +671,7 @@ public class Action {
             }else if(sageStatus<0){
                 this.sageStatus = sageStatusStrings.length;
             }
+            this.Save();
         }
         
         public void Save(){
@@ -686,6 +692,15 @@ public class Action {
             this.windowType = util.GetPropertyAsInteger(PropLocation + "WindowType", 0);
             this.waitForExit = util.GetPropertyAsBoolean(PropLocation + "WaitForExit", Boolean.FALSE);
             this.sageStatus = util.GetPropertyAsInteger(PropLocation + "SageStatus", 0);
+        }
+
+        public void AddProperties(Properties inProp){
+            String PropLocation = util.SagePropertyLocation + MenuItemName + "/ExternalAction/";
+            inProp.setProperty(PropLocation + "Application", command);
+            inProp.setProperty(PropLocation + "Arguments", arguments);
+            inProp.setProperty(PropLocation + "WindowType", windowType.toString());
+            inProp.setProperty(PropLocation + "WaitForExit", waitForExit.toString());
+            inProp.setProperty(PropLocation + "SageStatus", sageStatus.toString());
         }
         
         public void Execute(){
