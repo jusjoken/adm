@@ -74,7 +74,11 @@ public class MenuNode {
     public static String GetMenuItemAction(String Name){
         //System.out.println("ADM: mGetMenuItemAction for '" + Name + "' = '" + MenuNodeList().get(Name).ActionAttribute + "'");
         try {
-            return MenuNodeList().get(Name).ActionAttribute;
+            if (MenuNodeList().get(Name).ActionType.equals(Action.LaunchExternalApplication)){
+                return MenuNodeList().get(Name).ActionExternal.GetApplication();
+            }else{
+                return MenuNodeList().get(Name).ActionAttribute;
+            }
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;

@@ -248,7 +248,11 @@ public class Action {
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
         }else if(Type.equals(LaunchExternalApplication)){
-            return "Configure Settings";
+            if (Attribute.isEmpty()){
+                return "Configure";
+            }else{
+                return "Configure (" + Attribute + ")";
+            }
         }else if(IsFileBrowserType(Type)){
             if (Attribute==null){
                 return "Choose";
@@ -273,7 +277,6 @@ public class Action {
             //determine what to execute
             if (tActionType.equals(LaunchExternalApplication)){
                 //launch external application
-                //ExternalAction tExtApp = new ExternalAction("TestOnly", tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
                 ExternalAction tExtApp = MenuNode.GetMenuItemActionExternal(MenuItemName);
                 tExtApp.Execute();
             }else{
@@ -581,7 +584,7 @@ public class Action {
             this.command="";
             this.windowType=0;
             this.arguments="";
-            this.waitForExit=Boolean.FALSE;
+            this.waitForExit=Boolean.TRUE;
             this.sageStatus = SageStatusNothing;
         }
         
@@ -621,26 +624,26 @@ public class Action {
         public String GetWindowType(){
             return windowTypeStrings[windowType];
         }
-        public void SetWindowType(String bWindowType){
-            Boolean windowTypeFound = Boolean.FALSE;
-            for ( int i=0; i < windowTypeStrings.length ; i ++ ){
-                if ( windowTypeStrings[i].equals(bWindowType) ) {
-                    windowType=i;
-                    windowTypeFound = Boolean.TRUE;
-                    break;
-                }
-            }
-            if ( !windowTypeFound ){
-                this.windowType = 0;
-            }
-            this.Save();
-        }
+//        public void SetWindowType(String bWindowType){
+//            Boolean windowTypeFound = Boolean.FALSE;
+//            for ( int i=0; i < windowTypeStrings.length ; i ++ ){
+//                if ( windowTypeStrings[i].equals(bWindowType) ) {
+//                    windowType=i;
+//                    windowTypeFound = Boolean.TRUE;
+//                    break;
+//                }
+//            }
+//            if ( !windowTypeFound ){
+//                this.windowType = 0;
+//            }
+//            this.Save();
+//        }
         public void ChangeWindowType(Integer Delta){
             this.windowType = this.windowType + Delta;
-            if (windowType>windowTypeStrings.length){
+            if (windowType>=windowTypeStrings.length){
                 this.windowType = 0;
             }else if(windowType<0){
-                this.windowType = windowTypeStrings.length;
+                this.windowType = windowTypeStrings.length-1;
             }
             this.Save();
         }
@@ -665,10 +668,10 @@ public class Action {
         }
         public void ChangeSageStatus(Integer Delta){
             this.sageStatus = this.sageStatus + Delta;
-            if (sageStatus>sageStatusStrings.length){
+            if (sageStatus>=sageStatusStrings.length){
                 this.sageStatus = 0;
             }else if(sageStatus<0){
-                this.sageStatus = sageStatusStrings.length;
+                this.sageStatus = sageStatusStrings.length-1;
             }
             this.Save();
         }
@@ -689,7 +692,7 @@ public class Action {
             this.command = util.GetProperty(PropLocation + "Application", "");
             this.arguments = util.GetProperty(PropLocation + "Arguments", "");
             this.windowType = util.GetPropertyAsInteger(PropLocation + "WindowType", 0);
-            this.waitForExit = util.GetPropertyAsBoolean(PropLocation + "WaitForExit", Boolean.FALSE);
+            this.waitForExit = util.GetPropertyAsBoolean(PropLocation + "WaitForExit", Boolean.TRUE);
             this.sageStatus = util.GetPropertyAsInteger(PropLocation + "SageStatus", 0);
         }
 
