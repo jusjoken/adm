@@ -2,6 +2,8 @@ package ADM;
 
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import sagex.UIContext;
 
 /*
@@ -169,7 +171,12 @@ public class CopyMode {
         Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(tUIContext, CurrentWidgetSymbol);
         for (Object Child : Children){
             //System.out.println("ADM: cSaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(MyUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(MyUIContext,Child) + "'");
-            if ("Action".equals(sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child)) || "OptionsMenu".equals(sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child))){
+            List<String> validActions = new LinkedList<String>();
+            validActions.add("Action");
+            validActions.add("Menu");
+            validActions.add("OptionsMenu");
+            validActions.add("Conditional");
+            if (validActions.contains(sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child))){
                 //found an action so save it and leave
                 ActionWidget = sagex.api.WidgetAPI.GetWidgetSymbol(tUIContext,Child);
                 break;
@@ -220,6 +227,9 @@ public class CopyMode {
             }
             util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", FinalType);
             util.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
+        }else{
+            //no action found so set to DoNothing
+            util.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", Action.ActionTypeDefault);
         }
         System.out.println("ADM: cSaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
