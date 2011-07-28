@@ -273,7 +273,8 @@ public class Action {
             //determine what to execute
             if (tActionType.equals(LaunchExternalApplication)){
                 //launch external application
-                ExternalAction tExtApp = new ExternalAction("TestOnly", tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
+                //ExternalAction tExtApp = new ExternalAction("TestOnly", tActionAttribute, 0, "", Boolean.FALSE, ExternalAction.SageStatusNothing);
+                ExternalAction tExtApp = MenuNode.GetMenuItemActionExternal(MenuItemName);
                 tExtApp.Execute();
             }else{
                 //either execute the default widget symbol or the one for the Menu Item passed in
@@ -438,8 +439,6 @@ public class Action {
         if (Type.equals(BrowseVideoFolder)){
             return Boolean.TRUE;
         }else if(IsFileBrowserType(Type)){
-            return Boolean.TRUE;
-        }else if(Type.equals(LaunchExternalApplication)){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
