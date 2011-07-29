@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.381";
+    public static String Version = "0.400";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -53,6 +53,7 @@ public class util {
     public static final char[] symbols = new char[36];
     private static final Random random = new Random();
     public static List<String> SageBackgrounds = new LinkedList<String>();    
+    public static enum TriState{YES,NO,OTHER};
 
     public static String GetListNone(){ return ListNone; }
     
@@ -665,6 +666,25 @@ public class util {
         }
     }
     
+    public static TriState GetPropertyAsTriState(String Property, TriState DefaultValue){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            return DefaultValue;
+        }else if(tValue.equals("YES")){
+            return TriState.YES;
+        }else if(tValue.equals("NO")){
+            return TriState.NO;
+        }else if(tValue.equals("OTHER")){
+            return TriState.OTHER;
+        }else if(Boolean.parseBoolean(tValue)){
+            return TriState.YES;
+        }else if(!Boolean.parseBoolean(tValue)){
+            return TriState.NO;
+        }else{
+            return TriState.YES;
+        }
+    }
+    
     public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
         //read in the Sage Property and force convert it to an Integer
         Integer tInteger = DefaultValue;
@@ -688,6 +708,10 @@ public class util {
 
     public static void SetProperty(String Property, String Value){
         sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+    }
+
+    public static void SetPropertyAsTriState(String Property, TriState Value){
+        sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value.toString());
     }
 
     public static void SetServerProperty(String Property, String Value){

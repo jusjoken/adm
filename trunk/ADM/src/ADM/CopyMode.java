@@ -75,7 +75,7 @@ public class CopyMode {
             MenuNode.SetMenuItemButtonText(tMenuItemName,GetFileFolderDetailsButtonText());
             MenuNode.SetMenuItemName(tMenuItemName);
             MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+            MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
 
             System.out.println("ADM: cCreateMenuItemfromFileFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
             return tMenuItemName;
@@ -147,7 +147,7 @@ public class CopyMode {
         MenuNode.SetMenuItemButtonText(tMenuItemName,GetVideoFolderDetailsButtonText());
         MenuNode.SetMenuItemName(tMenuItemName);
         MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
         
         System.out.println("ADM: cCreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
@@ -252,7 +252,7 @@ public class CopyMode {
         }else{
             MenuNode.SetMenuItemSubMenu(tMenuItemName,GetMenuItemDetailsSubMenu());
         }
-        MenuNode.SetMenuItemIsActive(tMenuItemName,Boolean.TRUE);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
 
         System.out.println("ADM: cCreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
