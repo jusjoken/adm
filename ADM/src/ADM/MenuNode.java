@@ -35,7 +35,7 @@ public class MenuNode {
     private String BGImageFile = "";
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
-    private Boolean IsActive = true;
+    private util.TriState IsActive = util.TriState.YES;
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
     private Action.ExternalAction ActionExternal = null;
@@ -44,13 +44,14 @@ public class MenuNode {
     public static Map<String,LinkedHashMap> UIMenuNodeList = new LinkedHashMap<String,LinkedHashMap>();
     public static Map<String,DefaultMutableTreeNode> UIroot = new LinkedHashMap<String,DefaultMutableTreeNode>();
     public static DefaultMutableTreeNode Internalroot = new DefaultMutableTreeNode(util.OptionNotFound);
+    public static final String UserBasedActiveAll = "UserBasedActiveAll";
 
     public MenuNode(String bName){
         //create a MenuItem with just default values
-        this(util.TopMenu,bName,0,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
+        this(util.TopMenu,bName,0,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
     }
     
-    public MenuNode(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, Boolean bIsActive){
+    public MenuNode(String bParent, String bName, Integer bSortKey, String bButtonText, String bSubMenu, String bActionType, String bAction, String bBGImageFile, Boolean bIsDefault, util.TriState bIsActive){
         Parent = bParent;
         Name = bName;
         ButtonText = bButtonText;
@@ -258,7 +259,7 @@ public class MenuNode {
         }
     }
 
-    public static Boolean GetMenuItemIsActive(String Name){
+    public static util.TriState GetMenuItemIsActive(String Name){
         try {
             return MenuNodeList().get(Name).IsActive;
         } catch (Exception e) {
@@ -269,42 +270,62 @@ public class MenuNode {
 
     public static String GetMenuItemIsActiveIncludingParentFormatted(String Name){
         try {
-            if (!MenuNodeList().get(Name).IsActive){
+            if (!MenuNodeList().get(Name).IsActive.equals(util.TriState.NO)){
                 return "No";
-            }else if (GetMenuItemIsActiveIncludingParent(Name)){
-                return "Yes";
+            }else if (GetMenuItemIsActiveIncludingParent(Name).equals(util.TriState.OTHER)){
+                return "Yes (Parent: User Based)";
             }
             // in this case this item is active BUT the parent is not
-            return "Yes (but Parent is not Active)";
+            return "Yes (Parent: No)";
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
     
-    public static Boolean GetMenuItemIsActiveIncludingParent(String Name){
+    public static util.TriState GetMenuItemIsActiveIncludingParent(String Name){
         try {
             TreeNode[] path = MenuNodeList().get(Name).NodeItem.getPath();
             for (TreeNode pathnode : path){
                 DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
                 MenuNode tMenu = (MenuNode)pathnodea.getUserObject();
-                if (!tMenu.IsActive){
-                    //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' NOTACTIVE for item = '" + tMenu.Name + "'");
-                    return Boolean.FALSE;
+                if (tMenu.IsActive.equals(util.TriState.NO)){
+                    System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' NO for item = '" + tMenu.Name + "'");
+                    return util.TriState.NO;
+                }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
+                    System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' OTHER for item = '" + tMenu.Name + "'");
+                    return util.TriState.OTHER;
                 }
             }
-            //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
-            return Boolean.TRUE;
+            System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
+            return util.TriState.YES;
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
 
-    public static void SetMenuItemIsActive(String Name, Boolean Setting){
+    public static void SetMenuItemIsActive(String Name, util.TriState Setting){
         Save(Name, "IsActive", Setting.toString());
     }
 
+    public static void ChangeMenuItemIsActive(String Name){
+        try {
+            if(MenuNodeList().get(Name).IsActive.equals(util.TriState.YES)){
+                Save(Name, "IsActive", util.TriState.NO.toString());
+            }else if(MenuNodeList().get(Name).IsActive.equals(util.TriState.NO)){
+                Save(Name, "IsActive", util.TriState.OTHER.toString());
+            }else{
+                Save(Name, "IsActive", util.TriState.YES.toString());
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public static String GetMenuItemUserBasedActive(String Name){
+        return UserBasedActiveAll;
+    }
+    
     public static Boolean GetMenuItemIsDefault(String Name){
         try {
             return MenuNodeList().get(Name).IsDefault;
@@ -610,9 +631,16 @@ public class MenuNode {
             while (en.hasMoreElements())   {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
-                if (tMenu.IsActive==true || IncludeInactive==true){
+                if (IncludeInactive==true){
+                    bNames.add(tMenu.Name);
+                }else if(tMenu.IsActive.equals(util.TriState.YES)){
+                    bNames.add(tMenu.Name);
+                }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
+                    //only add if the active user is allowed to see this Menu Item
+                    //TODO: check if user is allowed to see this item
                     bNames.add(tMenu.Name);
                 }
+                //otherwise do not add the Menu Item
             }         
         }
         System.out.println("ADM: mGetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
@@ -795,7 +823,7 @@ public class MenuNode {
                     NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
                     NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
                     NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
-                    NewMenuItem.IsActive = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsActive", "true"));
+                    NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
                     NewMenuItem.ActionExternal.Load();
                     System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                 }else{
@@ -897,7 +925,7 @@ public class MenuNode {
         String tMenuItemName = GetNewMenuItemName();
 
         //Create a new MenuItem with defaults
-        MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,Boolean.TRUE);
+        MenuNode NewMenuItem = new MenuNode(Parent,tMenuItemName,SortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
         SaveMenuItemToSage(NewMenuItem);
         //add the Node to the Tree
         InsertNode(MenuNodeList().get(Parent).NodeItem, NewMenuItem, Boolean.TRUE);
@@ -929,12 +957,12 @@ public class MenuNode {
             //admSageTVVideos
             if ("true".equals(util.GetProperty(DiamondVideoMenuCheckProp, "false"))){
                 //show the Videos Menu
-                SetMenuItemIsActive(DiamondMenuMovies, Boolean.TRUE);
-                SetMenuItemIsActive(DiamondMenuVideos, Boolean.FALSE);
+                SetMenuItemIsActive(DiamondMenuMovies, util.TriState.YES);
+                SetMenuItemIsActive(DiamondMenuVideos, util.TriState.NO);
             }else{
                 //show the Movies Menu
-                SetMenuItemIsActive(DiamondMenuMovies, Boolean.FALSE);
-                SetMenuItemIsActive(DiamondMenuVideos, Boolean.TRUE);
+                SetMenuItemIsActive(DiamondMenuMovies, util.TriState.NO);
+                SetMenuItemIsActive(DiamondMenuVideos, util.TriState.YES);
             }
         }
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
@@ -1199,7 +1227,11 @@ public class MenuNode {
             }else if (PropType.equals("ButtonText")){
                 MenuNodeList().get(Name).ButtonText = Setting;
             }else if (PropType.equals("IsActive")){
-                MenuNodeList().get(Name).IsActive = Boolean.parseBoolean(Setting);
+                try {
+                    MenuNodeList().get(Name).IsActive = util.TriState.valueOf(Setting);
+                } catch (Exception e) {
+                    MenuNodeList().get(Name).IsActive = util.TriState.YES;
+                }
             }else if (PropType.equals("IsDefault")){
                 MenuNodeList().get(Name).IsDefault = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("SubMenu")){
