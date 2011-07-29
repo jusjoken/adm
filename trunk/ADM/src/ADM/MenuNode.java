@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -47,7 +48,7 @@ public class MenuNode {
     public static Map<String,LinkedHashMap> UIMenuNodeList = new LinkedHashMap<String,LinkedHashMap>();
     public static Map<String,DefaultMutableTreeNode> UIroot = new LinkedHashMap<String,DefaultMutableTreeNode>();
     public static DefaultMutableTreeNode Internalroot = new DefaultMutableTreeNode(util.OptionNotFound);
-    public static final String UserBasedActiveAll = "UserBasedActiveAll";
+    public static final String SageUserAdministrator = "Administrator";
 
     public MenuNode(String bName){
         //create a MenuItem with just default values
@@ -337,11 +338,36 @@ public class MenuNode {
     }
 
     public static List<String> GetSageUsersList(){
-        return Arrays.asList(sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())));
+        //return a list of SageUsers in sorted order with the Administrator at the TOP of the list
+        List<String> ProfileList = new LinkedList<String>();
+        ProfileList.addAll(Arrays.asList(sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName()))));
+        ProfileList.remove(SageUserAdministrator);
+        Collections.sort(ProfileList);
+        ProfileList.add(0,SageUserAdministrator);
+        return ProfileList;
     }
     
     public static Integer GetSageUsersListCount(){
         return sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())).length;
+    }
+    
+    //TODO: modify to get and set a list of users for the menu item
+    //use a Tokenized String to list all the users that are NOT allowed to use this menu item
+    //if a user is not in the String List then it is assumed they are ALLOWED to use the menu item
+    //therefore - new Users created in Sage will have access to all menu items until removed specifically
+    private static Boolean tempUserAllowed = Boolean.TRUE;
+    public static Boolean IsSageUserAllowed(String SageUser){
+        if (SageUser.equals(SageUserAdministrator)){
+            return Boolean.TRUE;
+        }else{
+            return tempUserAllowed;
+        }
+    }
+    
+    public static void ChangeSageUserAllowed(String SageUser){
+        if (!SageUser.equals(SageUserAdministrator)){
+            tempUserAllowed = !tempUserAllowed;
+        }
     }
     
     public static Boolean GetMenuItemIsDefault(String Name){
