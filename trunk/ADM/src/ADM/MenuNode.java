@@ -9,10 +9,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -70,6 +73,7 @@ public class MenuNode {
     public String toString(){
         //TODO: may want to change this to ButtonText
         return Name;
+        //return ButtonText;
     }
 
     public static String GetMenuItemAction(String Name){
@@ -270,8 +274,12 @@ public class MenuNode {
 
     public static String GetMenuItemIsActiveIncludingParentFormatted(String Name){
         try {
-            if (!MenuNodeList().get(Name).IsActive.equals(util.TriState.NO)){
+            if (MenuNodeList().get(Name).IsActive.equals(util.TriState.NO)){
                 return "No";
+            }else if (MenuNodeList().get(Name).IsActive.equals(util.TriState.OTHER)){
+                return "User Based";
+            }else if (GetMenuItemIsActiveIncludingParent(Name).equals(util.TriState.YES)){
+                return "Yes";
             }else if (GetMenuItemIsActiveIncludingParent(Name).equals(util.TriState.OTHER)){
                 return "Yes (Parent: User Based)";
             }
@@ -285,19 +293,25 @@ public class MenuNode {
     
     public static util.TriState GetMenuItemIsActiveIncludingParent(String Name){
         try {
+            if (MenuNodeList().get(Name).IsActive.equals(util.TriState.NO)){
+                return util.TriState.NO;
+            }else if (MenuNodeList().get(Name).IsActive.equals(util.TriState.OTHER)){
+                return util.TriState.OTHER;
+            }
             TreeNode[] path = MenuNodeList().get(Name).NodeItem.getPath();
             for (TreeNode pathnode : path){
                 DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
                 MenuNode tMenu = (MenuNode)pathnodea.getUserObject();
+                //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "'");
                 if (tMenu.IsActive.equals(util.TriState.NO)){
-                    System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' NO for item = '" + tMenu.Name + "'");
+                    //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = NO");
                     return util.TriState.NO;
                 }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
-                    System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' OTHER for item = '" + tMenu.Name + "'");
+                    //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = OTHER");
                     return util.TriState.OTHER;
                 }
             }
-            System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' ISACTIVE");
+            //System.out.println("ADM: mGetMenuItemIsActiveIncludingParent for '" + Name + "' YES");
             return util.TriState.YES;
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
@@ -322,8 +336,12 @@ public class MenuNode {
         }
     }
 
-    public static String GetMenuItemUserBasedActive(String Name){
-        return UserBasedActiveAll;
+    public static List<String> GetSageUsersList(){
+        return Arrays.asList(sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())));
+    }
+    
+    public static Integer GetSageUsersListCount(){
+        return sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())).length;
     }
     
     public static Boolean GetMenuItemIsDefault(String Name){
