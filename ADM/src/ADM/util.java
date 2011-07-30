@@ -19,11 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.SortedMap;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 public class util {
 
     public static String Version = "0.400";
+    public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
     public static final String SageADMBasePropertyLocation = "ADM/";
@@ -685,6 +687,20 @@ public class util {
         }
     }
     
+    public static List<String> GetPropertyAsList(String Property){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            return new LinkedList<String>();
+        }else{
+            List<String> tList = new LinkedList<String>();
+            StringTokenizer st = new StringTokenizer(tValue, ListToken); 
+            while(st.hasMoreTokens()) { 
+                tList.add(st.nextToken());
+            } 
+            return tList;
+        }
+    }
+    
     public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
         //read in the Sage Property and force convert it to an Integer
         Integer tInteger = DefaultValue;
@@ -712,6 +728,24 @@ public class util {
 
     public static void SetPropertyAsTriState(String Property, TriState Value){
         sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value.toString());
+    }
+
+    public static void SetPropertyAsList(String Property, List<String> ListValue){
+        String Value = "";
+        if (ListValue.size()>0){
+            Boolean tFirstItem = Boolean.TRUE;
+            for (String ListItem : ListValue){
+                if (tFirstItem){
+                    Value = ListItem;
+                    tFirstItem = Boolean.FALSE;
+                }else{
+                    Value = Value + ListToken + ListItem;
+                }
+            }
+            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+        }else{
+            RemovePropertyAndChildren(Property);
+        }
     }
 
     public static void SetServerProperty(String Property, String Value){
