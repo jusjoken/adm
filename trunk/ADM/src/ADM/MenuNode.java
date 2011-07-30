@@ -338,6 +338,13 @@ public class MenuNode {
         }
     }
 
+    public static List<String> GetMenuItemBlockedSageUsersList(String Name){
+        try {
+            
+        } catch (Exception e) {
+        }
+    }
+    
     public static List<String> GetSageUsersList(){
         //return a list of SageUsers in sorted order with the Administrator at the TOP of the list
         List<String> ProfileList = new LinkedList<String>();
