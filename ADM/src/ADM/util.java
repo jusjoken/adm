@@ -689,16 +689,7 @@ public class util {
     
     public static List<String> GetPropertyAsList(String Property){
         String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            return new LinkedList<String>();
-        }else{
-            List<String> tList = new LinkedList<String>();
-            StringTokenizer st = new StringTokenizer(tValue, ListToken); 
-            while(st.hasMoreTokens()) { 
-                tList.add(st.nextToken());
-            } 
-            return tList;
-        }
+        return ConvertStringtoList(tValue);
     }
     
     public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
@@ -731,17 +722,8 @@ public class util {
     }
 
     public static void SetPropertyAsList(String Property, List<String> ListValue){
-        String Value = "";
+        String Value = ConvertListtoString(ListValue);
         if (ListValue.size()>0){
-            Boolean tFirstItem = Boolean.TRUE;
-            for (String ListItem : ListValue){
-                if (tFirstItem){
-                    Value = ListItem;
-                    tFirstItem = Boolean.FALSE;
-                }else{
-                    Value = Value + ListToken + ListItem;
-                }
-            }
             sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
         }else{
             RemovePropertyAndChildren(Property);
@@ -764,5 +746,34 @@ public class util {
         sagex.api.Configuration.RemoveServerPropertyAndChildren(new UIContext(sagex.api.Global.GetUIContextName()),Property);
     }
 
+    public static String ConvertListtoString(List<String> ListValue){
+        String Value = "";
+        if (ListValue.size()>0){
+            Boolean tFirstItem = Boolean.TRUE;
+            for (String ListItem : ListValue){
+                if (tFirstItem){
+                    Value = ListItem;
+                    tFirstItem = Boolean.FALSE;
+                }else{
+                    Value = Value + ListToken + ListItem;
+                }
+            }
+        }
+        return Value;
+    }
+
+    public static List<String> ConvertStringtoList(String tValue){
+        if (tValue.equals(OptionNotFound) || tValue.equals("") || tValue==null){
+            return new LinkedList<String>();
+        }else{
+            List<String> tList = new LinkedList<String>();
+            StringTokenizer st = new StringTokenizer(tValue, ListToken); 
+            while(st.hasMoreTokens()) { 
+                tList.add(st.nextToken());
+            } 
+            return tList;
+        }
+    }
+    
     
 }
