@@ -40,6 +40,7 @@ public class MenuNode {
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
     private util.TriState IsActive = util.TriState.YES;
+    private List<String> BlockedSageUsersList = new LinkedList<String>();
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
     private Action.ExternalAction ActionExternal = null;
@@ -868,6 +869,7 @@ public class MenuNode {
                     NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
                     NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
                     NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
+                    NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
                     NewMenuItem.ActionExternal.Load();
                     System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                 }else{
@@ -933,6 +935,7 @@ public class MenuNode {
             util.SetProperty(PropLocation + "/SubMenu", tMenu.SubMenu);
             util.SetProperty(PropLocation + "/IsDefault", tMenu.IsDefault.toString());
             util.SetProperty(PropLocation + "/IsActive", tMenu.IsActive.toString());
+            util.SetPropertyAsList(PropLocation + "/BlockedSageUsersList", tMenu.BlockedSageUsersList);
         }
     }
     
@@ -1083,6 +1086,7 @@ public class MenuNode {
                 PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
                 PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
+                PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
                 GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
                 //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
             }
