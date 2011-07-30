@@ -128,6 +128,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === Load Default Menus ===
   * loads either a Standard Sage menu item list or a Diamond list if Diamond is detected
   * A confirmation will be displayed
+  * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * Default menus are designed to "mimic" the structure of the built in SageTV menus
   * Default menus after being loaded can then by edited and saved by using the Export feature
 
