@@ -347,17 +347,17 @@ public class MenuNode {
     }
     
     public static List<String> GetSageUsersList(){
-        //return a list of SageUsers in sorted order with the Administrator at the TOP of the list
+        //return a list of SageUsers in sorted order with the Administrator removed
         List<String> ProfileList = new LinkedList<String>();
         ProfileList.addAll(Arrays.asList(sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName()))));
         ProfileList.remove(SageUserAdministrator);
         Collections.sort(ProfileList);
-        ProfileList.add(0,SageUserAdministrator);
         return ProfileList;
     }
     
     public static Integer GetSageUsersListCount(){
-        return sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())).length;
+        //return a count of SageUsers with the Administrator removed
+        return sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())).length - 1;
     }
     
     public static Integer GetSageUsersBlockedListCount(String Name){
