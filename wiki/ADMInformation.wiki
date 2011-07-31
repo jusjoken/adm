@@ -130,7 +130,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * A confirmation will be displayed
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * Default menus are designed to "mimic" the structure of the built in SageTV menus
-  * Note: Default menus will NOT include any menu customizations from other installed plugins.  These must later be manually added or copied use the ADM Copy Mode
+  * Note: Default menus will NOT include any menu customizations from other installed plugins.  These must later be manually added or copied using the ADM Copy Mode
   * Default menus after being loaded can then by edited and saved by using the Export feature
 
 === Basic - Advanced Options ===
