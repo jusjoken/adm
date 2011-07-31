@@ -338,10 +338,11 @@ public class MenuNode {
         }
     }
 
-    public static List<String> GetMenuItemBlockedSageUsersList(String Name){
+    public static String GetMenuItemBlockedSageUsersList(String Name){
         try {
-            
+            return util.ConvertListtoString(MenuNodeList().get(Name).BlockedSageUsersList);
         } catch (Exception e) {
+            return "";
         }
     }
     
@@ -359,24 +360,56 @@ public class MenuNode {
         return sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName())).length;
     }
     
-    //TODO: modify to get and set a list of users for the menu item
+    public static Integer GetSageUsersBlockedListCount(String Name){
+        Integer tInt = 0;
+        for (String Item : sagex.api.Security.GetSecurityProfiles(new UIContext(sagex.api.Global.GetUIContextName()))){
+            try {
+                if (MenuNodeList().get(Name).BlockedSageUsersList.contains(Item)){
+                    tInt++;
+                }
+            } catch (Exception e) {
+                //do nothing
+            }
+        }
+        return tInt;
+    }
+    
     //use a Tokenized String to list all the users that are NOT allowed to use this menu item
     //if a user is not in the String List then it is assumed they are ALLOWED to use the menu item
     //therefore - new Users created in Sage will have access to all menu items until removed specifically
-    private static Boolean tempUserAllowed = Boolean.TRUE;
-    public static Boolean IsSageUserAllowed(String SageUser){
-        if (SageUser.equals(SageUserAdministrator)){
-            return Boolean.TRUE;
-        }else{
-            return tempUserAllowed;
+    public static Boolean IsSageUserAllowed(String Name, String SageUser){
+        try {
+            if (SageUser.equals(SageUserAdministrator)){
+                return Boolean.TRUE;
+            }else{
+                //if the SageUser is NOT in the list then the user is ALLOWED
+                return !MenuNodeList().get(Name).BlockedSageUsersList.contains(SageUser);
+            }
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
         }
     }
     
-    public static void ChangeSageUserAllowed(String SageUser){
+    public static void ChangeSageUserAllowed(String Name, String SageUser){
         if (!SageUser.equals(SageUserAdministrator)){
-            tempUserAllowed = !tempUserAllowed;
+            try {
+                //if the user is in the blocked list then remove it from the list otherwise add it
+                if (MenuNodeList().get(Name).BlockedSageUsersList.contains(SageUser)){
+                    MenuNodeList().get(Name).BlockedSageUsersList.remove(SageUser);
+                }else{
+                    MenuNodeList().get(Name).BlockedSageUsersList.add(SageUser);
+                }
+                Save(Name, "BlockedSageUsersList", util.ConvertListtoString(MenuNodeList().get(Name).BlockedSageUsersList));
+            } catch (Exception e) {
+                System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            }
         }
     }
+    
+    //TODO: need a routine to get the count of Blocked users
+    //this routine should also clean up the Blocked user list incase they are not valid
+    //OR it should just count VALID users and leave the others in place
     
     public static Boolean GetMenuItemIsDefault(String Name){
         try {
@@ -1293,6 +1326,8 @@ public class MenuNode {
                 MenuNodeList().get(Name).SubMenu = Setting;
             }else if (PropType.equals("Parent")){
                 MenuNodeList().get(Name).Parent = Setting;
+            }else if (PropType.equals("BlockedSageUsersList")){
+                //assume that the list has already been modified by the calling routine
             }else{
                 System.out.println("ADM: mSave - invalid option passed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
             }
