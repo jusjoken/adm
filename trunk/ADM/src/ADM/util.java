@@ -32,6 +32,7 @@ public class util {
     public static final String SagePropertyLocation = "ADM/menuitem/";
     public static final String SageFocusPropertyLocation = "ADM/focus/";
     public static final String SageBackgroundsPropertyLocation = "ADM/backgrounds/";
+    public static final String SageADMSettingsPropertyLocation = "ADM/settings";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
     public static final String TopMenu = "xTopMenu";
     public static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
@@ -775,5 +776,12 @@ public class util {
         }
     }
     
-    
+    //TODO: allow the user to set the MaxMenuItems for each level from the UI
+    public static Integer GetMaxMenuItems(Integer Level){
+        Integer DefaultMax = 8;
+        if (Level > 1){
+            DefaultMax = 10;
+        }
+        return GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
+    }
 }

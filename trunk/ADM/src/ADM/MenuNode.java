@@ -407,10 +407,6 @@ public class MenuNode {
         }
     }
     
-    //TODO: need a routine to get the count of Blocked users
-    //this routine should also clean up the Blocked user list incase they are not valid
-    //OR it should just count VALID users and leave the others in place
-    
     public static Boolean GetMenuItemIsDefault(String Name){
         try {
             return MenuNodeList().get(Name).IsDefault;
@@ -711,6 +707,7 @@ public class MenuNode {
     @SuppressWarnings("unchecked")
     public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
         Collection<String> bNames = new LinkedHashSet<String>();
+        String tActiveUser = sagex.api.Security.GetActiveSecurityProfile(new UIContext(sagex.api.Global.GetUIContextName()));
         if (MenuNodeList().containsKey(Parent) && MenuNodeList().get(Parent).NodeItem!=null){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList().get(Parent).NodeItem.children();
             while (en.hasMoreElements())   {
@@ -722,8 +719,9 @@ public class MenuNode {
                     bNames.add(tMenu.Name);
                 }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
                     //only add if the active user is allowed to see this Menu Item
-                    //TODO: check if user is allowed to see this item
-                    bNames.add(tMenu.Name);
+                    if (!tMenu.BlockedSageUsersList.contains(tActiveUser)){
+                        bNames.add(tMenu.Name);
+                    }
                 }
                 //otherwise do not add the Menu Item
             }         
