@@ -549,7 +549,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Loading Default Menus
     * go to the ADM Manager
     * select Load Default Menus
-    * for more info [#Default_Menus]
+    * for more info [#Load_Default_Menus]
   * Clear All ADM Settings
     * If all else fails then look here to [#Clear_All_ADM_Settings]
   * Where are the Imports/Exports
