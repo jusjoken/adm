@@ -288,47 +288,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * the item will always show in ADM Manager but will be in a "red" text
         * Children of this menu item will also show in "red" text if their parent is not "Shown" due to User Based settings
 
-=== User Based Control/Options ===
-  * These options only work if you setup the SageTV Permissions within Detailed Setup
-    ==== General Setup Steps (example) ====
-      * Assumes you have not setup ANY of this previously
-      * Go to Detailed Setup - Permissions
-      * Select "Manage User Profiles - Configure"
-      * Select "Add New User Profile"
-        * you must have at least 1 User Profile other than the default Administrator Profile to use these featrues of ADM
-      * Type a name for the Profile (example 'Kids')
-      * Unselect any permissions you don't want this profile to have access to
-        * If you want to protect the ADM settings and hide menu items you should at minimum unselect the following...
-          * Change UI configuration options (will block access to changing ADM settings and other SageTV UI settings)
-          * Manage permissions settings (will disallow changing their own permissions)
-        * Closed dialog when done
-      * Select "Add Lock Code - Add Code"
-        * Enter a code and then re-enter the code to confirm
-        * This creates the Code but does NOT lock the system
-    ==== User Based Menu Item Control (example) ====
-      * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
-      * Assumes the active user profile is either Administrator or one with similar privileges
-      
-    ==== Switch User (example) ====
-      * Switch to "Kids" profile
-        * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
-        * Assumes the active user profile is either Administrator or one with similar privileges
-        * Press Options
-        * Select Switch User
-        * Select "Set Active Permission Profile"
-        * Select "Kids" from the user profile list (or another profile with similar blocked access)
-        * SageTV will return to the Main Menu. 
-        * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
-      * Switch back to "Administrator" or similar profile
-        * Press Home to start at the ADM Main Menu
-        * Press Options
-        * Switch User is automatically displayed as ADM Manager and other UI Configuration Options are not allowed for this user profile.
-        * Select "Set Active Permission Profile"
-        * Enter the Permission Lock Code - if the user does not know this code then they can NOT switch users
-        * Select the "Administrator" user profile or one with similar privileges.
-        
-        
-
 === Creating new Menu and Submenu Items ===
   * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
   * A new Menu Item will be created and a Text Entry dialog will open for you to set the Display Name
@@ -355,6 +314,46 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Select this option while displaying a Custom Background to get a prompt to remove it
     * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
 
+== User Based Control/Options ==
+  * These options only work if you setup the SageTV Permissions within Detailed Setup
+    === General Setup Steps (example) ===
+      * Assumes you have not setup ANY of this previously
+      * Go to Detailed Setup - Permissions
+      * Select "Manage User Profiles - Configure"
+      * Select "Add New User Profile"
+        * you must have at least 1 User Profile other than the default Administrator Profile to use these featrues of ADM
+      * Type a name for the Profile (example 'Kids')
+      * Unselect any permissions you don't want this profile to have access to
+        * If you want to protect the ADM settings and hide menu items you should at minimum unselect the following...
+          * Change UI configuration options (will block access to changing ADM settings and other SageTV UI settings)
+          * Manage permissions settings (will disallow changing their own permissions)
+        * Closed dialog when done
+      * Select "Add Lock Code - Add Code"
+        * Enter a code and then re-enter the code to confirm
+        * This creates the Code but does NOT lock the system
+    === User Based Menu Item Control (example) ===
+      * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+      * Assumes the active user profile is either Administrator or one with similar privileges
+      
+    === Switch User (example) ===
+      * Switch to "Kids" profile
+        * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+        * Assumes the active user profile is either Administrator or one with similar privileges
+        * Press Options
+        * Select Switch User
+        * Select "Set Active Permission Profile"
+        * Select "Kids" from the user profile list (or another profile with similar blocked access)
+        * SageTV will return to the Main Menu. 
+        * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
+      * Switch back to "Administrator" or similar profile
+        * Press Home to start at the ADM Main Menu
+        * Press Options
+        * Switch User is automatically displayed as ADM Manager and other UI Configuration Options are not allowed for this user profile.
+        * Select "Set Active Permission Profile"
+        * Enter the Permission Lock Code - if the user does not know this code then they can NOT switch users
+        * Select the "Administrator" user profile or one with similar privileges.
+        
+        
 == ADM Copy Mode ==
 === Copy Sage Menu Items ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
