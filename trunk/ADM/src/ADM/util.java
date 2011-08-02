@@ -794,4 +794,25 @@ public class util {
             return GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
         }
     }
+
+    public static Integer GetPropertyMaxMenuItems(Integer Level){
+        Integer DefaultMax = 8;
+        if (Level > 1){
+            DefaultMax = 10;
+        }
+        return GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
+    }
+    public static void SetPropertyMaxMenuItems(Integer Level, Integer Value){
+        //ensure the value is within a reasonable range
+        Integer dMin = 3;
+        Integer dMax = 12;
+        if (Value > dMax){
+            Value = dMax;
+        }else if (Value < dMin){
+            Value = dMin;
+        }
+        SetProperty(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), Value.toString());
+    }
+
+
 }
