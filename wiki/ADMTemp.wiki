@@ -83,7 +83,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
-    * User security using SageTV User Profiles and Permissions
     * Other user suggestions if a feature is missing
 
 == ADM Manager ==
