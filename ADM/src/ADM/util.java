@@ -424,10 +424,10 @@ public class util {
             String BGImageFilePath = "";
             BGImageFilePath = EvaluateAttribute(Option);
             if (BGImageFilePath.equals(OptionNotFound)){
-                System.out.println("ADM: uGetSageBGFile for '" + Option + "' Evaluate Failed");
+                //System.out.println("ADM: uGetSageBGFile for '" + Option + "' Evaluate Failed");
                 return null;
             }else{
-                System.out.println("ADM: uGetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
+                //System.out.println("ADM: uGetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
                 return BGImageFilePath;
             }
         }
@@ -782,6 +782,16 @@ public class util {
         if (Level > 1){
             DefaultMax = 10;
         }
-        return GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
+        if (Level==1){
+            Integer Level1Max = GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
+            Integer TopMenuCount = MenuNode.GetMenuItemCount(util.TopMenu);
+            if (Level1Max > TopMenuCount){
+                return TopMenuCount;
+            }else{
+                return Level1Max;
+            }
+        }else{
+            return GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
+        }
     }
 }

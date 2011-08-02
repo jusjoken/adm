@@ -745,7 +745,7 @@ public class MenuNode {
     //Get the count of MenuItems for a parent that are active
     public static int GetMenuItemCount(String Parent){
         Collection<String> bNames = GetMenuItemNameList(Parent);
-        System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
+        //System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
         return bNames.size();
     }
 
