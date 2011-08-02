@@ -13,6 +13,17 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.40 ==
+
+  * New User Based Menu Item control
+    * Block the display of Menu Items based on SageTV User Profiles
+  * ADM integrated with SageTV's new User Profile Permissions
+    * "Change UI configuration options" permission is now required to modify any ADM menus/settings
+  * Now handles Large Menu Lists with any number of items
+    * All 3 levels now support large lists
+    * scrollbars automatically added when required
+  * Other minor fixes
+
 == Changes in Version 0.38 ==
 
   * New Action Type to Launch an External Application
@@ -72,7 +83,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
-    * Launch an external program is being considered - need some user feedback on what this would be used for and expected results.
+    * User security using SageTV User Profiles and Permissions
     * Other user suggestions if a feature is missing
 
 == ADM Manager ==
@@ -127,7 +138,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === Load Default Menus ===
   * loads either a Standard Sage menu item list or a Diamond list if Diamond is detected
   * A confirmation will be displayed
+  * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * Default menus are designed to "mimic" the structure of the built in SageTV menus
+  * Note: Default menus will NOT include any menu customizations from other installed plugins.  These must later be manually added or copied using the ADM Copy Mode
   * Default menus after being loaded can then by edited and saved by using the Export feature
 
 === Basic - Advanced Options ===
@@ -264,11 +277,57 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Note: as Sage Submenu items are internal Sage Menus, they can not have a custom background assigned to the individual menu items in the submenu. They will use the background of the parent item that has the Sage Submenu setting.
     * See also - [#ADM Background Manager]
 
-  * Show Menu Item
-    * Hides or Shows the Menu Item in SageTV
-    * the item will always show in ADM Manager but will be in a "greyed" text
-    * Children of this menu item will also show "greyed" out if their parent is not "Shown"
-    * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+  ==== Show or Block Menu Item ====
+    * Hides or Shows the Menu Item in SageTV including User Based blocking of the item
+      * Yes - item will show for any and all users
+      * No - item will not show for any user
+        * the item will always show in ADM Manager but will be in a "greyed" text
+        * Children of this menu item will also show "greyed" out if their parent is not "Shown"
+        * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+      * User Based
+        * the item will always show in ADM Manager but will be in a "red" text
+        * Children of this menu item will also show in "red" text if their parent is not "Shown" due to User Based settings
+
+=== User Based Control/Options ===
+  * These options only work if you setup the SageTV Permissions within Detailed Setup
+    ==== General Setup Steps (example) ====
+      * Assumes you have not setup ANY of this previously
+      * Go to Detailed Setup - Permissions
+      * Select "Manage User Profiles - Configure"
+      * Select "Add New User Profile"
+        * you must have at least 1 User Profile other than the default Administrator Profile to use these featrues of ADM
+      * Type a name for the Profile (example 'Kids')
+      * Unselect any permissions you don't want this profile to have access to
+        * If you want to protect the ADM settings and hide menu items you should at minimum unselect the following...
+          * Change UI configuration options (will block access to changing ADM settings and other SageTV UI settings)
+          * Manage permissions settings (will disallow changing their own permissions)
+        * Closed dialog when done
+      * Select "Add Lock Code - Add Code"
+        * Enter a code and then re-enter the code to confirm
+        * This creates the Code but does NOT lock the system
+    ==== User Based Menu Item Control (example) ====
+      * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+      * Assumes the active user profile is either Administrator or one with similar privileges
+      
+    ==== Switch User (example) ====
+      * Switch to "Kids" profile
+        * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+        * Assumes the active user profile is either Administrator or one with similar privileges
+        * Press Options
+        * Select Switch User
+        * Select "Set Active Permission Profile"
+        * Select "Kids" from the user profile list (or another profile with similar blocked access)
+        * SageTV will return to the Main Menu. 
+        * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
+      * Switch back to "Administrator" or similar profile
+        * Press Home to start at the ADM Main Menu
+        * Press Options
+        * Switch User is automatically displayed as ADM Manager and other UI Configuration Options are not allowed for this user profile.
+        * Select "Set Active Permission Profile"
+        * Enter the Permission Lock Code - if the user does not know this code then they can NOT switch users
+        * Select the "Administrator" user profile or one with similar privileges.
+        
+        
 
 === Creating new Menu and Submenu Items ===
   * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
