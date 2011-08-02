@@ -365,7 +365,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Verify the "Online" menu is NOT displayed
       
   === Switch User (example) ===
-    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod-ppc.JPG] _Options_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions-ppc.JPG] _Switch User_ || _click to view_ ||
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod-ppc.JPG] _Options_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions-ppc.JPG] _Switch User_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles-ppc.JPG] _Select Kids_ || _click to view_ ||
     * Switch to "Kids" profile
       * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
       * Assumes the active user profile is either Administrator or one with similar privileges
