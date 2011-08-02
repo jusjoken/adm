@@ -376,6 +376,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * If you disallowed "Manage general setup options" then SageTV will close the dialog and return to the Main Menu. 
         * Otherwise just press Options and you will be returned to the Main Menu
       * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-ppc.JPG] _Switch User_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked-ppc.JPG] _Enter Code_ || _click to view_ ||
     * Switch back to "Administrator" or similar profile
       * Press Home to start at the ADM Main Menu
       * Press Options
