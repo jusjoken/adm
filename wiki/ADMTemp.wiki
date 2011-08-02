@@ -147,6 +147,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 === ADM Options ===
 
 ==== Maximum Menu Items ====
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions-ppc.JPG] _Options_ |||| _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1-ppc.JPG] _Level 1_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2-ppc.JPG] _Level 2_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3-ppc.JPG] _Level 3_ || _click to view_ ||
   * Select Options (Basic) or Options (Advanced) from the left side menu in ADM Manager
   * Select any of the 3 Levels to adjust the Maximum Menu Item before the menus will scroll
   * Close the dialog when done.
