@@ -213,7 +213,9 @@ public class MenuNode {
                     return GetMenuItemBGImageFilePath(MenuNodeList().get(Name).Parent);
                 }
             }else{
-                return MenuNodeList().get(Name).BGImageFilePath;
+                //changed to ensure if a variable it get re-evaluated if a new theme is loaded
+                return util.GetSageBGFile(MenuNodeList().get(Name).BGImageFile);
+                //return MenuNodeList().get(Name).BGImageFilePath;
             }
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
