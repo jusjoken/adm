@@ -20,8 +20,11 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * ADM integrated with SageTV's new User Profile Permissions
     * "Change UI configuration options" permission is now required to modify any ADM menus/settings
   * Now handles Large Menu Lists with any number of items
-    * All 3 levels now support large lists
+    * All 3 levels now support large menu item lists
     * scrollbars automatically added when required
+  * ADM Manager
+    * Menu Items can now be reordered in either of the List by modes (Structured/Grouped)
+    * Options item updated to allow configuring the Max items to be displayed on each level before scrolling starts
   * Other minor fixes
 
 == Changes in Version 0.38 ==
@@ -103,14 +106,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Menu Structure
     * Lists all menus in the natural order they will appear in SageTV
     * Indentation is used to indicate menu depth (level changes)
-    * Menu item Order cannot be changed in this list view
   * Menus Grouped
     * Lists all menus Grouped with other menu items at the same level with the same Parent
     * The Menu Item's Path is displayed to indicate menu depth (level changes) and groupings
-    * Menu item Order within a menu group can be changed
-      * Press RIGHT when on a Menu Item
-      * Press UP/DOWN to move the item within the Menu Group
-      * Press LEFT to exit the move function
+  * Menu item Order can be changed within the same Level
+    * Press RIGHT when on a Menu Item
+    * Press UP/DOWN to move the item within the Menu Level
+    * Press LEFT to exit the move function
   * Default Menu Item will be indicated by an "*" after the Display Name
     * The Default item is the one that will have focus when a new menu is opened
   * Sage Submenus are indicated by their name such as '<Submenu>' after the Menu Item Display Name
@@ -144,18 +146,18 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 === Basic - Advanced Options ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG] _Basic_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG] _Advanced_ || _click to view_ ||
-  * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
+  * Can be toggled from/to Advanced/Basic modes by selecting Options on the left menu in ADM Manager and then toggling the Advanced/Basic option button.
   * Advanced Options Mode
     * lets you see the Widget Symbols and internal Menu Names on lists while in ADM Manager
     * offers one extra Action that lets you type in a Widget Symbol (which it validates) rather than picking from the internal lists
-    * adds a "Clear All ADM Settings" option.  See [#Clear_All_ADM_Settings]
+    * adds a "Clear All ADM Settings" button to the Options Dialog.  See [#Clear_All_ADM_Settings]
 
 === Clear All ADM Settings ===
-  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
+  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Options (Basic)" then select this button to open the ADM Options Dialog and then change the "Currently using Basic Options" button to "Currently using Advanced Options" which will then also make "Clear All ADM Settings" available in the ADM Options Dialog.
   * Resets all settings to pre-installed values (removes all ADM settings in the sage Client and Server .properties file)
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * removes all Custom Backgrounds
-  * Loads the Default Menus (see above)
+  * Loads the Default Menus. See [#Load_Default_Menus]
   * Enables ADM
   * Disables Advanced Options
 
