@@ -281,12 +281,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Hides or Shows the Menu Item in SageTV including User Based blocking of the item
       * Yes - item will show for any and all users
       * No - item will not show for any user
-        * the item will always show in ADM Manager but will be in a "greyed" text
+        * The item will always show in ADM Manager but will be in a "greyed" text
         * Children of this menu item will also show "greyed" out if their parent is not "Shown"
-        * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
-      * User Based
-        * the item will always show in ADM Manager but will be in a "red" text
+        * Use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+      * User Based - the item can be hidden from specific users based on SageTV user profiles
+        * The item will always show in ADM Manager but will be in a "red" text
         * Children of this menu item will also show in "red" text if their parent is not "Shown" due to User Based settings
+        * See [#User_Based_Control/Options] for more information and examples
 
 === Creating new Menu and Submenu Items ===
   * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
@@ -327,13 +328,31 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * If you want to protect the ADM settings and hide menu items you should at minimum unselect the following...
           * Change UI configuration options (will block access to changing ADM settings and other SageTV UI settings)
           * Manage permissions settings (will disallow changing their own permissions)
+          * Optional - Manage general setup options (will disallow access to Detailed Setup)
         * Closed dialog when done
       * Select "Add Lock Code - Add Code"
         * Enter a code and then re-enter the code to confirm
         * This creates the Code but does NOT lock the system
+
     === User Based Menu Item Control (example) ===
       * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
       * Assumes the active user profile is either Administrator or one with similar privileges
+      * Edit the "Online" Menu Item to NOT display for the "Kids" user profile
+        * Press Options
+        * Select ADM Manager
+        * Select the "Online" Menu Item to edit from the list on the right
+        * Select "Edit" from the dialog
+        * On the Menu Item Settings dialog select "Show Menu Item" and change it's setting from "Yes" to "User Based"
+        * Select "Blocked Users" button (this indicates that 0 of x user profile are blocked)
+        * Unselect the "Kids" user profile. By default all user profiles have access to all menu items unless specifically unselected using this function.
+        * Close the Dialog. 
+        * "Blocked Users" should now indicate 1/x users blocked
+        * Close the Menu Item Settings Dialog
+        * The "Online" menu item and it's children will now be displayed in "red" to indicate it is set to User Based
+        * Press Home to return to the Main Menu
+      * Verify the "Online" menu is still displayed (as you are using the "Administrator" user profile)
+      * Switch user to the "Kids" user profile. See [#Switch_User_(example)]
+      * Verify the "Online" menu is NOT displayed
       
     === Switch User (example) ===
       * Switch to "Kids" profile
@@ -343,7 +362,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Select Switch User
         * Select "Set Active Permission Profile"
         * Select "Kids" from the user profile list (or another profile with similar blocked access)
-        * SageTV will return to the Main Menu. 
+          * If you disallowed "Manage general setup options" then SageTV will close the dialog and return to the Main Menu. 
+          * Otherwise just press Options and you will be returned to the Main Menu
         * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
       * Switch back to "Administrator" or similar profile
         * Press Home to start at the ADM Main Menu
@@ -352,6 +372,9 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Select "Set Active Permission Profile"
         * Enter the Permission Lock Code - if the user does not know this code then they can NOT switch users
         * Select the "Administrator" user profile or one with similar privileges.
+    === Other Notes ===
+      * Relock
+        * If you setup the "Kids" profile as described above, you need to add a lock code but you do not need to use the "Relock" function unless you want other users (other than "Kids") to also have to enter the Lock code to manage profiles or other permission settings.
         
         
 == ADM Copy Mode ==
