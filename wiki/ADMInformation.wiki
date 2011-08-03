@@ -14,6 +14,20 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.40 ==
+
+  * New User Based Menu Item control
+    * Block the display of Menu Items based on SageTV User Profiles
+  * ADM integrated with SageTV's new User Profile Permissions
+    * "Change UI configuration options" permission is now required to modify any ADM menus/settings
+  * Now handles Large Menu Lists with any number of items
+    * All 3 levels now support large menu item lists
+    * scrollbars automatically added when required
+  * ADM Manager
+    * Menu Items can now be reordered in either of the List by modes (Structured/Grouped)
+    * Options item updated to allow configuring the Max items to be displayed on each level before scrolling starts
+  * Other minor fixes
+
 == Changes in Version 0.38 ==
 
   * New Action Type to Launch an External Application
@@ -73,7 +87,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 == !ToDo List ==
   * Check this list out if you are "wondering" if a new feature is planned for ADM
-    * User security using SageTV User Profiles and Permissions
     * Other user suggestions if a feature is missing
 
 == ADM Manager ==
@@ -94,14 +107,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Menu Structure
     * Lists all menus in the natural order they will appear in SageTV
     * Indentation is used to indicate menu depth (level changes)
-    * Menu item Order cannot be changed in this list view
   * Menus Grouped
     * Lists all menus Grouped with other menu items at the same level with the same Parent
     * The Menu Item's Path is displayed to indicate menu depth (level changes) and groupings
-    * Menu item Order within a menu group can be changed
-      * Press RIGHT when on a Menu Item
-      * Press UP/DOWN to move the item within the Menu Group
-      * Press LEFT to exit the move function
+  * Menu item Order can be changed within the same Level
+    * Press RIGHT when on a Menu Item
+    * Press UP/DOWN to move the item within the Menu Level
+    * Press LEFT to exit the move function
   * Default Menu Item will be indicated by an "*" after the Display Name
     * The Default item is the one that will have focus when a new menu is opened
   * Sage Submenus are indicated by their name such as '<Submenu>' after the Menu Item Display Name
@@ -133,20 +145,29 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Note: Default menus will NOT include any menu customizations from other installed plugins.  These must later be manually added or copied using the ADM Copy Mode
   * Default menus after being loaded can then by edited and saved by using the Export feature
 
-=== Basic - Advanced Options ===
+=== ADM Options ===
+
+==== Maximum Menu Items ====
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions-ppc.JPG] _Options_ |||| _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1-ppc.JPG] _Level 1_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2-ppc.JPG] _Level 2_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3.JPG http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3-ppc.JPG] _Level 3_ || _click to view_ ||
+  * Select Options (Basic) or Options (Advanced) from the left side menu in ADM Manager
+  * Select any of the 3 Levels to adjust the Maximum Menu Item before the menus will scroll
+  * Close the dialog when done.
+  
+==== Basic - Advanced Options ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG] _Basic_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG] _Advanced_ || _click to view_ ||
-  * Can be toggled from/to Advanced/Basic modes by selecting this button on the left menu in ADM Manager
+  * Can be toggled from/to Advanced/Basic modes by selecting Options on the left menu in ADM Manager and then toggling the Advanced/Basic option button.
   * Advanced Options Mode
     * lets you see the Widget Symbols and internal Menu Names on lists while in ADM Manager
     * offers one extra Action that lets you type in a Widget Symbol (which it validates) rather than picking from the internal lists
-    * adds a "Clear All ADM Settings" option.  See [#Clear_All_ADM_Settings]
+    * adds a "Clear All ADM Settings" button to the Options Dialog.  See [#Clear_All_ADM_Settings]
 
 === Clear All ADM Settings ===
-  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Basic Options" then select this button to enable "Advanced Options" which will also make "Clear All ADM Settings" available.
+  * Advanced Options must be enabled. If the left hand menu in ADM Manager shows "Options (Basic)" then select this button to open the ADM Options Dialog and then change the "Currently using Basic Options" button to "Currently using Advanced Options" which will then also make "Clear All ADM Settings" available in the ADM Options Dialog.
   * Resets all settings to pre-installed values (removes all ADM settings in the sage Client and Server .properties file)
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * removes all Custom Backgrounds
-  * Loads the Default Menus (see above)
+  * Loads the Default Menus. See [#Load_Default_Menus]
   * Enables ADM
   * Disables Advanced Options
 
@@ -267,11 +288,17 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Note: as Sage Submenu items are internal Sage Menus, they can not have a custom background assigned to the individual menu items in the submenu. They will use the background of the parent item that has the Sage Submenu setting.
     * See also - [#ADM Background Manager]
 
-  * Show Menu Item
-    * Hides or Shows the Menu Item in SageTV
-    * the item will always show in ADM Manager but will be in a "greyed" text
-    * Children of this menu item will also show "greyed" out if their parent is not "Shown"
-    * use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+  ==== Show or Block Menu Item ====
+    * Hides or Shows the Menu Item in SageTV including User Based blocking of the item
+      * Yes - item will show for any and all users
+      * No - item will not show for any user
+        * The item will always show in ADM Manager but will be in a "greyed" text
+        * Children of this menu item will also show "greyed" out if their parent is not "Shown"
+        * Use this feature while testing or if you want a single menu Export that can be used on multiple systems where you may want one or more items hidden on some of the target systems
+      * User Based - the item can be hidden from specific users based on SageTV user profiles
+        * The item will always show in ADM Manager but will be in a "red" text
+        * Children of this menu item will also show in "red" text if their parent is not "Shown" due to User Based settings
+        * See [#User_Based_Control/Options] for more information and examples
 
 === Creating new Menu and Submenu Items ===
   * Select any Menu Item and then select either Add Menu Item below or Add Submenu Item below
@@ -299,6 +326,70 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Select this option while displaying a Custom Background to get a prompt to remove it
     * Remove ALL custom Backgrounds will also be offered through this option - a confirm dialog will be offered as well.
 
+== User Based Control/Options ==
+  === General Setup Steps (example) ===
+    * Assumes you have not setup ANY of this previously
+    * Go to Detailed Setup - Permissions
+    * Select "Manage User Profiles - Configure"
+    * Select "Add New User Profile"
+      * you must have at least 1 User Profile other than the default Administrator Profile to use these featrues of ADM
+    * Type a name for the Profile (example 'Kids')
+    * Unselect any permissions you don't want this profile to have access to
+      * If you want to protect the ADM settings and hide menu items you should at minimum unselect the following...
+        * Change UI configuration options (will block access to changing ADM settings and other SageTV UI settings)
+        * Manage permissions settings (will disallow changing their own permissions)
+        * Optional - Manage general setup options (will disallow access to Detailed Setup)
+      * Closed dialog when done
+    * Select "Add Lock Code - Add Code"
+      * Enter a code and then re-enter the code to confirm
+      * This creates the Code but does NOT lock the system
+
+  === User Based Menu Item Control (example) ===
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline-ppc.JPG] _User Based_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager-ppc.JPG] _Blocked Items_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow-ppc.JPG] _Unselect Kids_ || _click to view_ ||
+    * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+    * Assumes the active user profile is either Administrator or one with similar privileges
+    * Edit the "Online" Menu Item to NOT display for the "Kids" user profile
+      * Press Options
+      * Select ADM Manager
+      * Select the "Online" Menu Item to edit from the list on the right
+      * Select "Edit" from the dialog
+      * On the Menu Item Settings dialog select "Show Menu Item" and change it's setting from "Yes" to "User Based"
+      * Select "Blocked Users" button (this indicates that 0 of x user profile are blocked)
+      * Unselect the "Kids" user profile. By default all user profiles have access to all menu items unless specifically unselected using this function.
+      * Close the Dialog. 
+      * "Blocked Users" should now indicate 1/x users blocked
+      * Close the Menu Item Settings Dialog
+      * The "Online" menu item and it's children will now be displayed in "red" to indicate it is set to User Based
+      * Press Home to return to the Main Menu
+    * Verify the "Online" menu is still displayed (as you are using the "Administrator" user profile)
+    * Switch user to the "Kids" user profile. See [#Switch_User_(example)]
+    * Verify the "Online" menu is NOT displayed
+      
+  === Switch User (example) ===
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod-ppc.JPG] _Options_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions-ppc.JPG] _Switch User_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles-ppc.JPG] _Select Kids_ || _click to view_ ||
+    * Switch to "Kids" profile
+      * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
+      * Assumes the active user profile is either Administrator or one with similar privileges
+      * Press Options
+      * Select Switch User
+      * Select "Set Active Permission Profile"
+      * Select "Kids" from the user profile list (or another profile with similar blocked access)
+        * If you disallowed "Manage general setup options" then SageTV will close the dialog and return to the Main Menu. 
+        * Otherwise just press Options and you will be returned to the Main Menu
+      * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-ppc.JPG] _Switch User_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked.JPG http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked-ppc.JPG] _Enter Code_ || _click to view_ ||
+    * Switch back to "Administrator" or similar profile
+      * Press Home to start at the ADM Main Menu
+      * Press Options
+      * Switch User is automatically displayed as ADM Manager and other UI Configuration Options are not allowed for this user profile.
+      * Select "Set Active Permission Profile"
+      * Enter the Permission Lock Code - if the user does not know this code then they can NOT switch users
+      * Select the "Administrator" user profile or one with similar privileges.
+  === Other Notes ===
+    * Relock
+      * If you setup the "Kids" profile as described above, you need to add a lock code but you do not need to use the "Relock" function unless you want other users (other than "Kids") to also have to enter the Lock code to manage profiles or other permission settings.
+        
+        
 == ADM Copy Mode ==
 === Copy Sage Menu Items ===
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG] _Copy Mode_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG] _Change Settings_ || _click to view_ ||
@@ -471,7 +562,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Loading Default Menus
     * go to the ADM Manager
     * select Load Default Menus
-    * for more info [#Default_Menus]
+    * for more info [#Load_Default_Menus]
   * Clear All ADM Settings
     * If all else fails then look here to [#Clear_All_ADM_Settings]
   * Where are the Imports/Exports
