@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.400";
+    public static String Version = "0.401";
     public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
