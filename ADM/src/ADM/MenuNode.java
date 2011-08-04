@@ -642,6 +642,14 @@ public class MenuNode {
         }
     }
 
+    public String getSubMenuExcludingSageMenus() {
+        if (!NodeItem.isLeaf()){
+            return Name;
+        }else{
+            return null;
+        }
+    }
+
     public static String GetMenuItemSubMenu(String Name){
         try {
             return MenuNodeList().get(Name).getSubMenu();
