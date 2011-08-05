@@ -600,6 +600,10 @@ public class util {
         SetProperty(SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
+    public static String GetLastFocusForSubMenuQLM(String SubMenu){
+        return GetLastFocusForSubMenu(SubMenu, Boolean.TRUE);
+    }
+    
     public static String GetLastFocusForSubMenu(String SubMenu){
         return GetLastFocusForSubMenu(SubMenu, Boolean.FALSE);
     }
@@ -612,14 +616,8 @@ public class util {
             return MenuNode.GetSubMenuDefault(SubMenu);
         }else{
             //check that the focus item stored in Sage is still valid
-            if (MenuNode.IsSubMenuItem(SubMenu, LastFocus)){
-                if(QLMCheck && IsSageSubMenu(SubMenu)){
-                    System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' QLM and SageSubMenu - returning DEFAULT");
-                    return MenuNode.GetSubMenuDefault(SubMenu);
-                }else{
-                    System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
-                    return LastFocus;
-                }
+            if (MenuNode.IsSubMenuItem(SubMenu, LastFocus, QLMCheck)){
+                return LastFocus;
             }else{
                 System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
                 return MenuNode.GetSubMenuDefault(SubMenu);
