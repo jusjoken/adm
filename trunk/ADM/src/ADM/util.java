@@ -601,6 +601,10 @@ public class util {
     }
 
     public static String GetLastFocusForSubMenu(String SubMenu){
+        return GetLastFocusForSubMenu(SubMenu, Boolean.FALSE);
+    }
+    
+    public static String GetLastFocusForSubMenu(String SubMenu, Boolean QLMCheck){
         String LastFocus = GetProperty(SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
@@ -609,8 +613,13 @@ public class util {
         }else{
             //check that the focus item stored in Sage is still valid
             if (MenuNode.IsSubMenuItem(SubMenu, LastFocus)){
-                System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
-                return LastFocus;
+                if(QLMCheck && IsSageSubMenu(SubMenu)){
+                    System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' QLM and SageSubMenu - returning DEFAULT");
+                    return MenuNode.GetSubMenuDefault(SubMenu);
+                }else{
+                    System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' returning = '" + LastFocus + "'");
+                    return LastFocus;
+                }
             }else{
                 System.out.println("ADM: uGetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
                 return MenuNode.GetSubMenuDefault(SubMenu);
@@ -776,7 +785,12 @@ public class util {
         }
     }
     
-    //TODO: allow the user to set the MaxMenuItems for each level from the UI
+    public static Integer GetMaxMenuItems(String Parent){
+        Integer DefaultMax = 8;
+        Integer LevelMax = GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/0", DefaultMax);
+        return LevelMax;
+    }
+
     public static Integer GetMaxMenuItems(Integer Level){
         Integer DefaultMax = 8;
         if (Level > 1){
