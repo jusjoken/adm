@@ -692,14 +692,27 @@ public class MenuNode {
     }
 
     public static Boolean IsSubMenuItem(String bParent, String Item){
+        return IsSubMenuItem(bParent, Item, Boolean.FALSE);
+    }
+    
+    public static Boolean IsSubMenuItem(String bParent, String Item, Boolean QLMCheck){
         //check if Item is a child of bParent
         if (bParent==null || Item==null){
             return Boolean.FALSE;
         }
         try {
             if (MenuNodeList().get(Item).NodeItem.getParent().toString().equals(bParent)){
-                System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
-                return Boolean.TRUE;
+                if (QLMCheck){
+                    //make sure the item is show in QLM - NO SageSubMenus
+                    if (MenuNodeList().get(Item).SubMenu==null || MenuNodeList().get(Item).SubMenu.equals(MenuNodeList().get(Item).Name)){
+                        return Boolean.TRUE;
+                    }else{
+                        return Boolean.FALSE;
+                    }
+                }else{
+                    System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+                    return Boolean.TRUE;
+                }
             }else{
                 System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
                 return Boolean.FALSE;
@@ -770,10 +783,16 @@ public class MenuNode {
     }
 
     private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
-        Boolean Test = Boolean.TRUE;
         if (tMenu.SubMenu==null || tMenu.SubMenu.equals(tMenu.Name)){
             return Boolean.FALSE;
         }else if(!tMenu.ActionType.equals(Action.ActionTypeDefault)){
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+    
+    public static Boolean QLMInvalidSubmenu(String SubMenu, String Name){
+        if (SubMenu==null || SubMenu.equals(Name)){
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
