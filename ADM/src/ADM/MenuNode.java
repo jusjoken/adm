@@ -720,14 +720,23 @@ public class MenuNode {
         }
     }
     
+    //returns only menu items for a specific parent that are active and have no SageSubMenu items
+    public static Collection<String> GetMenuItemNameListQLM(String Parent){
+        return GetMenuItemNameList(Parent, Boolean.FALSE, Boolean.TRUE);
+    }
+
     //returns only menu items for a specific parent that are active
     public static Collection<String> GetMenuItemNameList(String Parent){
         return GetMenuItemNameList(Parent, Boolean.FALSE);
     }
 
+    public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
+        return GetMenuItemNameList(Parent, Boolean.FALSE, Boolean.FALSE);
+    }
+    
     //returns menu items for a specific parent
     @SuppressWarnings("unchecked")
-    public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive){
+    public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive, Boolean QLMCheck){
         Collection<String> bNames = new LinkedHashSet<String>();
         String tActiveUser = sagex.api.Security.GetActiveSecurityProfile(new UIContext(sagex.api.Global.GetUIContextName()));
         if (MenuNodeList().containsKey(Parent) && MenuNodeList().get(Parent).NodeItem!=null){
@@ -738,11 +747,19 @@ public class MenuNode {
                 if (IncludeInactive==true){
                     bNames.add(tMenu.Name);
                 }else if(tMenu.IsActive.equals(util.TriState.YES)){
-                    bNames.add(tMenu.Name);
+                    if (QLMCheck && QLMInvalidSubmenu(tMenu)){
+                        //do not add this item
+                    }else{
+                        bNames.add(tMenu.Name);
+                    }
                 }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
                     //only add if the active user is allowed to see this Menu Item
                     if (!tMenu.BlockedSageUsersList.contains(tActiveUser)){
-                        bNames.add(tMenu.Name);
+                        if (QLMCheck && QLMInvalidSubmenu(tMenu)){
+                            //do not add this item
+                        }else{
+                            bNames.add(tMenu.Name);
+                        }
                     }
                 }
                 //otherwise do not add the Menu Item
@@ -750,6 +767,16 @@ public class MenuNode {
         }
         System.out.println("ADM: mGetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
         return bNames;
+    }
+
+    private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
+        Boolean Test = Boolean.TRUE;
+        if (tMenu.SubMenu==null || tMenu.SubMenu.equals(tMenu.Name)){
+            return Boolean.FALSE;
+        }else if(!tMenu.ActionType.equals(Action.ActionTypeDefault)){
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
     }
     
     //returns the count of ALL MenuNode ITems
@@ -762,6 +789,13 @@ public class MenuNode {
         }
     }
     
+    //Get the count of MenuItems for a parent that are active and do not include SageSubMenus
+    public static int GetMenuItemCountQLM(String Parent){
+        Collection<String> bNames = GetMenuItemNameListQLM(Parent);
+        //System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
+        return bNames.size();
+    }
+
     //Get the count of MenuItems for a parent that are active
     public static int GetMenuItemCount(String Parent){
         Collection<String> bNames = GetMenuItemNameList(Parent);
@@ -795,7 +829,6 @@ public class MenuNode {
     }
 
     public static Collection<String> GetParentListforMenuItem(String Name){
-        System.out.println("ADMTemp: GetMenuItemSubMenu: for '" + Name + "' ='" + GetMenuItemSubMenu(Name) + "'");
         if (Name.equals(GetMenuItemSubMenu(Name)) || GetMenuItemSubMenu(Name)==null){
             return GetMenuItemParentList();
         }else{
