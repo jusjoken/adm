@@ -828,10 +828,11 @@ public class util {
     }
 
     public static enum QLMCloseType{HOME_MM_LEFT_CLOSE,HOME_CLOSE_LEFT_MM,HOME_CLOSE_LEFT_CLOSE};
+    public static final String SageADMSettingsQLMCloseState = SageADMSettingsPropertyLocation + "/qlm_close_state";
 
     public static String GetQLMCloseState(){
         //determine the current state and return a button text string to display
-        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        String cState = GetProperty(SageADMSettingsQLMCloseState, QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
         if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
             return "Home: Main Menu - Left: Close QLM";
         }else if (cState.equals(QLMCloseType.HOME_CLOSE_LEFT_MM.toString())){
@@ -844,7 +845,7 @@ public class util {
     
     public static void SetQLMCloseState(Integer Delta){
         //determine the current state and change to the next/previous state
-        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        String cState = GetProperty(SageADMSettingsQLMCloseState, QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
         QLMCloseType nextState = QLMCloseType.HOME_CLOSE_LEFT_CLOSE;
         Integer i = 0;
         for (QLMCloseType value : QLMCloseType.values()){
@@ -864,12 +865,12 @@ public class util {
             nextState = QLMCloseType.values()[i];
         }
         //save the nextState
-        SetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", nextState.toString());
+        SetProperty(SageADMSettingsQLMCloseState, nextState.toString());
     }
 
     public static void ExecuteQLMCloseStateLeft(){
         //determine the current state and execute based on that state
-        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        String cState = GetProperty(SageADMSettingsQLMCloseState, QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
         if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
             CloseOptionsMenu();
         }else if (cState.equals(QLMCloseType.HOME_CLOSE_LEFT_MM.toString())){
@@ -883,7 +884,7 @@ public class util {
 
     public static void ExecuteQLMCloseStateHome(){
         //determine the current state and execute based on that state
-        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        String cState = GetProperty(SageADMSettingsQLMCloseState, QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
         if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
             CloseOptionsMenu();
             Action.ExecuteWidget(MainMenuWidgetSymbol);

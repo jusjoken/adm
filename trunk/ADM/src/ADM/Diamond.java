@@ -64,5 +64,34 @@ public class Diamond {
         }
         return Boolean.FALSE;
     }
+  
+    public static Boolean ShowWidgetswithQLM(){
+        //ensure Diamond is installed and enabled
+//        if (!IsDiamond()){
+//            return Boolean.FALSE;
+//        }
+        //ensure at minimum that the option is enabled in QLM
+        Boolean OptionOn = util.GetPropertyAsBoolean(util.SageADMSettingsPropertyLocation + "/qlm_show_diamond_widgets", Boolean.FALSE);
+        if (OptionOn){
+            //now ensure that the Diamond Widget options are turned on and should be showing
+            String WidgetPanel = "JOrton/MainMenu/WidgetPanel";
+            String Off = "Off";
+            if (!util.GetProperty(WidgetPanel + "1", Off).equals(Off) || !util.GetProperty(WidgetPanel + "2", Off).equals(Off) || !util.GetProperty(WidgetPanel + "3", Off).equals(Off) || !util.GetProperty(WidgetPanel + "4", Off).equals(Off)){
+                //as at least one panel is On then Show the Widget Panel
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static void ExecuteWidgetswithQLM(){
+        //show the Diamond Widgets
+        String DiamondWidgetsPanelSymbol = "JUSJOKEN-167710";
+        Action.ExecuteWidget(DiamondWidgetsPanelSymbol);
+    }
+
     
 }
