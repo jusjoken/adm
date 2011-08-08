@@ -826,5 +826,43 @@ public class util {
         SetProperty(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), Value.toString());
     }
 
+    public static enum QLMCloseType{HOME_MM_LEFT_CLOSE,HOME_CLOSE_LEFT_MM,HOME_CLOSE_LEFT_CLOSE};
 
+    public static String GetQLMCloseState(){
+        //determine the current state and return a button text string to display
+        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
+            return "Home: Main Menu - Left: Close QLM";
+        }else if (cState.equals(QLMCloseType.HOME_CLOSE_LEFT_MM.toString())){
+            return "Home: Close QLM - Left: Main Menu";
+        }else{
+            //default to HOME_CLOSE_LEFT_CLOSE
+            return "Home: Close QLM - Left: Close QLM";
+        }
+    }
+    
+    public static void SetQLMCloseState(Integer Delta){
+        //determine the current state and change to the next/previous state
+        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        QLMCloseType nextState = QLMCloseType.HOME_CLOSE_LEFT_CLOSE;
+        Integer i = 0;
+        for (QLMCloseType value : QLMCloseType.values()){
+            if (value.toString().equals(cState)){
+                break;
+            }
+            i++;
+        }
+        //i now has the current state
+        i = i + Delta;
+        //i now has the next state based on Delta
+        if (i>=QLMCloseType.values().length){
+            nextState = QLMCloseType.values()[0];
+        }else if(i<0){
+            nextState = QLMCloseType.values()[QLMCloseType.values().length-1];
+        }else{
+            nextState = QLMCloseType.values()[i];
+        }
+        //save the nextState
+        SetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", nextState.toString());
+    }
 }
