@@ -55,7 +55,8 @@ public class util {
     public static Collection<String> SageSubMenusLevel2Keys = new LinkedHashSet<String>();
     public static final char[] symbols = new char[36];
     private static final Random random = new Random();
-    public static List<String> SageBackgrounds = new LinkedList<String>();    
+    public static List<String> SageBackgrounds = new LinkedList<String>(); 
+    private static final String MainMenuWidgetSymbol = "BASE-44343";
     public static enum TriState{YES,NO,OTHER};
 
     public static String GetListNone(){ return ListNone; }
@@ -865,4 +866,37 @@ public class util {
         //save the nextState
         SetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", nextState.toString());
     }
+
+    public static void ExecuteQLMCloseStateLeft(){
+        //determine the current state and execute based on that state
+        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
+            CloseOptionsMenu();
+        }else if (cState.equals(QLMCloseType.HOME_CLOSE_LEFT_MM.toString())){
+            CloseOptionsMenu();
+            Action.ExecuteWidget(MainMenuWidgetSymbol);
+        }else{
+            //default to HOME_CLOSE_LEFT_CLOSE
+            CloseOptionsMenu();
+        }
+    }
+
+    public static void ExecuteQLMCloseStateHome(){
+        //determine the current state and execute based on that state
+        String cState = GetProperty(SageADMSettingsPropertyLocation + "/qlm_close_state/", QLMCloseType.HOME_CLOSE_LEFT_CLOSE.toString());
+        if (cState.equals(QLMCloseType.HOME_MM_LEFT_CLOSE.toString())){
+            CloseOptionsMenu();
+            Action.ExecuteWidget(MainMenuWidgetSymbol);
+        }else if (cState.equals(QLMCloseType.HOME_CLOSE_LEFT_MM.toString())){
+            CloseOptionsMenu();
+        }else{
+            //default to HOME_CLOSE_LEFT_CLOSE
+            CloseOptionsMenu();
+        }
+    }
+
+    private static void CloseOptionsMenu(){
+        sagex.api.Global.CloseOptionsMenu(new UIContext(sagex.api.Global.GetUIContextName()));
+    }
+    
 }
