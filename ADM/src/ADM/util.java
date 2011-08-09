@@ -56,7 +56,7 @@ public class util {
     public static final char[] symbols = new char[36];
     private static final Random random = new Random();
     public static List<String> SageBackgrounds = new LinkedList<String>(); 
-    private static final String MainMenuWidgetSymbol = "BASE-44343";
+    private static final String MainMenuWidgetSymbol = "OPUS4A-202264"; //"BASE-44343";
     public static enum TriState{YES,NO,OTHER};
 
     public static String GetListNone(){ return ListNone; }
