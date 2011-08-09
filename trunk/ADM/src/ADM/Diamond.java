@@ -67,9 +67,9 @@ public class Diamond {
   
     public static Boolean ShowWidgetswithQLM(){
         //ensure Diamond is installed and enabled
-//        if (!IsDiamond()){
-//            return Boolean.FALSE;
-//        }
+        if (!IsDiamond()){
+            return Boolean.FALSE;
+        }
         //ensure at minimum that the option is enabled in QLM
         Boolean OptionOn = util.GetPropertyAsBoolean(util.SageADMSettingsPropertyLocation + "/qlm_show_diamond_widgets", Boolean.FALSE);
         if (OptionOn){
@@ -87,11 +87,33 @@ public class Diamond {
         }
     }
     
-    public static void ExecuteWidgetswithQLM(){
+    public static void LoadDiamondWidgetswithQLM(){
+        DiamondWidgetswithQLM(Boolean.TRUE);
+    }
+    
+    public static void UnloadDiamondWidgetswithQLM(){
+        DiamondWidgetswithQLM(Boolean.FALSE);
+    }
+    
+    private static void DiamondWidgetswithQLM(Boolean Load){
         //show the Diamond Widgets
-        String DiamondWidgetsPanelSymbol = "JUSJOKEN-167710";
-        Action.ExecuteWidget(DiamondWidgetsPanelSymbol);
+        String DiamondWidgetsPanelSymbol = "AOSCS-679196";
+        //AOSCS-679196 or JUSJOKEN-167710 or JUSJOKEN-1236101
+        String QLMWidgetsParentPanelSymbol = "JUSJOKEN-1236101";
+        //JUSJOKEN-1236101 or JUSJOKEN-1079122
+        
+        //connect/disconnect the Widget panel from it's parent
+        if (Load){
+            sagex.api.WidgetAPI.InsertWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMWidgetsParentPanelSymbol, DiamondWidgetsPanelSymbol,0);
+        }else{
+            sagex.api.WidgetAPI.RemoveWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMWidgetsParentPanelSymbol, DiamondWidgetsPanelSymbol);
+        }
+        
     }
 
+    //Use the diamond widget width property and return it for the panel width
+    public static Double DiamondWidgetsPanelWidth(){
+        return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
+    }
     
 }
