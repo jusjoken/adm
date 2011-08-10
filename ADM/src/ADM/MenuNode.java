@@ -925,6 +925,16 @@ public class MenuNode {
         }
     }
 
+    //return a path delimited by "/"
+    public static String GetBreadCrumb(String Name){
+        String BreadCrumb = GetPath(MenuNodeList().get(Name).NodeItem);
+        if (BreadCrumb==null){
+            return "";
+        }else{
+            return BreadCrumb;
+        }
+    }
+
     public static void Execute(String Name){
         Action.Execute(Name);
     }
