@@ -1147,7 +1147,13 @@ public class MenuNode {
         Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
         Integer Counter = 0;
         for (String vName: Action.SageTVRecordingViews.keySet()){
-            String tMenuItemName = MenuNode.NewMenuItem(sSubMenu, Counter);
+            String tMenuItemName = GetNewMenuItemName();
+            //Create a new MenuItem with defaults
+            MenuNode NewMenuItem = new MenuNode(sSubMenu,tMenuItemName,Counter,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+            SaveMenuItemToSage(NewMenuItem);
+            //add the Node to the Tree
+            InsertNode(MenuNodeList().get(sSubMenu).NodeItem, NewMenuItem, Counter);
+
             MenuNode.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
             MenuNode.SetMenuItemAction(tMenuItemName,vName);
             MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
@@ -1160,6 +1166,8 @@ public class MenuNode {
                 break;
             }
         }
+        //ensure there is 1 default item
+        ValidateSubMenuDefault(sSubMenu);
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
 
