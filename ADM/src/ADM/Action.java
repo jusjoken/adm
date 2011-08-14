@@ -624,20 +624,6 @@ public class Action {
         public String GetWindowType(){
             return windowTypeStrings[windowType];
         }
-//        public void SetWindowType(String bWindowType){
-//            Boolean windowTypeFound = Boolean.FALSE;
-//            for ( int i=0; i < windowTypeStrings.length ; i ++ ){
-//                if ( windowTypeStrings[i].equals(bWindowType) ) {
-//                    windowType=i;
-//                    windowTypeFound = Boolean.TRUE;
-//                    break;
-//                }
-//            }
-//            if ( !windowTypeFound ){
-//                this.windowType = 0;
-//            }
-//            this.Save();
-//        }
         public void ChangeWindowType(Integer Delta){
             this.windowType = this.windowType + Delta;
             if (windowType>=windowTypeStrings.length){
@@ -648,9 +634,6 @@ public class Action {
             this.Save();
         }
         
-//        public Boolean GetWaitForExit(){
-//            return waitForExit;
-//        }
         public String GetWaitForExit(){
             if (waitForExit){
                 return "Wait until Application Exits";
