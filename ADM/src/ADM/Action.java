@@ -38,6 +38,7 @@ public class Action {
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
     public static Properties DiamondDefaultFlowsProps = new Properties();
     public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
+    public static Map<String,String>  SageCustomMenuActions = new LinkedHashMap<String,String>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     private String Type = "";
@@ -58,6 +59,7 @@ public class Action {
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
     public static final String StandardMenuAction = "ExecuteStandardMenuAction";
     public static final String TVRecordingView = "ExecuteTVRecordingView";
+    public static final String CustomMenuAction = "ExecuteCustomMenuAction";
     public static final String DiamondDefaultFlows = "ExecuteDiamondDefaultFlow";
     public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
     public static final String BrowseFileFolderLocal = "ExecuteBrowseFileFolderLocal";
@@ -103,6 +105,8 @@ public class Action {
             ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
             ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
             
+            ActionList.put(CustomMenuAction, new Action(CustomMenuAction,Boolean.FALSE,Boolean.FALSE,"Launch Custom Menu Action", "Custom Menu Action","BASE-64897"));
+            ActionList.get(CustomMenuAction).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
             
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
             
@@ -140,7 +144,7 @@ public class Action {
             LoadStandardActionList();
             LoadDiamondDefaultFlowsList();
 
-            //load the SageTV Recording views
+            LoadSageCustomMenuActions();
             LoadSageTVRecordingViews();
             
             InitComplete = Boolean.TRUE;
@@ -151,6 +155,7 @@ public class Action {
     public static String GetBrowseVideoFolder(){ return BrowseVideoFolder; }
     public static String GetStandardMenuAction(){ return StandardMenuAction; }
     public static String GetTVRecordingView(){ return TVRecordingView; }
+    public static String GetCustomMenuAction(){ return CustomMenuAction; }
     public static String GetDiamondCustomFlows(){ return DiamondCustomFlows; }
     public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
     public static String GetBrowseFileFolderLocal(){ return BrowseFileFolderLocal; }
@@ -181,10 +186,6 @@ public class Action {
         return ActionList.get(Type).DiamondOnly;
     }
     
-//    public static String GetAttribute(String Type){
-//        return ActionList.get(Type).Attribute;
-//    }
-//    
     public static List<ActionVariable> GetActionVariables(String Type){
         return ActionList.get(Type).ActionVariables;
     }
@@ -239,6 +240,8 @@ public class Action {
             }
         }else if(Type.equals(TVRecordingView)){
             return GetSageTVRecordingViewsButtonText(Attribute);
+        }else if(Type.equals(CustomMenuAction)){
+            return SageCustomMenuActions.get(Attribute);
         }else if(Type.equals(DiamondDefaultFlows)){
             if (util.IsAdvancedMode()){
                 return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
@@ -415,6 +418,8 @@ public class Action {
             return StandardActionKeys;
         }else if(Type.equals(TVRecordingView)){
             return SageTVRecordingViews.keySet();
+        }else if(Type.equals(CustomMenuAction)){
+            return SageCustomMenuActions.keySet();
         }else if(Type.equals(DiamondDefaultFlows)){
             return DiamondDefaultFlowsKeys;
         }else if(Type.equals(DiamondCustomFlows)){
@@ -428,6 +433,8 @@ public class Action {
         if (Type.equals(StandardMenuAction)){
             return Boolean.TRUE;
         }else if(Type.equals(TVRecordingView)){
+            return Boolean.TRUE;
+        }else if(Type.equals(CustomMenuAction)){
             return Boolean.TRUE;
         }else if(Type.equals(DiamondDefaultFlows)){
             return Boolean.TRUE;
@@ -490,6 +497,13 @@ public class Action {
         }else{
             return "";
         }
+    }
+
+    private static void LoadSageCustomMenuActions(){
+        //put the ViewType and ButtonText into a list
+        SageCustomMenuActions.put("xInterleaved","Interleaved Schedule");
+        SageCustomMenuActions.put("xByDay","By Day Schedule");
+        SageCustomMenuActions.put("xParallel","Parallel Schedule");
     }
 
     private static void LoadSageTVRecordingViews(){

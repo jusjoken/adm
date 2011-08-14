@@ -462,6 +462,8 @@ public class MenuNode {
             }else {
                 System.out.println("ADM: mValidateSubMenuDefault for '" + bParent + "' : Default already set");
             }
+            //As there are submenu items the submenu setting should be null
+            SetMenuItemSubMenu(bParent, util.ListNone);
         }else{
             //no subMenu items so make sure this parent's SubMenu settings are correct
             SetMenuItemSubMenu(bParent, util.ListNone);
@@ -1231,23 +1233,26 @@ public class MenuNode {
 
         for (String tName : MenuNodeList().keySet()){
             if (!tName.equals(util.TopMenu)){
-                PropLocation = util.SagePropertyLocation + tName;
-                PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/ActionType", GetMenuItemActionType(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/BGImageFile", GetMenuItemBGImageFile(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/ButtonText", GetMenuItemButtonText(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/Name", tName);
-                PropertyAdd(MenuItemProps,PropLocation + "/Parent", GetMenuItemParent(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/SortKey", GetMenuItemSortKey(tName).toString());
-                PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
-                PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
-                PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
-                PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
-                //if this is an external action then save out the external action properties
-                if (GetMenuItemActionType(tName).equals(Action.LaunchExternalApplication)){
-                    GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
+                //TODO: only while cleaning up Defaults - then remove this IF
+                if (!GetMenuItemActionType(tName).equals(Action.TVRecordingView)){
+                    PropLocation = util.SagePropertyLocation + tName;
+                    PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/ActionType", GetMenuItemActionType(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/BGImageFile", GetMenuItemBGImageFile(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/ButtonText", GetMenuItemButtonText(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/Name", tName);
+                    PropertyAdd(MenuItemProps,PropLocation + "/Parent", GetMenuItemParent(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/SortKey", GetMenuItemSortKey(tName).toString());
+                    PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
+                    PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
+                    PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
+                    PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
+                    //if this is an external action then save out the external action properties
+                    if (GetMenuItemActionType(tName).equals(Action.LaunchExternalApplication)){
+                        GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
+                    }
+                    //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
                 }
-                //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
             }
         }
         //write the properties to the properties file
