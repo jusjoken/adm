@@ -1134,6 +1134,26 @@ public class MenuNode {
                 SetMenuItemIsActive(DiamondMenuVideos, util.TriState.YES);
             }
         }
+        //now build any dynamic submenus
+        //build the TV Recordings submenu
+        String sSubMenu = "admRecordings";
+        //determine the max number of TV Recording Views to add
+        Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
+        Integer Counter = 0;
+        for (String vName: Action.SageTVRecordingViews.keySet()){
+            String tMenuItemName = MenuNode.NewMenuItem(sSubMenu, Counter);
+            MenuNode.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
+            MenuNode.SetMenuItemAction(tMenuItemName,vName);
+            MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetSageTVRecordingViewsButtonText(vName));
+            MenuNode.SetMenuItemName(tMenuItemName);
+            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+            Counter++;
+            if (Counter>=ViewCount){
+                break;
+            }
+        }
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
 
