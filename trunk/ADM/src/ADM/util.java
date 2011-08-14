@@ -665,21 +665,42 @@ public class util {
     }
 
     public static String GetProperty(String Property, String DefaultValue){
-        return sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            RemovePropertyAndChildren(Property);
+            return DefaultValue;
+        }else{
+            return tValue;
+        }
     }
     
     public static Boolean GetPropertyAsBoolean(String Property, Boolean DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, util.OptionNotFound);
-        if (tValue.equals(util.OptionNotFound)){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            //remove the blank property and then return the default value
+            RemovePropertyAndChildren(Property);
             return DefaultValue;
         }else{
             return Boolean.parseBoolean(tValue);
         }
     }
     
+    //Evaluates the property and returns it's value - must be true or false - returns true otherwise
+    public static Boolean GetPropertyEvalAsBoolean(String Property, Boolean DefaultValue){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            //remove the blank property and then return the default value
+            RemovePropertyAndChildren(Property);
+            return DefaultValue;
+        }else{
+            return Boolean.parseBoolean(EvaluateAttribute(tValue));
+        }
+    }
+    
     public static TriState GetPropertyAsTriState(String Property, TriState DefaultValue){
         String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
         if (tValue.equals(OptionNotFound)){
+            RemovePropertyAndChildren(Property);
             return DefaultValue;
         }else if(tValue.equals("YES")){
             return TriState.YES;
@@ -698,6 +719,9 @@ public class util {
     
     public static List<String> GetPropertyAsList(String Property){
         String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            RemovePropertyAndChildren(Property);
+        }
         return ConvertStringtoList(tValue);
     }
     
@@ -706,6 +730,7 @@ public class util {
         Integer tInteger = DefaultValue;
         String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, util.OptionNotFound);
         if (tValue.equals(util.OptionNotFound)){
+            RemovePropertyAndChildren(Property);
             return DefaultValue;
         }
         try {
@@ -719,7 +744,13 @@ public class util {
     
 
     public static String GetServerProperty(String Property, String DefaultValue){
-        return sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, DefaultValue);
+        String tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
+        if (tValue.equals(OptionNotFound)){
+            RemovePropertyAndChildren(Property);
+            return DefaultValue;
+        }else{
+            return tValue;
+        }
     }
 
     public static void SetProperty(String Property, String Value){

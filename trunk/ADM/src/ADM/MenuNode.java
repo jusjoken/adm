@@ -980,20 +980,25 @@ public class MenuNode {
                 //make sure you do not load a TopMenu item - it should never be saved but this is just an extra check
                 if (!tMenuItemName.equals(util.TopMenu)){
                     PropLocation = util.SagePropertyLocation + tMenuItemName;
-                    MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                    NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
-                    NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
-                    NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
-                    NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
-                    NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
-                    NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
-                    NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
-                    NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
-                    NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
-                    NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
-                    NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
-                    NewMenuItem.ActionExternal.Load();
-                    System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                    //check the hidden ShowIF property and skip if it is FALSE
+                    if (util.GetPropertyEvalAsBoolean(PropLocation + "/ShowIF", Boolean.TRUE)){
+                        MenuNode NewMenuItem = new MenuNode(tMenuItemName);
+                        NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
+                        NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
+                        NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
+                        NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                        NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
+                        NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
+                        NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
+                        NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
+                        NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
+                        NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
+                        NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
+                        NewMenuItem.ActionExternal.Load();
+                        System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                    }else{
+                        System.out.println("ADM: mLoadMenuItemsFromSage: skipped - '" + tMenuItemName + "' due to ShowIF ");
+                    }
                 }else{
                     System.out.println("ADM: mLoadMenuItemsFromSage: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
                 }
@@ -1135,6 +1140,7 @@ public class MenuNode {
             }
         }
         //now build any dynamic submenus
+        System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
         //build the TV Recordings submenu
         String sSubMenu = "admRecordings";
         //determine the max number of TV Recording Views to add
@@ -1229,7 +1235,10 @@ public class MenuNode {
                 PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
                 PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
-                GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
+                //if this is an external action then save out the external action properties
+                if (GetMenuItemActionType(tName).equals(Action.LaunchExternalApplication)){
+                    GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
+                }
                 //System.out.println("ADM: mExportMenuItems: exported - '" + entry.getValue().getName() + "'");
             }
         }
@@ -1426,6 +1435,8 @@ public class MenuNode {
                 MenuNodeList().get(Name).IsDefault = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("SubMenu")){
                 MenuNodeList().get(Name).SubMenu = Setting;
+            }else if (PropType.equals("Name")){
+                //included Name only so it does not raise an erro when called
             }else if (PropType.equals("Parent")){
                 MenuNodeList().get(Name).Parent = Setting;
             }else if (PropType.equals("BlockedSageUsersList")){
