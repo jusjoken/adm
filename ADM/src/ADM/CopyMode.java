@@ -220,6 +220,7 @@ public class CopyMode {
                 
             }else if (Action.CustomAction.WidgetSymbols.contains(ActionWidget)){
                 FinalType = Action.CustomMenuAction;
+                //TODO: need to get the specific Attribute value here ****
             }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
                 FinalType = Action.StandardMenuAction;
             }else if (Action.GetActionList(Action.DiamondDefaultFlows).contains(ActionWidget)){
