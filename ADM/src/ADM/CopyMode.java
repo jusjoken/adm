@@ -219,7 +219,6 @@ public class CopyMode {
                 //TODO: need to find a way to determine the selected Flow
                 
             }else if (Action.CustomAction.WidgetSymbols.contains(ActionWidget)){
-                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
                 //CustomAction found so determine which one 
                 Boolean tFound = Boolean.FALSE;
                 for (Object Child : Children){
@@ -230,10 +229,8 @@ public class CopyMode {
                         String tVar = sagex.api.WidgetAPI.GetWidgetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Child,"Value");
                         tVar = tVar.replace("\"", "");
                         String tCheckString = Action.CustomAction.UniqueID(tName,tVar);
-                        System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction tCheckString '" + tCheckString + "'");
                         if (Action.CustomAction.CopyModeUniqueIDs.contains(tCheckString)){
                             FinalAction = tVar;
-                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
                             tFound = Boolean.TRUE;
                             break;
                         }
@@ -241,7 +238,6 @@ public class CopyMode {
                 }
                 if (tFound){
                     FinalType = Action.CustomMenuAction;
-                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
                 }
             }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
                 FinalType = Action.StandardMenuAction;
