@@ -505,14 +505,15 @@ public class Action {
 
     private static void LoadSageCustomMenuActions(){
         //load custom menu actions into a list
-        SageCustomMenuActions.put("xInterleaved",new CustomAction("xInterleaved","Interleaved Schedule","BASE-64897"));
-        SageCustomMenuActions.get("xInterleaved").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+        SageCustomMenuActions.put("xInterleaved",new CustomAction("xInterleaved","Interleaved Schedule","OPUS4A-177257","ViewFilter"));
+        SageCustomMenuActions.get("xInterleaved").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
 
-        SageCustomMenuActions.put("xByDay",new CustomAction("xByDay","By Day Schedule","BASE-64897"));
-        SageCustomMenuActions.get("xByDay").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+        SageCustomMenuActions.put("xByDay",new CustomAction("xByDay","By Day Schedule","OPUS4A-177257","ViewFilter"));
+        SageCustomMenuActions.get("xByDay").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
 
-        SageCustomMenuActions.put("xParallel",new CustomAction("xParallel","Parallel Schedule","BASE-64897"));
-        SageCustomMenuActions.get("xParallel").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+        SageCustomMenuActions.put("xParallel",new CustomAction("xParallel","Parallel Schedule","OPUS4A-177257","ViewFilter"));
+        SageCustomMenuActions.get("xParallel").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
+        
     }
 
     private static void LoadSageTVRecordingViews(){
@@ -564,7 +565,7 @@ public class Action {
                 tVal = Attribute;
             }
             if (this.VarType.equals(VarTypeGlobal)){
-                sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
+                sagex.api.Global.AddGlobalContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
                 System.out.println("ADM: aEvaluateVariable - Setting Static Context for = '" + this.Var + "' to '" + tVal + "'");
             }else if (this.VarType.equals(VarTypeSetProp)){
                 util.SetProperty(this.Var, tVal);
@@ -577,14 +578,23 @@ public class Action {
         private String Name = "";
         private String ButtonText = "";
         private String WidgetSymbol = "";
+        private String CopyModeAttributeVar = Blank;
         private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
         public static Collection<String> WidgetSymbols = new LinkedHashSet<String>();
+        //the combination of the Name and CopymodeAttributeVar fields make the CustomAction unique for the CopyMode
+        public static Collection<String> CopyModeUniqueIDs = new LinkedHashSet<String>();
         
         public CustomAction(String Name, String ButtonText, String WidgetSymbol){
+            this(Name,ButtonText,WidgetSymbol,Blank);
+        }
+
+        public CustomAction(String Name, String ButtonText, String WidgetSymbol, String CopyModeAttributeVar){
             this.Name = Name;
             this.ButtonText = ButtonText;
             this.WidgetSymbol = WidgetSymbol;
+            this.CopyModeAttributeVar = CopyModeAttributeVar;
             WidgetSymbols.add(WidgetSymbol);
+            CopyModeUniqueIDs.add(UniqueID(CopyModeAttributeVar,Name));
         }
         
         public void Execute(String Attribute){
@@ -595,6 +605,10 @@ public class Action {
             
             //Execute the WidgetSymbol
             Action.ExecuteWidget(WidgetSymbol);
+        }
+        
+        public static String UniqueID(String Name, String Var){
+            return Name + util.ListToken + Var;
         }
         
     }

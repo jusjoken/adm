@@ -219,8 +219,30 @@ public class CopyMode {
                 //TODO: need to find a way to determine the selected Flow
                 
             }else if (Action.CustomAction.WidgetSymbols.contains(ActionWidget)){
-                FinalType = Action.CustomMenuAction;
-                //TODO: need to get the specific Attribute value here ****
+                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
+                //CustomAction found so determine which one 
+                Boolean tFound = Boolean.FALSE;
+                for (Object Child : Children){
+                    //check only Attribute Widgets
+                    if ("Attribute".equals(sagex.api.WidgetAPI.GetWidgetType(new UIContext(sagex.api.Global.GetUIContextName()),Child))){
+                        //append the widget Value to the widget Name to lookup a unique CopyMode name
+                        String tName = sagex.api.WidgetAPI.GetWidgetName(new UIContext(sagex.api.Global.GetUIContextName()),Child);
+                        String tVar = sagex.api.WidgetAPI.GetWidgetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Child,"Value");
+                        tVar = tVar.replace("\"", "");
+                        String tCheckString = Action.CustomAction.UniqueID(tName,tVar);
+                        System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction tCheckString '" + tCheckString + "'");
+                        if (Action.CustomAction.CopyModeUniqueIDs.contains(tCheckString)){
+                            FinalAction = tVar;
+                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
+                            tFound = Boolean.TRUE;
+                            break;
+                        }
+                    }
+                }
+                if (tFound){
+                    FinalType = Action.CustomMenuAction;
+                System.out.println("ADM: cSaveCurrentMenuItemDetails: CustomAction ButtonText '" + ButtonText + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
+                }
             }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
                 FinalType = Action.StandardMenuAction;
             }else if (Action.GetActionList(Action.DiamondDefaultFlows).contains(ActionWidget)){

@@ -607,6 +607,10 @@ public class MenuNode {
     public static void SortKeyUpdate(){
         SortKeyUpdate(root());
     }
+
+    public static void SortKeyUpdate(String bParent){
+        SortKeyUpdate(MenuNodeList().get(bParent).NodeItem);
+    }
     
     @SuppressWarnings("unchecked")
     public static void SortKeyUpdate(DefaultMutableTreeNode aParent){
@@ -1170,6 +1174,7 @@ public class MenuNode {
         }
         //ensure there is 1 default item
         ValidateSubMenuDefault(sSubMenu);
+        SortKeyUpdate(sSubMenu);
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
 
