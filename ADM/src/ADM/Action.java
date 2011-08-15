@@ -578,11 +578,13 @@ public class Action {
         private String ButtonText = "";
         private String WidgetSymbol = "";
         private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
+        public static Collection<String> WidgetSymbols = new LinkedHashSet<String>();
         
         public CustomAction(String Name, String ButtonText, String WidgetSymbol){
             this.Name = Name;
             this.ButtonText = ButtonText;
             this.WidgetSymbol = WidgetSymbol;
+            WidgetSymbols.add(WidgetSymbol);
         }
         
         public void Execute(String Attribute){
