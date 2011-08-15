@@ -38,7 +38,7 @@ public class Action {
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
     public static Properties DiamondDefaultFlowsProps = new Properties();
     public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
-    public static Map<String,String>  SageCustomMenuActions = new LinkedHashMap<String,String>();
+    public static Map<String,CustomAction>  SageCustomMenuActions = new LinkedHashMap<String,CustomAction>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     private String Type = "";
@@ -106,8 +106,7 @@ public class Action {
             ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
             
             //CustomMenuAction gets all its settings from the loaded list and by parsing the attribute
-            ActionList.put(CustomMenuAction, new Action(CustomMenuAction,Boolean.FALSE,Boolean.FALSE,"Launch Custom Menu Action", "Custom Menu Action","BASE-64897"));
-            ActionList.get(CustomMenuAction).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+            ActionList.put(CustomMenuAction, new Action(CustomMenuAction,Boolean.FALSE,Boolean.FALSE,"Launch Custom Menu Action", "Custom Menu Action"));
             
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
             
@@ -242,7 +241,7 @@ public class Action {
         }else if(Type.equals(TVRecordingView)){
             return GetSageTVRecordingViewsButtonText(Attribute);
         }else if(Type.equals(CustomMenuAction)){
-            return SageCustomMenuActions.get(Attribute);
+            return SageCustomMenuActions.get(Attribute).ButtonText;
         }else if(Type.equals(DiamondDefaultFlows)){
             if (util.IsAdvancedMode()){
                 return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
@@ -274,21 +273,25 @@ public class Action {
         String tActionAttribute = MenuNode.GetMenuItemAction(MenuItemName);
         System.out.println("ADM: aExecute - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
         if (!tActionType.equals(ActionTypeDefault)){
-            //see if there are any ActionVariables that need to be evaluated
-            for (ActionVariable tActionVar : GetActionVariables(tActionType)){
-                tActionVar.EvaluateVariable(tActionAttribute);
-            }
-            //determine what to execute
-            if (tActionType.equals(LaunchExternalApplication)){
-                //launch external application
-                ExternalAction tExtApp = MenuNode.GetMenuItemActionExternal(MenuItemName);
-                tExtApp.Execute();
+            if (tActionType.equals(CustomMenuAction)){
+                SageCustomMenuActions.get(tActionAttribute).Execute(tActionAttribute);
             }else{
-                //either execute the default widget symbol or the one for the Menu Item passed in
-                if (GetWidgetSymbol(tActionType).equals(Blank)){
-                    ExecuteWidget(tActionAttribute);
+                //see if there are any ActionVariables that need to be evaluated
+                for (ActionVariable tActionVar : GetActionVariables(tActionType)){
+                    tActionVar.EvaluateVariable(tActionAttribute);
+                }
+                //determine what to execute
+                if (tActionType.equals(LaunchExternalApplication)){
+                    //launch external application
+                    ExternalAction tExtApp = MenuNode.GetMenuItemActionExternal(MenuItemName);
+                    tExtApp.Execute();
                 }else{
-                    ExecuteWidget(GetWidgetSymbol(tActionType));
+                    //either execute the default widget symbol or the one for the Menu Item passed in
+                    if (GetWidgetSymbol(tActionType).equals(Blank)){
+                        ExecuteWidget(tActionAttribute);
+                    }else{
+                        ExecuteWidget(GetWidgetSymbol(tActionType));
+                    }
                 }
             }
         }
@@ -501,10 +504,15 @@ public class Action {
     }
 
     private static void LoadSageCustomMenuActions(){
-        //put the ViewType and ButtonText into a list
-        SageCustomMenuActions.put("xInterleaved","Interleaved Schedule");
-        SageCustomMenuActions.put("xByDay","By Day Schedule");
-        SageCustomMenuActions.put("xParallel","Parallel Schedule");
+        //load custom menu actions into a list
+        SageCustomMenuActions.put("xInterleaved",new CustomAction("xInterleaved","Interleaved Schedule","BASE-64897"));
+        SageCustomMenuActions.get("xInterleaved").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+
+        SageCustomMenuActions.put("xByDay",new CustomAction("xByDay","By Day Schedule","BASE-64897"));
+        SageCustomMenuActions.get("xByDay").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
+
+        SageCustomMenuActions.put("xParallel",new CustomAction("xParallel","Parallel Schedule","BASE-64897"));
+        SageCustomMenuActions.get("xParallel").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
     }
 
     private static void LoadSageTVRecordingViews(){
