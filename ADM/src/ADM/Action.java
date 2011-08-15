@@ -105,6 +105,7 @@ public class Action {
             ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
             ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
             
+            //CustomMenuAction gets all its settings from the loaded list and by parsing the attribute
             ActionList.put(CustomMenuAction, new Action(CustomMenuAction,Boolean.FALSE,Boolean.FALSE,"Launch Custom Menu Action", "Custom Menu Action","BASE-64897"));
             ActionList.get(CustomMenuAction).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ScheduleViewFilterStyle", UseAttributeValue));
             
@@ -562,6 +563,30 @@ public class Action {
                 System.out.println("ADM: aEvaluateVariable - Setting Property = '" + this.Var + "' to '" + tVal + "'");
             }
         }
+    }
+
+    public static class CustomAction{
+        private String Name = "";
+        private String ButtonText = "";
+        private String WidgetSymbol = "";
+        private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
+        
+        public CustomAction(String Name, String ButtonText, String WidgetSymbol){
+            this.Name = Name;
+            this.ButtonText = ButtonText;
+            this.WidgetSymbol = WidgetSymbol;
+        }
+        
+        public void Execute(String Attribute){
+            //evaluate all the ActionVariables first
+            for (ActionVariable ActionVar : ActionVariables){
+                ActionVar.EvaluateVariable(Attribute);
+            }
+            
+            //Execute the WidgetSymbol
+            Action.ExecuteWidget(WidgetSymbol);
+        }
+        
     }
     
     public static class ExternalAction{
