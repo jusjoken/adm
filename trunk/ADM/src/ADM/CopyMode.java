@@ -218,6 +218,8 @@ public class CopyMode {
                 
                 //TODO: need to find a way to determine the selected Flow
                 
+            }else if (Action.CustomAction.WidgetSymbols.contains(ActionWidget)){
+                FinalType = Action.CustomMenuAction;
             }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
                 FinalType = Action.StandardMenuAction;
             }else if (Action.GetActionList(Action.DiamondDefaultFlows).contains(ActionWidget)){
