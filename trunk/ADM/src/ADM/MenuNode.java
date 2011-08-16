@@ -43,6 +43,8 @@ public class MenuNode {
     private List<String> BlockedSageUsersList = new LinkedList<String>();
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
+    private String ShowIF = "";
+    private Boolean IsCreatedNotLoaded = Boolean.FALSE;
     private Action.ExternalAction ActionExternal = null;
     public static Integer SortKeyCounter = 0;
     public static Map<String,MenuNode> InternalMenuNodeList = new LinkedHashMap<String,MenuNode>();
@@ -409,6 +411,19 @@ public class MenuNode {
         }
     }
     
+    public static Boolean GetMenuItemIsCreatedNotLoaded(String Name){
+        try {
+            return MenuNodeList().get(Name).IsCreatedNotLoaded;
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+
+    public static void SetMenuItemIsCreatedNotLoaded(String Name, Boolean Setting){
+        MenuNodeList().get(Name).IsCreatedNotLoaded = Setting;
+    }
+    
     public static Boolean GetMenuItemIsDefault(String Name){
         try {
             return MenuNodeList().get(Name).IsDefault;
@@ -562,6 +577,19 @@ public class MenuNode {
         }
     }
     
+    public static String GetMenuItemShowIF(String Name){
+        if (Name.equals(util.TopMenu)){
+            return "";
+        }else{
+            try {
+                return MenuNodeList().get(Name).ShowIF;
+            } catch (Exception e) {
+                System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                return null;
+            }
+        }
+    }
+
     public static Integer GetMenuItemSortKey(String Name){
         try {
             return MenuNodeList().get(Name).SortKey;
@@ -665,8 +693,6 @@ public class MenuNode {
             return null;
         }
     }
-
-    //TODO: need function to get menu item list EXCLUDING items with a Sage Submenu and no default action
 
     public static String GetMenuItemSubMenu(String Name){
         try {
@@ -987,7 +1013,7 @@ public class MenuNode {
                 if (!tMenuItemName.equals(util.TopMenu)){
                     PropLocation = util.SagePropertyLocation + tMenuItemName;
                     //check the hidden ShowIF property and skip if it is FALSE
-                    if (util.GetPropertyEvalAsBoolean(PropLocation + "/ShowIF", Boolean.TRUE)){
+                    if (util.GetPropertyEvalAsBoolean(PropLocation + "/ShowIF", Boolean.TRUE) || util.GetDefaultsWorkingMode()){
                         MenuNode NewMenuItem = new MenuNode(tMenuItemName);
                         NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
                         NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
@@ -1000,6 +1026,9 @@ public class MenuNode {
                         NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
                         NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
                         NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
+                        if (util.GetDefaultsWorkingMode()){
+                            NewMenuItem.ShowIF = util.GetProperty(PropLocation + "/ShowIF", util.OptionNotFound);
+                        }
                         NewMenuItem.ActionExternal.Load();
                         System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                     }else{
@@ -1159,6 +1188,9 @@ public class MenuNode {
             SaveMenuItemToSage(NewMenuItem);
             //add the Node to the Tree
             InsertNode(MenuNodeList().get(sSubMenu).NodeItem, NewMenuItem, Counter);
+            
+            //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
+            MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
 
             MenuNode.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
             MenuNode.SetMenuItemAction(tMenuItemName,vName);
@@ -1238,8 +1270,9 @@ public class MenuNode {
 
         for (String tName : MenuNodeList().keySet()){
             if (!tName.equals(util.TopMenu)){
-                //TODO: only while cleaning up Defaults - then remove this IF
-                if (!GetMenuItemActionType(tName).equals(Action.TVRecordingView)){
+                if (GetMenuItemIsCreatedNotLoaded(tName) && util.GetDefaultsWorkingMode()){
+                    //skip exporting this item as we are in DefaultsWorkingMode and this is a Created item so it should not be exported
+                }else{
                     PropLocation = util.SagePropertyLocation + tName;
                     PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
                     PropertyAdd(MenuItemProps,PropLocation + "/ActionType", GetMenuItemActionType(tName));
@@ -1252,6 +1285,10 @@ public class MenuNode {
                     PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                     PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
                     PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
+                    if (util.GetDefaultsWorkingMode() && !GetMenuItemShowIF(tName).equals(util.OptionNotFound)){
+                        //in this mode the ShowIF property get's exported so it's available to build a new defaults file
+                        PropertyAdd(MenuItemProps,PropLocation + "/ShowIF", GetMenuItemShowIF(tName));
+                    }
                     //if this is an external action then save out the external action properties
                     if (GetMenuItemActionType(tName).equals(Action.LaunchExternalApplication)){
                         GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);

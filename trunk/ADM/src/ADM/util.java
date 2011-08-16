@@ -60,6 +60,25 @@ public class util {
     public static enum TriState{YES,NO,OTHER};
 
     public static String GetListNone(){ return ListNone; }
+
+    public static Boolean GetDefaultsWorkingMode() {
+        return GetPropertyAsBoolean(SageADMSettingsPropertyLocation + "/DefaultsWorkingMode", Boolean.FALSE);
+    }
+    public static void SetDefaultsWorkingMode() {
+        Boolean tValue = !GetDefaultsWorkingMode(); 
+        SetProperty(SageADMSettingsPropertyLocation + "/DefaultsWorkingMode", tValue.toString());
+        System.out.println("ADM: uDefaultsWorkingMode - set to '" + tValue.toString() + "'");
+    }
+    
+    //ADM Hidden Features are toggled in ADM by typing 5309 on the Close button on the Options Menu in ADM Manager
+    public static Boolean GetADMHiddenFeaturesMode() {
+        return GetPropertyAsBoolean(SageADMSettingsPropertyLocation + "/ADMHiddenFeaturesMode", Boolean.FALSE);
+    }
+    public static void SetADMHiddenFeaturesMode() {
+        Boolean tValue = !GetADMHiddenFeaturesMode(); 
+        SetProperty(SageADMSettingsPropertyLocation + "/ADMHiddenFeaturesMode", tValue.toString());
+        System.out.println("ADM: uADMHiddenFeaturesMode - set to '" + tValue.toString() + "'");
+    }
     
     public static void InitADM(){
         
@@ -665,9 +684,8 @@ public class util {
     }
 
     public static String GetProperty(String Property, String DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else{
             return tValue;
@@ -675,10 +693,8 @@ public class util {
     }
     
     public static Boolean GetPropertyAsBoolean(String Property, Boolean DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            //remove the blank property and then return the default value
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else{
             return Boolean.parseBoolean(tValue);
@@ -687,10 +703,8 @@ public class util {
     
     //Evaluates the property and returns it's value - must be true or false - returns true otherwise
     public static Boolean GetPropertyEvalAsBoolean(String Property, Boolean DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            //remove the blank property and then return the default value
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else{
             return Boolean.parseBoolean(EvaluateAttribute(tValue));
@@ -698,9 +712,8 @@ public class util {
     }
     
     public static TriState GetPropertyAsTriState(String Property, TriState DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else if(tValue.equals("YES")){
             return TriState.YES;
@@ -718,19 +731,19 @@ public class util {
     }
     
     public static List<String> GetPropertyAsList(String Property){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
+            return new LinkedList<String>();
+        }else{
+            return ConvertStringtoList(tValue);
         }
-        return ConvertStringtoList(tValue);
     }
     
     public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
         //read in the Sage Property and force convert it to an Integer
         Integer tInteger = DefaultValue;
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, util.OptionNotFound);
-        if (tValue.equals(util.OptionNotFound)){
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }
         try {
@@ -744,9 +757,8 @@ public class util {
     
 
     public static String GetServerProperty(String Property, String DefaultValue){
-        String tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, OptionNotFound);
-        if (tValue.equals(OptionNotFound)){
-            RemovePropertyAndChildren(Property);
+        String tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else{
             return tValue;
