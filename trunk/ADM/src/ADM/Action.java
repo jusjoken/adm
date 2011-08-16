@@ -525,6 +525,21 @@ public class Action {
         
         SageCustomMenuActions.put("xPluginModeInstalled",new CustomAction("xPluginModeInstalled","Installed Plugins","NFLX1-1589268","PluginModeStyle"));
         SageCustomMenuActions.get("xPluginModeInstalled").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
+
+        SageCustomMenuActions.put("xItemHelpHeaderInfo",new CustomAction("xItemHelpHeaderInfo","View Menu Header Information","OPUS4A-174784","ThisItem"));
+        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
+        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
+        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"HelpAreaList", null));
+
+        SageCustomMenuActions.put("xItemHelpTVMarkers",new CustomAction("xItemHelpTVMarkers","View TV Indicators and Markers","OPUS4A-174785","ThisItem"));
+        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
+        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
+        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"HelpAreaList", null));
+
+        SageCustomMenuActions.put("xItemHelpTVCategoryColors",new CustomAction("xItemHelpTVCategoryColors","View TV Category Colors","OPUS4A-174786","ThisItem"));
+        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
+        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
+        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CategoryBGColorList", null));
     }
 
     private static void LoadSageTVRecordingViews(){
@@ -572,12 +587,12 @@ public class Action {
         }
         public void EvaluateVariable(String Attribute){
             String tVal = this.Val;
-            if (this.Val.equals(UseAttributeValue)){
+            if (this.Val!=null && this.Val.equals(UseAttributeValue)){
                 tVal = Attribute;
             }
             if (this.VarType.equals(VarTypeGlobal)){
                 sagex.api.Global.AddGlobalContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
-                System.out.println("ADM: aEvaluateVariable - Setting Static Context for = '" + this.Var + "' to '" + tVal + "'");
+                System.out.println("ADM: aEvaluateVariable - Setting Global for = '" + this.Var + "' to '" + tVal + "'");
             }else if (this.VarType.equals(VarTypeSetProp)){
                 util.SetProperty(this.Var, tVal);
                 System.out.println("ADM: aEvaluateVariable - Setting Property = '" + this.Var + "' to '" + tVal + "'");
