@@ -43,7 +43,7 @@ public class MenuNode {
     private List<String> BlockedSageUsersList = new LinkedList<String>();
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
-    private String ShowIF = "";
+    private String ShowIF = util.OptionNotFound;
     private Boolean IsCreatedNotLoaded = Boolean.FALSE;
     private Action.ExternalAction ActionExternal = null;
     public static Integer SortKeyCounter = 0;
