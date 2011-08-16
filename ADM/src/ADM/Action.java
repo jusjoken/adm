@@ -514,6 +514,17 @@ public class Action {
         SageCustomMenuActions.put("xParallel",new CustomAction("xParallel","Parallel Schedule","OPUS4A-177257","ViewFilter"));
         SageCustomMenuActions.get("xParallel").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
         
+        SageCustomMenuActions.put("xPluginModeAll",new CustomAction("xPluginModeAll","All Available Plugins","NFLX1-1589268","PluginModeStyle"));
+        SageCustomMenuActions.get("xPluginModeAll").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
+
+        SageCustomMenuActions.put("xPluginModeInstalledServer",new CustomAction("xPluginModeInstalledServer","Installed Server Plugins","NFLX1-1589268","PluginModeStyle"));
+        SageCustomMenuActions.get("xPluginModeInstalledServer").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
+        
+        SageCustomMenuActions.put("xPluginModeInstalledClient",new CustomAction("xPluginModeInstalledClient","Installed Client Plugins","NFLX1-1589268","PluginModeStyle"));
+        SageCustomMenuActions.get("xPluginModeInstalledClient").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
+        
+        SageCustomMenuActions.put("xPluginModeInstalled",new CustomAction("xPluginModeInstalled","Installed Plugins","NFLX1-1589268","PluginModeStyle"));
+        SageCustomMenuActions.get("xPluginModeInstalled").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
     }
 
     private static void LoadSageTVRecordingViews(){
