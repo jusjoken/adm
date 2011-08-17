@@ -683,6 +683,15 @@ public class util {
         return "adm" + new String(buf);
     }
 
+    public static Boolean HasProperty(String Property){
+        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
+            return Boolean.FALSE;
+        }else{
+            return Boolean.TRUE;
+        }
+    }
+    
     public static String GetProperty(String Property, String DefaultValue){
         String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
         if (tValue==null || tValue.equals(OptionNotFound)){
