@@ -31,8 +31,10 @@ import sagex.UIContext;
 public class Action {
 
     private static final String Blank = "admActionBlank";
+    private static final String SageADMCustomActionsPropertyLocation = "ADM/custom_actions";
     private static final String UseAttributeValue = "admActionUseAttributeValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
+    private static final String CustomActionListFile = "ADMCustomActions.properties";
     private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
     public static Properties StandardActionProps = new Properties();
     public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
@@ -504,7 +506,73 @@ public class Action {
     }
 
     private static void LoadSageCustomMenuActions(){
-        //load custom menu actions into a list
+        Properties CustomActionProps = new Properties();
+        String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + CustomActionListFile;
+        
+        //read the properties from the properties file
+        try {
+            FileInputStream in = new FileInputStream(CustomActionPropsPath);
+            try {
+                CustomActionProps.load(in);
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("ADM: aLoadSageCustomMenuActions: IO exception loading custom actions " + util.class.getName() + ex);
+                return;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("ADM: aLoadSageCustomMenuActions: file not found loading custom actions " + util.class.getName() + ex);
+            return;
+        }
+
+        //write all the custom actions to Sage properties as it is easier to parse them that way - delete them when done
+        if (CustomActionProps.size()>0){
+            //clean up existing Custom Actions from the SageTV properties file before writing the new ones
+            util.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
+            
+            for (String tPropertyKey : CustomActionProps.stringPropertyNames()){
+                util.SetProperty(tPropertyKey, CustomActionProps.getProperty(tPropertyKey));
+            }
+        }
+        
+        //load custom menu actions from Sage Properties
+        //find all Custom Action Name entries from the SageTV properties file
+        String[] CustomActionNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),SageADMCustomActionsPropertyLocation);
+        
+        if (CustomActionNames.length>0){
+            String PropLocation = "";
+            for (String tCustomActionName : CustomActionNames){
+                PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
+                CustomAction tAction = new CustomAction(tCustomActionName);
+                tAction.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                tAction.WidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
+                tAction.CopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
+                SageCustomMenuActions.put(tCustomActionName,tAction);
+                Integer Counter = 0;
+                Boolean Found = Boolean.TRUE;
+                do {
+                    Counter++;
+                    //first test if the current action variable is available
+                    String AVPropLocation = PropLocation + "/ActionVariables/" + Counter;
+                    if (util.HasProperty(AVPropLocation + "/VarType")){
+                        ActionVariable tVar = new ActionVariable();
+                        tVar.VarType = util.GetProperty(AVPropLocation + "/VarType", VarTypeGlobal);
+                        tVar.Var = util.GetProperty(AVPropLocation + "/Var", "");
+                        tVar.Val = util.GetProperty(AVPropLocation + "/Val", "");
+                    }else{
+                        Found = Boolean.FALSE;
+                    }
+                    
+                } while (Found);
+
+
+                
+                
+            }
+            
+            
+        }
+        
+        
         SageCustomMenuActions.put("xInterleaved",new CustomAction("xInterleaved","Interleaved Schedule","OPUS4A-177257","ViewFilter"));
         SageCustomMenuActions.get("xInterleaved").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
 
@@ -540,6 +608,9 @@ public class Action {
         SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
         SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
         SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CategoryBGColorList", null));
+        
+        //clean up existing Custom Actions from the SageTV properties file as they are no longer needed
+        util.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
     }
 
     private static void LoadSageTVRecordingViews(){
@@ -570,6 +641,9 @@ public class Action {
         private String Val = "";
         private String VarType = VarTypeGlobal;
 
+        public ActionVariable(){
+        }
+        
         public ActionVariable(String VarType, String Var, String Val ){
             this.VarType = VarType;
             this.Var = Var;
@@ -609,6 +683,10 @@ public class Action {
         public static Collection<String> WidgetSymbols = new LinkedHashSet<String>();
         //the combination of the Name and CopymodeAttributeVar fields make the CustomAction unique for the CopyMode
         public static Collection<String> CopyModeUniqueIDs = new LinkedHashSet<String>();
+        
+        public CustomAction(String Name){
+            this(Name,"","",Blank);
+        }
         
         public CustomAction(String Name, String ButtonText, String WidgetSymbol){
             this(Name,ButtonText,WidgetSymbol,Blank);
