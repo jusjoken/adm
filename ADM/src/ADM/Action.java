@@ -554,12 +554,24 @@ public class Action {
                     Counter++;
                     //first test if the current action variable is available
                     String AVPropLocation = PropLocation + "/ActionVariables/" + Counter;
-                    System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "'");
                     if (util.HasProperty(AVPropLocation + "/VarType")){
                         ActionVariable tVar = new ActionVariable();
                         tVar.VarType = util.GetProperty(AVPropLocation + "/VarType", VarTypeGlobal);
                         tVar.Var = util.GetProperty(AVPropLocation + "/Var", "");
-                        tVar.Val = util.GetProperty(AVPropLocation + "/Val", "");
+                        String ValType = util.GetProperty(AVPropLocation + "/ValType", "");
+//                        if (ValType.equals("Integer")){
+//                            tVar.Val = util.GetPropertyAsInteger(AVPropLocation + "/Val", 0).toString();
+//                        }else{
+                            String tempVal = util.GetProperty(AVPropLocation + "/Val", "");
+                            if (tempVal.equals("null")){
+                                tVar.Val = null;
+                            }else{
+                                tVar.Val = tempVal;
+                            }
+//                        }
+                        SageCustomMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
+                        
+                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
