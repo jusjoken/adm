@@ -427,7 +427,8 @@ public class Action {
         }else if(Type.equals(TVRecordingView)){
             return SageTVRecordingViews.keySet();
         }else if(Type.equals(CustomMenuAction)){
-            return SageCustomMenuActions.keySet();
+            return CustomAction.ActionListSorted.values();
+//            return SageCustomMenuActions.keySet();
         }else if(Type.equals(DiamondDefaultFlows)){
             return DiamondDefaultFlowsKeys;
         }else if(Type.equals(DiamondCustomFlows)){
@@ -510,6 +511,8 @@ public class Action {
     private static void LoadSageCustomMenuActions(){
         Properties CustomActionProps = new Properties();
         String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + CustomActionListFile;
+        //clear the list
+        SageCustomMenuActions.clear();
         
         //read the properties from the properties file
         try {
@@ -526,6 +529,8 @@ public class Action {
             return;
         }
 
+        //TODO: need to sort the list of CustomMenuActions
+        
         //write all the custom actions to Sage properties as it is easier to parse them that way - delete them when done
         if (CustomActionProps.size()>0){
             //clean up existing Custom Actions from the SageTV properties file before writing the new ones
@@ -545,8 +550,8 @@ public class Action {
             for (String tCustomActionName : CustomActionNames){
                 System.out.println("ADM: aLoadSageCustomMenuActions: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
-                CustomAction tAction = new CustomAction(tCustomActionName);
-                tAction.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                CustomAction tAction = new CustomAction(tCustomActionName,util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault));
+                //tAction.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
                 tAction.WidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
                 tAction.CopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
                 SageCustomMenuActions.put(tCustomActionName,tAction);
@@ -696,11 +701,14 @@ public class Action {
         public static Collection<String> WidgetSymbols = new LinkedHashSet<String>();
         //the combination of the Name and CopymodeAttributeVar fields make the CustomAction unique for the CopyMode
         public static Collection<String> CopyModeUniqueIDs = new LinkedHashSet<String>();
+        //need a list of keys that are sorted by the ButtonText
+        public static SortedMap<String,String> ActionListSorted = new TreeMap<String,String>();
+
         
-        public CustomAction(String Name){
-            this(Name,"","",Blank);
+        public CustomAction(String Name, String ButtonText){
+            this(Name,ButtonText,"",Blank);
         }
-        
+
         public CustomAction(String Name, String ButtonText, String WidgetSymbol){
             this(Name,ButtonText,WidgetSymbol,Blank);
         }
@@ -712,6 +720,7 @@ public class Action {
             this.CopyModeAttributeVar = CopyModeAttributeVar;
             WidgetSymbols.add(WidgetSymbol);
             CopyModeUniqueIDs.add(UniqueID(CopyModeAttributeVar,Name));
+            ActionListSorted.put(this.ButtonText, Name);
         }
         
         public void Execute(String Attribute){
