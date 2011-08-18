@@ -31,8 +31,9 @@ import sagex.UIContext;
 public class Action {
 
     private static final String Blank = "admActionBlank";
+    private static final String VarNull = "VarNull";
     private static final String SageADMCustomActionsPropertyLocation = "ADM/custom_actions";
-    private static final String UseAttributeValue = "admActionUseAttributeValue";
+    private static final String UseAttributeValue = "UseAttributeValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String CustomActionListFile = "ADMCustomActions.properties";
     private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
@@ -52,6 +53,7 @@ public class Action {
     private ActionVariable EvalExpression = BlankActionVariable;
     private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
     private static final String VarTypeGlobal = "VarTypeGlobal";
+    private static final String VarTypeStatic = "VarTypeStatic";
     private static final String VarTypeSetProp = "VarTypeSetProp";
     private Boolean AdvancedOnly = Boolean.FALSE;
     private Boolean DiamondOnly = Boolean.FALSE;
@@ -571,7 +573,7 @@ public class Action {
 //                        }
                         SageCustomMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
                         
-                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
+                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -669,16 +671,19 @@ public class Action {
         }
         public void EvaluateVariable(String Attribute){
             String tVal = this.Val;
-            if (this.Val!=null && this.Val.equals(UseAttributeValue)){
+            if (this.Val.equals(UseAttributeValue)){
                 tVal = Attribute;
+            }else if (this.Val.equals(VarNull)){
+                tVal = null;
             }
             if (this.VarType.equals(VarTypeGlobal)){
                 sagex.api.Global.AddGlobalContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
-                System.out.println("ADM: aEvaluateVariable - Setting Global for = '" + this.Var + "' to '" + tVal + "'");
+            }else if (this.VarType.equals(VarTypeStatic)){
+                sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
             }else if (this.VarType.equals(VarTypeSetProp)){
                 util.SetProperty(this.Var, tVal);
-                System.out.println("ADM: aEvaluateVariable - Setting Property = '" + this.Var + "' to '" + tVal + "'");
             }
+            System.out.println("ADM: aEvaluateVariable - Type '" + this.VarType + "' setting '" + this.Var + "' to '" + tVal + "' for Attribute '" + Attribute + "' original Val ='" + this.Val + "'");
         }
     }
 
