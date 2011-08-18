@@ -342,6 +342,14 @@ public class MenuNode {
         }
     }
 
+    public static List<String> GetMenuItemBlockedSageUsersListAsList(String Name){
+        try {
+            return MenuNodeList().get(Name).BlockedSageUsersList;
+        } catch (Exception e) {
+            return new LinkedList<String>();
+        }
+    }
+    
     public static String GetMenuItemBlockedSageUsersList(String Name){
         try {
             return util.ConvertListtoString(MenuNodeList().get(Name).BlockedSageUsersList);
@@ -1281,10 +1289,16 @@ public class MenuNode {
                     PropertyAdd(MenuItemProps,PropLocation + "/Name", tName);
                     PropertyAdd(MenuItemProps,PropLocation + "/Parent", GetMenuItemParent(tName));
                     PropertyAdd(MenuItemProps,PropLocation + "/SortKey", GetMenuItemSortKey(tName).toString());
-                    PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
+                    if (GetMenuItemSubMenu(tName)==null){
+                        //do nothing for null
+                    }else if (!GetMenuItemSubMenu(tName).equals(tName)){
+                        PropertyAdd(MenuItemProps,PropLocation + "/SubMenu", GetMenuItemSubMenu(tName));
+                    }
                     PropertyAdd(MenuItemProps,PropLocation + "/IsDefault", GetMenuItemIsDefault(tName).toString());
                     PropertyAdd(MenuItemProps,PropLocation + "/IsActive", GetMenuItemIsActive(tName).toString());
-                    PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
+                    if (GetMenuItemBlockedSageUsersListAsList(tName).size()>0){
+                        PropertyAdd(MenuItemProps,PropLocation + "/BlockedSageUsersList", GetMenuItemBlockedSageUsersList(tName));
+                    }
                     if (util.GetDefaultsWorkingMode() && !GetMenuItemShowIF(tName).equals(util.OptionNotFound)){
                         //in this mode the ShowIF property get's exported so it's available to build a new defaults file
                         PropertyAdd(MenuItemProps,PropLocation + "/ShowIF", GetMenuItemShowIF(tName));
