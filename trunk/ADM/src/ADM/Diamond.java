@@ -69,7 +69,16 @@ public class Diamond {
         }
         return Boolean.FALSE;
     }
-  
+
+    public static Boolean UseDiamondMovies(){
+        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
+        if (util.GetPropertyAsBoolean(DiamondVideoMenuCheckProp, Boolean.FALSE)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
     public static Boolean ShowWidgetswithQLM(){
         //ensure Diamond is installed and enabled
         if (!IsDiamond()){
@@ -148,7 +157,6 @@ public class Diamond {
             this.Default = Default;
             ListSorted.put(this.ButtonText, this.WidgetSymbol);
         }
-        
     }
     
 }

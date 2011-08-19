@@ -111,6 +111,7 @@ public class util {
             SageSubMenusLevel2Keys.add(ListNone);
 
             //clean up existing focus items
+            ClearFocusStorage();
             RemovePropertyAndChildren(SageFocusPropertyLocation);
         
             //generate symbols to be used for new MenuItem names
@@ -129,6 +130,11 @@ public class util {
         System.out.println("ADM: uInitADM - UI level initialization complete.");
            
 
+    }
+    
+    public static void ClearFocusStorage(){
+            //clean up existing focus items
+            RemovePropertyAndChildren(SageFocusPropertyLocation);
     }
     
     public static void ClearAll(){

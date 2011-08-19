@@ -1160,30 +1160,13 @@ public class MenuNode {
     public static void LoadMenuItemDefaults(){
         //load default MenuItems from one or more default .properties file
         String DefaultPropFile = "ADMDefault.properties";
-        String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
         String DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFile;
-        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
-        String DiamondMenuMovies = "admDiamondMovies";
         
-        
-        // check to see if the Diamond Plugin is installed
-        if (Diamond.IsDiamond()){
-            //DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
-        }
         ImportMenuItems(DefaultsFullPath);
+        util.ClearFocusStorage();
         
         //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
         if (Diamond.IsDiamond()){
-            //admSageTVVideos
-            if ("true".equals(util.GetProperty(DiamondVideoMenuCheckProp, "false"))){
-                //show the Videos Menu
-                //SetMenuItemIsActive(DiamondMenuMovies, util.TriState.YES);
-                //SetMenuItemIsActive(DiamondMenuVideos, util.TriState.NO);
-            }else{
-                //show the Movies Menu
-                //SetMenuItemIsActive(DiamondMenuMovies, util.TriState.NO);
-                //SetMenuItemIsActive(DiamondMenuVideos, util.TriState.YES);
-            }
         }
         //now build any dynamic submenus
         System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
@@ -1208,10 +1191,27 @@ public class MenuNode {
         if (Diamond.IsDiamond()){
             String SageTVMenuVideos = "admSageTVVideos";
             String NewMenuItemName = "";
-            for (Diamond.DefaultFlow vFlow: Diamond.DiamondDefaultFlows.values()){
-                NewMenuItemName = CreateDynamicMenuItem(vFlow.WidgetSymbol, SageTVMenuVideos, Action.DiamondDefaultFlows, vFlow.SortOrder);
-                if (vFlow.Default){
-                    SetMenuItemIsDefault(NewMenuItemName, Boolean.TRUE);
+            if (Diamond.UseDiamondMovies()){
+                //force the Parent Name to be Movies
+                SetMenuItemButtonText(SageTVMenuVideos, "Movies");
+                Counter = 0;
+                String FirstItem = "";
+                for (String vFlow: Diamond.GetCustomViews()){
+                    NewMenuItemName = CreateDynamicMenuItem(vFlow, SageTVMenuVideos, Action.DiamondCustomFlows, Counter);
+                    if (Counter==0){
+                        FirstItem = NewMenuItemName;
+                    }
+                    Counter++;
+                }
+                SetMenuItemIsDefault(FirstItem, Boolean.TRUE);
+            }else{
+                //force the Parent Name to be Videos
+                SetMenuItemButtonText(SageTVMenuVideos, "Videos");
+                for (Diamond.DefaultFlow vFlow: Diamond.DiamondDefaultFlows.values()){
+                    NewMenuItemName = CreateDynamicMenuItem(vFlow.WidgetSymbol, SageTVMenuVideos, Action.DiamondDefaultFlows, vFlow.SortOrder);
+                    if (vFlow.Default){
+                        SetMenuItemIsDefault(NewMenuItemName, Boolean.TRUE);
+                    }
                 }
             }
             ValidateSubMenuDefault(SageTVMenuVideos);
