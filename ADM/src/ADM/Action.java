@@ -36,9 +36,6 @@ public class Action {
     private static final String UseAttributeValue = "UseAttributeValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String CustomActionListFile = "ADMCustomActions.properties";
-//    private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
-//    public static Properties DiamondDefaultFlowsProps = new Properties();
-//    public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
     public static Map<String,CustomAction> SageMenuActions = new LinkedHashMap<String,CustomAction>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
@@ -56,7 +53,6 @@ public class Action {
     private Boolean AdvancedOnly = Boolean.FALSE;
     private Boolean DiamondOnly = Boolean.FALSE;
     private static Map<String,Action> ActionList = new LinkedHashMap<String,Action>();
-    public static Boolean InitComplete = Boolean.FALSE;
     public static final String WidgetbySymbol = "ExecuteWidget";
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
     public static final String StandardMenuAction = "ExecuteStandardMenuAction";
@@ -89,72 +85,67 @@ public class Action {
     }
     
     public static void Init(){
-        //if (!InitComplete){
-            //Clear existing Actions if any
-            ActionList.clear();
-            //Create the Actions for ADM to use
-            ActionList.put(ActionTypeDefault, new Action(ActionTypeDefault,Boolean.FALSE,Boolean.FALSE,"None"));
-            
-            ActionList.put(WidgetbySymbol, new Action(WidgetbySymbol,Boolean.FALSE,Boolean.TRUE,"Execute Widget by Symbol", "Action"));
-            
-            ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637"));
-            ActionList.get(BrowseVideoFolder).ActionVariables.add(new ActionVariable(VarTypeGlobal,"gCurrentVideoBrowserFolder", UseAttributeValue));
-            
+        //Clear existing Actions if any
+        ActionList.clear();
+        //Create the Actions for ADM to use
+        ActionList.put(ActionTypeDefault, new Action(ActionTypeDefault,Boolean.FALSE,Boolean.FALSE,"None"));
 
-            ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
-            
-            ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
-            ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
-            
-            ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
-            
-            ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
-            ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
-            
-            ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
-            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
-            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xLocal"));
-            ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/local", UseAttributeValue));
+        ActionList.put(WidgetbySymbol, new Action(WidgetbySymbol,Boolean.FALSE,Boolean.TRUE,"Execute Widget by Symbol", "Action"));
 
-            ActionList.put(BrowseFileFolderServer, new Action(BrowseFileFolderServer,Boolean.FALSE,Boolean.FALSE,"File Browser: Server","Server File Path","BASE-51703"));
-            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
-            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xServer"));
-            ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/server", UseAttributeValue));
+        ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637"));
+        ActionList.get(BrowseVideoFolder).ActionVariables.add(new ActionVariable(VarTypeGlobal,"gCurrentVideoBrowserFolder", UseAttributeValue));
 
-            ActionList.put(BrowseFileFolderImports, new Action(BrowseFileFolderImports,Boolean.FALSE,Boolean.FALSE,"File Browser: Imports","Imports File Path","BASE-51703"));
-            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
-            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xImports"));
-            ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/imports", UseAttributeValue));
 
-            ActionList.put(BrowseFileFolderRecDir, new Action(BrowseFileFolderRecDir,Boolean.FALSE,Boolean.FALSE,"File Browser: Recordings","Recording File Path","BASE-51703"));
-            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
-            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xRecDirs"));
-            ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/rec_dirs", UseAttributeValue));
+        ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
 
-            ActionList.put(BrowseFileFolderNetwork, new Action(BrowseFileFolderNetwork,Boolean.FALSE,Boolean.FALSE,"File Browser: Network","Network File Path","BASE-51703"));
-            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
-            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xNetwork"));
-            ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/network", UseAttributeValue));
+        ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
+        ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
 
-            ActionList.put(LaunchExternalApplication, new Action(LaunchExternalApplication,Boolean.FALSE,Boolean.FALSE,"Launch External Application", "Application Settings"));
+        ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
 
-            //also load the actions lists - only needs loaded at startup
-            //clear the lists
-            SageMenuActions.clear();
-            CustomAction.ActionListSorted.clear();
-            CustomAction.CopyModeUniqueIDs.clear();
-            CustomAction.WidgetSymbols.clear();
-        
-            LoadStandardActionList();
-            LoadSageCustomMenuActions();
+        ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
+        ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
 
-            //LoadDiamondDefaultFlowsList();
-            Diamond.LoadDiamondDefaultFlows();
+        ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
+        ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+        ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xLocal"));
+        ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/local", UseAttributeValue));
 
-            LoadSageTVRecordingViews();
-            
-            InitComplete = Boolean.TRUE;
-        //}
+        ActionList.put(BrowseFileFolderServer, new Action(BrowseFileFolderServer,Boolean.FALSE,Boolean.FALSE,"File Browser: Server","Server File Path","BASE-51703"));
+        ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+        ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xServer"));
+        ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/server", UseAttributeValue));
+
+        ActionList.put(BrowseFileFolderImports, new Action(BrowseFileFolderImports,Boolean.FALSE,Boolean.FALSE,"File Browser: Imports","Imports File Path","BASE-51703"));
+        ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+        ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xImports"));
+        ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/imports", UseAttributeValue));
+
+        ActionList.put(BrowseFileFolderRecDir, new Action(BrowseFileFolderRecDir,Boolean.FALSE,Boolean.FALSE,"File Browser: Recordings","Recording File Path","BASE-51703"));
+        ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+        ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xRecDirs"));
+        ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/rec_dirs", UseAttributeValue));
+
+        ActionList.put(BrowseFileFolderNetwork, new Action(BrowseFileFolderNetwork,Boolean.FALSE,Boolean.FALSE,"File Browser: Network","Network File Path","BASE-51703"));
+        ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
+        ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xNetwork"));
+        ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/network", UseAttributeValue));
+
+        ActionList.put(LaunchExternalApplication, new Action(LaunchExternalApplication,Boolean.FALSE,Boolean.FALSE,"Launch External Application", "Application Settings"));
+
+        //also load the actions lists - only needs loaded at startup
+        //clear the lists
+        SageMenuActions.clear();
+        CustomAction.ActionListSorted.clear();
+        CustomAction.CopyModeUniqueIDs.clear();
+        CustomAction.WidgetSymbols.clear();
+
+        LoadStandardActionList();
+        LoadSageCustomMenuActions();
+
+        Diamond.LoadDiamondDefaultFlows();
+
+        LoadSageTVRecordingViews();
     }
     
     public static String GetWidgetbySymbol(){ return WidgetbySymbol; }
@@ -424,7 +415,6 @@ public class Action {
         //TODO: build a AllActions list to provide a search or full list to select from.
         if (Type.equals(StandardMenuAction)){
             return CustomAction.ActionListSorted.values();
-//            return StandardActionKeys;
         }else if(Type.equals(TVRecordingView)){
             return SageTVRecordingViews.keySet();
         }else if(Type.equals(DiamondDefaultFlows)){
