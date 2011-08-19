@@ -36,12 +36,10 @@ public class Action {
     private static final String UseAttributeValue = "UseAttributeValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String CustomActionListFile = "ADMCustomActions.properties";
-    private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
-    public static Properties StandardActionProps = new Properties();
-    public static Collection<String> StandardActionKeys = new LinkedHashSet<String>();
-    public static Properties DiamondDefaultFlowsProps = new Properties();
-    public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
-    public static Map<String,CustomAction>  SageCustomMenuActions = new LinkedHashMap<String,CustomAction>();
+//    private static final String DiamondDefaultFlowsListFile = "ADMDiamondDefaultFlows.properties";
+//    public static Properties DiamondDefaultFlowsProps = new Properties();
+//    public static Collection<String> DiamondDefaultFlowsKeys = new LinkedHashSet<String>();
+    public static Map<String,CustomAction> SageMenuActions = new LinkedHashMap<String,CustomAction>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     private String Type = "";
@@ -63,7 +61,6 @@ public class Action {
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
     public static final String StandardMenuAction = "ExecuteStandardMenuAction";
     public static final String TVRecordingView = "ExecuteTVRecordingView";
-    public static final String CustomMenuAction = "ExecuteCustomMenuAction";
     public static final String DiamondDefaultFlows = "ExecuteDiamondDefaultFlow";
     public static final String DiamondCustomFlows = "ExecuteDiamondCustomFlow";
     public static final String BrowseFileFolderLocal = "ExecuteBrowseFileFolderLocal";
@@ -109,9 +106,6 @@ public class Action {
             ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
             ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
             
-            //CustomMenuAction gets all its settings from the loaded list and by parsing the attribute
-            ActionList.put(CustomMenuAction, new Action(CustomMenuAction,Boolean.FALSE,Boolean.FALSE,"Launch Custom Menu Action", "Custom Menu Action"));
-            
             ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
             
             ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
@@ -145,10 +139,18 @@ public class Action {
             ActionList.put(LaunchExternalApplication, new Action(LaunchExternalApplication,Boolean.FALSE,Boolean.FALSE,"Launch External Application", "Application Settings"));
 
             //also load the actions lists - only needs loaded at startup
+            //clear the lists
+            SageMenuActions.clear();
+            CustomAction.ActionListSorted.clear();
+            CustomAction.CopyModeUniqueIDs.clear();
+            CustomAction.WidgetSymbols.clear();
+        
             LoadStandardActionList();
-            LoadDiamondDefaultFlowsList();
-
             LoadSageCustomMenuActions();
+
+            //LoadDiamondDefaultFlowsList();
+            Diamond.LoadDiamondDefaultFlows();
+
             LoadSageTVRecordingViews();
             
             InitComplete = Boolean.TRUE;
@@ -159,7 +161,6 @@ public class Action {
     public static String GetBrowseVideoFolder(){ return BrowseVideoFolder; }
     public static String GetStandardMenuAction(){ return StandardMenuAction; }
     public static String GetTVRecordingView(){ return TVRecordingView; }
-    public static String GetCustomMenuAction(){ return CustomMenuAction; }
     public static String GetDiamondCustomFlows(){ return DiamondCustomFlows; }
     public static String GetDiamondDefaultFlows(){ return DiamondDefaultFlows; }
     public static String GetBrowseFileFolderLocal(){ return BrowseFileFolderLocal; }
@@ -227,12 +228,16 @@ public class Action {
     }
     
     public static String GetAttributeButtonText(String Type, String Attribute){
+        return GetAttributeButtonText(Type, Attribute, Boolean.FALSE);
+    }
+    
+    public static String GetAttributeButtonText(String Type, String Attribute, Boolean IgnoreAdvanced){
         if (Type.equals(StandardMenuAction)){
             //determine if using Advanced options
-            if (util.IsAdvancedMode()){
-                return StandardActionProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
+            if (util.IsAdvancedMode() && !IgnoreAdvanced){
+                return SageMenuActions.get(Attribute).ButtonText + " (" + Attribute + ")";
             }else{
-                return StandardActionProps.getProperty(Attribute, util.OptionNotFound);
+                return SageMenuActions.get(Attribute).ButtonText;
             }
         }else if(Type.equals(WidgetbySymbol)){
             return Attribute + " - " + GetWidgetName(Attribute);
@@ -244,13 +249,11 @@ public class Action {
             }
         }else if(Type.equals(TVRecordingView)){
             return GetSageTVRecordingViewsButtonText(Attribute);
-        }else if(Type.equals(CustomMenuAction)){
-            return SageCustomMenuActions.get(Attribute).ButtonText;
         }else if(Type.equals(DiamondDefaultFlows)){
-            if (util.IsAdvancedMode()){
-                return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound) + " (" + Attribute + ")";
+            if (util.IsAdvancedMode() && !IgnoreAdvanced){
+                return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText + " (" + Attribute + ")";
             }else{
-                return DiamondDefaultFlowsProps.getProperty(Attribute, util.OptionNotFound);
+                return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText;
             }
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
@@ -277,8 +280,8 @@ public class Action {
         String tActionAttribute = MenuNode.GetMenuItemAction(MenuItemName);
         System.out.println("ADM: aExecute - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
         if (!tActionType.equals(ActionTypeDefault)){
-            if (tActionType.equals(CustomMenuAction)){
-                SageCustomMenuActions.get(tActionAttribute).Execute(tActionAttribute);
+            if (tActionType.equals(StandardMenuAction)){
+                SageMenuActions.get(tActionAttribute).Execute(tActionAttribute);
             }else{
                 //see if there are any ActionVariables that need to be evaluated
                 for (ActionVariable tActionVar : GetActionVariables(tActionType)){
@@ -351,45 +354,46 @@ public class Action {
                
     }
     
-    public static void LoadDiamondDefaultFlowsList(){
-        String DiamondDefaultFlowsPropsPath = util.GetADMDefaultsLocation() + File.separator + DiamondDefaultFlowsListFile;
-        DiamondDefaultFlowsKeys.clear();
-        
-        //read the properties from the properties file
-        try {
-            FileInputStream in = new FileInputStream(DiamondDefaultFlowsPropsPath);
-            try {
-                DiamondDefaultFlowsProps.load(in);
-                in.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: aLoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
-                return;
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: aLoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
-            return;
-        }
-
-        //sort the keys into value order
-        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
-
-        //Add all the Values to a sorted list
-        for (String ActionItem : DiamondDefaultFlowsProps.stringPropertyNames()){
-            ActionValuesList.put(DiamondDefaultFlowsProps.getProperty(ActionItem),ActionItem);
-        }
-
-        //build a list of keys in the order of the values
-        for (String ActionValue : ActionValuesList.keySet()){
-            DiamondDefaultFlowsKeys.add(ActionValuesList.get(ActionValue));
-        }
-        
-        System.out.println("ADM: aLoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
-        return;
-    }
-
+//    public static void LoadDiamondDefaultFlowsList(){
+//        String DiamondDefaultFlowsPropsPath = util.GetADMDefaultsLocation() + File.separator + DiamondDefaultFlowsListFile;
+//        DiamondDefaultFlowsKeys.clear()
+//        
+//        //read the properties from the properties file
+//        try {
+//            FileInputStream in = new FileInputStream(DiamondDefaultFlowsPropsPath);
+//            try {
+//                DiamondDefaultFlowsProps.load(in);
+//                in.close();
+//            } catch (IOException ex) {
+//                System.out.println("ADM: aLoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
+//                return;
+//            }
+//        } catch (FileNotFoundException ex) {
+//            System.out.println("ADM: aLoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
+//            return;
+//        }
+//
+//        //sort the keys into value order
+//        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
+//
+//        //Add all the Values to a sorted list
+//        for (String ActionItem : DiamondDefaultFlowsProps.stringPropertyNames()){
+//            System.out.println("ADM: aLoadDiamondDefaultFlowsList: Item = '" + ActionItem + "'");
+//            ActionValuesList.put(DiamondDefaultFlowsProps.getProperty(ActionItem),ActionItem);
+//        }
+//
+//        //build a list of keys in the order of the values
+//        for (String ActionValue : ActionValuesList.keySet()){
+//            DiamondDefaultFlowsKeys.add(ActionValuesList.get(ActionValue));
+//        }
+//        
+//        System.out.println("ADM: aLoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
+//        return;
+//    }
+//
     public static void LoadStandardActionList(){
+        Properties StandardActionProps = new Properties();
         String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
-        StandardActionKeys.clear();
         
         //read the properties from the properties file
         try {
@@ -406,19 +410,12 @@ public class Action {
             return;
         }
 
-        //sort the keys into value order
-        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
-
-        //Add all the Values to a sorted list
+        //Add all the Actions as Custom Actions
         for (String ActionItem : StandardActionProps.stringPropertyNames()){
-            ActionValuesList.put(StandardActionProps.getProperty(ActionItem),ActionItem);
+            CustomAction tAction = new CustomAction(ActionItem, StandardActionProps.getProperty(ActionItem),ActionItem);
+            SageMenuActions.put(ActionItem, tAction);
         }
 
-        //build a list of keys in the order of the values
-        for (String ActionValue : ActionValuesList.keySet()){
-            StandardActionKeys.add(ActionValuesList.get(ActionValue));
-        }
-        
         System.out.println("ADM: aLoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
         return;
     }
@@ -426,14 +423,12 @@ public class Action {
     public static Collection<String> GetActionList(String Type){
         //TODO: build a AllActions list to provide a search or full list to select from.
         if (Type.equals(StandardMenuAction)){
-            return StandardActionKeys;
+            return CustomAction.ActionListSorted.values();
+//            return StandardActionKeys;
         }else if(Type.equals(TVRecordingView)){
             return SageTVRecordingViews.keySet();
-        }else if(Type.equals(CustomMenuAction)){
-            return CustomAction.ActionListSorted.values();
-//            return SageCustomMenuActions.keySet();
         }else if(Type.equals(DiamondDefaultFlows)){
-            return DiamondDefaultFlowsKeys;
+            return Diamond.DefaultFlow.ListSorted.values();
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetCustomViews();
         }else{
@@ -445,8 +440,6 @@ public class Action {
         if (Type.equals(StandardMenuAction)){
             return Boolean.TRUE;
         }else if(Type.equals(TVRecordingView)){
-            return Boolean.TRUE;
-        }else if(Type.equals(CustomMenuAction)){
             return Boolean.TRUE;
         }else if(Type.equals(DiamondDefaultFlows)){
             return Boolean.TRUE;
@@ -514,12 +507,6 @@ public class Action {
     private static void LoadSageCustomMenuActions(){
         Properties CustomActionProps = new Properties();
         String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + CustomActionListFile;
-        //clear the list
-        SageCustomMenuActions.clear();
-        CustomAction.ActionListSorted.clear();
-        CustomAction.CopyModeUniqueIDs.clear();
-        CustomAction.WidgetSymbols.clear();
-        
         //read the properties from the properties file
         try {
             FileInputStream in = new FileInputStream(CustomActionPropsPath);
@@ -535,8 +522,6 @@ public class Action {
             return;
         }
 
-        //TODO: need to sort the list of CustomMenuActions
-        
         //write all the custom actions to Sage properties as it is easier to parse them that way - delete them when done
         if (CustomActionProps.size()>0){
             //clean up existing Custom Actions from the SageTV properties file before writing the new ones
@@ -556,11 +541,11 @@ public class Action {
             for (String tCustomActionName : CustomActionNames){
                 System.out.println("ADM: aLoadSageCustomMenuActions: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
-                CustomAction tAction = new CustomAction(tCustomActionName,util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault));
-                //tAction.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
-                tAction.WidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
-                tAction.CopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
-                SageCustomMenuActions.put(tCustomActionName,tAction);
+                String tButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                String tWidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
+                String tCopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
+                CustomAction tAction = new CustomAction(tCustomActionName,tButtonText, tWidgetSymbol, tCopyModeAttributeVar);
+                SageMenuActions.put(tCustomActionName,tAction);
                 Integer Counter = 0;
                 Boolean Found = Boolean.TRUE;
                 do {
@@ -571,20 +556,8 @@ public class Action {
                         ActionVariable tVar = new ActionVariable();
                         tVar.VarType = util.GetProperty(AVPropLocation + "/VarType", VarTypeGlobal);
                         tVar.Var = util.GetProperty(AVPropLocation + "/Var", "");
-                        String ValType = util.GetProperty(AVPropLocation + "/ValType", "");
-                        //TODO: get rid of the Integer lines in the customActions file
-//                        if (ValType.equals("Integer")){
-//                            tVar.Val = util.GetPropertyAsInteger(AVPropLocation + "/Val", 0).toString();
-//                        }else{
-                            String tempVal = util.GetProperty(AVPropLocation + "/Val", "");
-                            if (tempVal.equals("null")){
-                                tVar.Val = null;
-                            }else{
-                                tVar.Val = tempVal;
-                            }
-//                        }
-                        SageCustomMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
-                        
+                        tVar.Val = util.GetProperty(AVPropLocation + "/Val", "");
+                        SageMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
                         System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
                     }else{
                         Found = Boolean.FALSE;
@@ -595,7 +568,7 @@ public class Action {
         
         //clean up existing Custom Actions from the SageTV properties file as they are no longer needed
         util.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
-        System.out.println("ADM: aLoadSageCustomMenuActions: completed loading '" + SageCustomMenuActions.size() + "' Custom Menu Actions");
+        System.out.println("ADM: aLoadSageCustomMenuActions: completed loading '" + SageMenuActions.size() + "' Custom Menu Actions");
     }
 
     private static void LoadSageTVRecordingViews(){
@@ -676,10 +649,10 @@ public class Action {
         public static SortedMap<String,String> ActionListSorted = new TreeMap<String,String>();
 
         
-        public CustomAction(String Name, String ButtonText){
-            this(Name,ButtonText,"",Blank);
-        }
-
+//        public CustomAction(String Name, String ButtonText){
+//            this(Name,ButtonText,"",Blank);
+//        }
+//
         public CustomAction(String Name, String ButtonText, String WidgetSymbol){
             this(Name,ButtonText,WidgetSymbol,Blank);
         }
@@ -689,7 +662,11 @@ public class Action {
             this.ButtonText = ButtonText;
             this.WidgetSymbol = WidgetSymbol;
             this.CopyModeAttributeVar = CopyModeAttributeVar;
-            WidgetSymbols.add(WidgetSymbol);
+            //WidgetSymbols list is used for the copymode function to further refine the item to be copied
+            //therefore it is not populated for items that do not have a CopyModeAttributeVar
+            if (!CopyModeAttributeVar.equals(Blank)){
+                WidgetSymbols.add(WidgetSymbol);
+            }
             CopyModeUniqueIDs.add(UniqueID(CopyModeAttributeVar,Name));
             ActionListSorted.put(this.ButtonText, Name);
         }

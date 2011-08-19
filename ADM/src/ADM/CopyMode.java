@@ -237,7 +237,7 @@ public class CopyMode {
                     }
                 }
                 if (tFound){
-                    FinalType = Action.CustomMenuAction;
+                    FinalType = Action.StandardMenuAction;
                 }
             }else if (Action.GetActionList(Action.StandardMenuAction).contains(ActionWidget)){
                 FinalType = Action.StandardMenuAction;

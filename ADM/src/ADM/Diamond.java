@@ -6,6 +6,10 @@ package ADM;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import sagex.UIContext;
 
 /**
@@ -17,6 +21,7 @@ public class Diamond {
     //class functions copied from diamond 3.30 release to support diamond Menu Customization
 
     public static final String PropName="JOrton/CustomViews";
+    public static Map<String,Diamond.DefaultFlow> DiamondDefaultFlows = new LinkedHashMap<String,Diamond.DefaultFlow>();
 
 //    public static Object GetCustomViews(){
 //        String views=util.GetProperty(PropName,"");
@@ -114,6 +119,36 @@ public class Diamond {
     //Use the diamond widget width property and return it for the panel width
     public static Double DiamondWidgetsPanelWidth(){
         return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
+    }
+
+    public static void LoadDiamondDefaultFlows(){
+        DiamondDefaultFlows.clear();
+        DiamondDefaultFlows.put("LCKOF-346154", new DefaultFlow("Wall Flow", "LCKOF-346154", 0,Boolean.TRUE));
+        DiamondDefaultFlows.put("LCKOF-346153", new DefaultFlow("Cover Flow", "LCKOF-346153", 1));
+        DiamondDefaultFlows.put("LCKOF-346152", new DefaultFlow("List Flow", "LCKOF-346152", 2));
+        DiamondDefaultFlows.put("PLUCKYHD-1486084", new DefaultFlow("SideWays Flow", "PLUCKYHD-1486084", 3));
+        DiamondDefaultFlows.put("AOSCS-186340", new DefaultFlow("Category Flow", "AOSCS-186340", 4));
+        DiamondDefaultFlows.put("LCKOF-392395", new DefaultFlow("360 Flow", "LCKOF-392395", 5));
+    }
+    
+    public static class DefaultFlow{
+        public String ButtonText = "";
+        public String WidgetSymbol = "";
+        public Integer SortOrder = 0;
+        public Boolean Default = Boolean.FALSE;
+        public static SortedMap<String,String> ListSorted = new TreeMap<String,String>();
+        
+        public DefaultFlow(String ButtonText, String WidgetSymbol, Integer SortOrder){
+            this(ButtonText, WidgetSymbol, SortOrder, Boolean.FALSE);
+        }
+        public DefaultFlow(String ButtonText, String WidgetSymbol, Integer SortOrder, Boolean Default){
+            this.ButtonText = ButtonText;
+            this.WidgetSymbol = WidgetSymbol;
+            this.SortOrder = SortOrder;
+            this.Default = Default;
+            ListSorted.put(this.ButtonText, this.WidgetSymbol);
+        }
+        
     }
     
 }

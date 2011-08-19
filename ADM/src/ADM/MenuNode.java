@@ -1163,13 +1163,12 @@ public class MenuNode {
         String DefaultPropFileDiamond = "ADMDefaultDiamond.properties";
         String DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFile;
         String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
-        String DiamondMenuVideos = "admSageTVVideos";
         String DiamondMenuMovies = "admDiamondMovies";
         
         
         // check to see if the Diamond Plugin is installed
         if (Diamond.IsDiamond()){
-            DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
+            //DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFileDiamond;
         }
         ImportMenuItems(DefaultsFullPath);
         
@@ -1178,39 +1177,24 @@ public class MenuNode {
             //admSageTVVideos
             if ("true".equals(util.GetProperty(DiamondVideoMenuCheckProp, "false"))){
                 //show the Videos Menu
-                SetMenuItemIsActive(DiamondMenuMovies, util.TriState.YES);
-                SetMenuItemIsActive(DiamondMenuVideos, util.TriState.NO);
+                //SetMenuItemIsActive(DiamondMenuMovies, util.TriState.YES);
+                //SetMenuItemIsActive(DiamondMenuVideos, util.TriState.NO);
             }else{
                 //show the Movies Menu
-                SetMenuItemIsActive(DiamondMenuMovies, util.TriState.NO);
-                SetMenuItemIsActive(DiamondMenuVideos, util.TriState.YES);
+                //SetMenuItemIsActive(DiamondMenuMovies, util.TriState.NO);
+                //SetMenuItemIsActive(DiamondMenuVideos, util.TriState.YES);
             }
         }
         //now build any dynamic submenus
         System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
+        
         //build the TV Recordings submenu
         String sSubMenu = "admRecordings";
         //determine the max number of TV Recording Views to add
         Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
         Integer Counter = 0;
         for (String vName: Action.SageTVRecordingViews.keySet()){
-            String tMenuItemName = GetNewMenuItemName();
-            //Create a new MenuItem with defaults
-            MenuNode NewMenuItem = new MenuNode(sSubMenu,tMenuItemName,Counter,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
-            SaveMenuItemToSage(NewMenuItem);
-            //add the Node to the Tree
-            InsertNode(MenuNodeList().get(sSubMenu).NodeItem, NewMenuItem, Counter);
-            
-            //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
-            MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
-
-            MenuNode.SetMenuItemActionType(tMenuItemName,Action.TVRecordingView);
-            MenuNode.SetMenuItemAction(tMenuItemName,vName);
-            MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetSageTVRecordingViewsButtonText(vName));
-            MenuNode.SetMenuItemName(tMenuItemName);
-            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+            CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
             Counter++;
             if (Counter>=ViewCount){
                 break;
@@ -1219,7 +1203,44 @@ public class MenuNode {
         //ensure there is 1 default item
         ValidateSubMenuDefault(sSubMenu);
         SortKeyUpdate(sSubMenu);
+        
+        //buld Diamond Videos Menu
+        if (Diamond.IsDiamond()){
+            String SageTVMenuVideos = "admSageTVVideos";
+            String NewMenuItemName = "";
+            for (Diamond.DefaultFlow vFlow: Diamond.DiamondDefaultFlows.values()){
+                NewMenuItemName = CreateDynamicMenuItem(vFlow.WidgetSymbol, SageTVMenuVideos, Action.DiamondDefaultFlows, vFlow.SortOrder);
+                if (vFlow.Default){
+                    SetMenuItemIsDefault(NewMenuItemName, Boolean.TRUE);
+                }
+            }
+            ValidateSubMenuDefault(SageTVMenuVideos);
+            SortKeyUpdate(SageTVMenuVideos);
+        }
+        
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
+    }
+    
+    public static String CreateDynamicMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
+        String tMenuItemName = GetNewMenuItemName();
+        //Create a new MenuItem with defaults
+        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+        SaveMenuItemToSage(NewMenuItem);
+        //add the Node to the Tree
+        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
+
+        //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
+        MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
+
+        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
+        MenuNode.SetMenuItemAction(tMenuItemName,dKey);
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetAttributeButtonText(dActionType, dKey, Boolean.TRUE));
+        MenuNode.SetMenuItemName(tMenuItemName);
+        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+        
+        return tMenuItemName;
     }
 
     public static Boolean ImportMenuItems(String ImportPath){
