@@ -58,7 +58,7 @@ public class Action {
     private Boolean AdvancedOnly = Boolean.FALSE;
     private Boolean DiamondOnly = Boolean.FALSE;
     private static Map<String,Action> ActionList = new LinkedHashMap<String,Action>();
-    private static Boolean InitComplete = Boolean.FALSE;
+    public static Boolean InitComplete = Boolean.FALSE;
     public static final String WidgetbySymbol = "ExecuteWidget";
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
     public static final String StandardMenuAction = "ExecuteStandardMenuAction";
@@ -92,7 +92,7 @@ public class Action {
     }
     
     public static void Init(){
-        if (!InitComplete){
+        //if (!InitComplete){
             //Clear existing Actions if any
             ActionList.clear();
             //Create the Actions for ADM to use
@@ -152,7 +152,7 @@ public class Action {
             LoadSageTVRecordingViews();
             
             InitComplete = Boolean.TRUE;
-        }
+        //}
     }
     
     public static String GetWidgetbySymbol(){ return WidgetbySymbol; }
@@ -353,6 +353,7 @@ public class Action {
     
     public static void LoadDiamondDefaultFlowsList(){
         String DiamondDefaultFlowsPropsPath = util.GetADMDefaultsLocation() + File.separator + DiamondDefaultFlowsListFile;
+        DiamondDefaultFlowsKeys.clear();
         
         //read the properties from the properties file
         try {
@@ -388,6 +389,7 @@ public class Action {
 
     public static void LoadStandardActionList(){
         String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
+        StandardActionKeys.clear();
         
         //read the properties from the properties file
         try {
@@ -422,6 +424,7 @@ public class Action {
     }
 
     public static Collection<String> GetActionList(String Type){
+        //TODO: build a AllActions list to provide a search or full list to select from.
         if (Type.equals(StandardMenuAction)){
             return StandardActionKeys;
         }else if(Type.equals(TVRecordingView)){
@@ -513,6 +516,9 @@ public class Action {
         String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + CustomActionListFile;
         //clear the list
         SageCustomMenuActions.clear();
+        CustomAction.ActionListSorted.clear();
+        CustomAction.CopyModeUniqueIDs.clear();
+        CustomAction.WidgetSymbols.clear();
         
         //read the properties from the properties file
         try {
@@ -566,6 +572,7 @@ public class Action {
                         tVar.VarType = util.GetProperty(AVPropLocation + "/VarType", VarTypeGlobal);
                         tVar.Var = util.GetProperty(AVPropLocation + "/Var", "");
                         String ValType = util.GetProperty(AVPropLocation + "/ValType", "");
+                        //TODO: get rid of the Integer lines in the customActions file
 //                        if (ValType.equals("Integer")){
 //                            tVar.Val = util.GetPropertyAsInteger(AVPropLocation + "/Val", 0).toString();
 //                        }else{
@@ -589,46 +596,10 @@ public class Action {
         //clean up existing Custom Actions from the SageTV properties file as they are no longer needed
         util.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
         System.out.println("ADM: aLoadSageCustomMenuActions: completed loading '" + SageCustomMenuActions.size() + "' Custom Menu Actions");
-        
-        //SageCustomMenuActions.put("xInterleaved",new CustomAction("xInterleaved","Interleaved Schedule","OPUS4A-177257","ViewFilter"));
-        //SageCustomMenuActions.get("xInterleaved").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
-
-        //SageCustomMenuActions.put("xByDay",new CustomAction("xByDay","By Day Schedule","OPUS4A-177257","ViewFilter"));
-        //SageCustomMenuActions.get("xByDay").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
-
-        //SageCustomMenuActions.put("xParallel",new CustomAction("xParallel","Parallel Schedule","OPUS4A-177257","ViewFilter"));
-        //SageCustomMenuActions.get("xParallel").ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
-        
-        //SageCustomMenuActions.put("xPluginModeAll",new CustomAction("xPluginModeAll","All Available Plugins","NFLX1-1589268","PluginModeStyle"));
-        //SageCustomMenuActions.get("xPluginModeAll").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
-
-        //SageCustomMenuActions.put("xPluginModeInstalledServer",new CustomAction("xPluginModeInstalledServer","Installed Server Plugins","NFLX1-1589268","PluginModeStyle"));
-        //SageCustomMenuActions.get("xPluginModeInstalledServer").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
-        
-        //SageCustomMenuActions.put("xPluginModeInstalledClient",new CustomAction("xPluginModeInstalledClient","Installed Client Plugins","NFLX1-1589268","PluginModeStyle"));
-        //SageCustomMenuActions.get("xPluginModeInstalledClient").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
-        
-        //SageCustomMenuActions.put("xPluginModeInstalled",new CustomAction("xPluginModeInstalled","Installed Plugins","NFLX1-1589268","PluginModeStyle"));
-        //SageCustomMenuActions.get("xPluginModeInstalled").ActionVariables.add(new ActionVariable(VarTypeGlobal,"PluginModeStyle", UseAttributeValue));
-
-//        SageCustomMenuActions.put("xItemHelpHeaderInfo",new CustomAction("xItemHelpHeaderInfo","View Menu Header Information","OPUS4A-174784","ThisItem"));
-//        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
-//        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
-//        SageCustomMenuActions.get("xItemHelpHeaderInfo").ActionVariables.add(new ActionVariable(VarTypeGlobal,"HelpAreaList", null));
-
-//        SageCustomMenuActions.put("xItemHelpTVMarkers",new CustomAction("xItemHelpTVMarkers","View TV Indicators and Markers","OPUS4A-174785","ThisItem"));
-//        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
-//        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
-//        SageCustomMenuActions.get("xItemHelpTVMarkers").ActionVariables.add(new ActionVariable(VarTypeGlobal,"HelpAreaList", null));
-
-//        SageCustomMenuActions.put("xItemHelpTVCategoryColors",new CustomAction("xItemHelpTVCategoryColors","View TV Category Colors","OPUS4A-174786","ThisItem"));
-//        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CurHelpArea", "0"));
-//        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"NumAreas", "0"));
-//        SageCustomMenuActions.get("xItemHelpTVCategoryColors").ActionVariables.add(new ActionVariable(VarTypeGlobal,"CategoryBGColorList", null));
-        
     }
 
     private static void LoadSageTVRecordingViews(){
+        SageTVRecordingViews.clear();
         //put the ViewType and Default View Name into a list
         SageTVRecordingViews.put("xAll","All Recordings");
         SageTVRecordingViews.put("xRecordings","Archived Recordings");

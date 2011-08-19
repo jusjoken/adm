@@ -980,7 +980,11 @@ public class MenuNode {
     }
     
     public static String GetActionAttributeButtonText(String Name){
-        return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+        if (GetMenuItemAction(Name)==null){
+            return "";
+        }else{
+            return Action.GetAttributeButtonText(GetMenuItemActionType(Name), GetMenuItemAction(Name));
+        }
     }
 
     //prepare the environment for a new load or a delete

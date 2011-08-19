@@ -152,6 +152,16 @@ public class util {
         
     }
 
+    public static void ReloadADMSettings(){
+
+        //clear all the Sage property settings for ADM
+        System.out.println("ADM: uReloadADMSettings: reload ADM settings");
+        ADMInitComplete = Boolean.FALSE;
+        InitADM();
+        System.out.println("ADM: uReloadADMSettings: complete");
+        
+    }
+
     public static String GetElement(Collection<String> List, Integer element){
         System.out.println("ADM: uGetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
@@ -201,6 +211,8 @@ public class util {
     
     public static void LoadSubMenuListLevel1(){
         String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel1ListFile;
+        SageSubMenusLevel1Keys.clear();
+        SageSubMenusKeys.clear();
         
         //read the properties from the properties file
         try {
@@ -240,6 +252,7 @@ public class util {
 
     public static void LoadSubMenuListLevel2(){
         String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel2ListFile;
+        SageSubMenusLevel2Keys.clear();
         
         //read the properties from the properties file
         try {
@@ -279,6 +292,7 @@ public class util {
 
     public static void LoadSageBGVariablesList(){
         String StandardActionPropsPath = ADMDefaultsLocation + File.separator + SageBGVariablesListFile;
+        SageBGVariablesKeys.clear();
         
         //read the properties from the properties file
         try {
