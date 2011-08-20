@@ -47,9 +47,11 @@ public class MenuNode {
     //IsCreatedNotLoaded is used to optionally avoid exporting created menu items if rebuilding a default menu
     // only used in Hidden Features mode when creating Default Menus from an export
     private Boolean IsCreatedNotLoaded = Boolean.FALSE;
+    //IsTemp is used for Menu Items that are created as part of Dynamic Lists so they can be deleted
+    private Boolean IsTemp = Boolean.FALSE;
     private Action.ExternalAction ActionExternal = null;
     public static Integer SortKeyCounter = 0;
-    public static Map<String,MenuNode> InternalMenuNodeList = new LinkedHashMap<String,MenuNode>();
+    //public static Map<String,MenuNode> InternalMenuNodeList = new LinkedHashMap<String,MenuNode>();
     public static Map<String,LinkedHashMap> UIMenuNodeList = new LinkedHashMap<String,LinkedHashMap>();
     public static Map<String,DefaultMutableTreeNode> UIroot = new LinkedHashMap<String,DefaultMutableTreeNode>();
     public static DefaultMutableTreeNode Internalroot = new DefaultMutableTreeNode(util.OptionNotFound);
@@ -432,6 +434,10 @@ public class MenuNode {
 
     public static void SetMenuItemIsCreatedNotLoaded(String Name, Boolean Setting){
         MenuNodeList().get(Name).IsCreatedNotLoaded = Setting;
+    }
+    
+    public static void SetMenuItemIsTemp(String Name, Boolean Setting){
+        MenuNodeList().get(Name).IsTemp = Setting;
     }
     
     public static Boolean GetMenuItemIsDefault(String Name){
@@ -827,11 +833,11 @@ public class MenuNode {
     private static void AddMenuItemtoList(Collection<String> bNames, MenuNode tMenu ){
         //TODO: determine if the menu item is itself a list of menu items
         if (tMenu.ActionType.equals(Action.DynamicList)){
-            for (String tItem : Action.GetDynamicListItems(tMenu.ActionAttribute)){
+            for (MenuNode tItem : Action.GetDynamicListItems(tMenu.ActionAttribute)){
                 //TODO: need to build TEMP menu nodes for each item either here or in Action
                 //likely need to associate each node with a new UIRoot node
                 //Each time you GetMenuItemNameList - as above - then clear old TEMP nodes
-                bNames.add(tItem);
+                bNames.add(tItem.Name)
             }
         }else{
             bNames.add(tMenu.Name);
@@ -1244,6 +1250,29 @@ public class MenuNode {
 
         //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
         MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
+
+        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
+        MenuNode.SetMenuItemAction(tMenuItemName,dKey);
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetAttributeButtonText(dActionType, dKey, Boolean.TRUE));
+        MenuNode.SetMenuItemName(tMenuItemName);
+        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+        
+        return tMenuItemName;
+    }
+
+    //used for temp menu items created during the display of Dynamic Lists
+    public static String CreateTempMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
+        String tMenuItemName = GetNewMenuItemName();
+        //Create a new MenuItem with defaults
+        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+        SaveMenuItemToSage(NewMenuItem);
+        //add the Node to the Tree
+        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
+
+        //keep track that this is a temp menu item so we can easily delete it
+        MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
 
         MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
         MenuNode.SetMenuItemAction(tMenuItemName,dKey);
