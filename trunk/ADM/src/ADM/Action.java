@@ -392,8 +392,13 @@ public class Action {
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
     }
     
-    public static Collection<String> GetDynamicListItems(String Attribute){
+    public static Collection<MenuNode> GetDynamicListItems(String Attribute){
+        Collection<MenuNode> TempMenuItems = new LinkedHashSet<MenuNode>();
         if (Attribute.equals(DynamicTVRecordingsList)){
+            for (String ItemKey : SageTVRecordingViews.keySet()){
+                //create a temp menu item for each item
+                
+            }
             return SageTVRecordingViews.keySet();
         }else if(Attribute.equals(DynamicVideoPlaylist)){
             return SageTVRecordingViews.keySet();
