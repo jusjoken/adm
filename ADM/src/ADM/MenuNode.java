@@ -44,6 +44,8 @@ public class MenuNode {
     private Integer SortKey = 0;
     private DefaultMutableTreeNode NodeItem;
     private String ShowIF = util.OptionNotFound;
+    //IsCreatedNotLoaded is used to optionally avoid exporting created menu items if rebuilding a default menu
+    // only used in Hidden Features mode when creating Default Menus from an export
     private Boolean IsCreatedNotLoaded = Boolean.FALSE;
     private Action.ExternalAction ActionExternal = null;
     public static Integer SortKeyCounter = 0;
