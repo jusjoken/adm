@@ -28,7 +28,7 @@ import sagex.UIContext;
  * @author jusjoken
  */
 public class MenuNode {
-    public static DefaultMutableTreeNode Testing;
+    //public static DefaultMutableTreeNode Testing;
 
     private String Parent = "";
     public String Name = "";
@@ -798,12 +798,12 @@ public class MenuNode {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
                 if (IncludeInactive==true){
-                    bNames.add(tMenu.Name);
+                    AddMenuItemtoList(bNames, tMenu);
                 }else if(tMenu.IsActive.equals(util.TriState.YES)){
                     if (QLMCheck && QLMInvalidSubmenu(tMenu)){
                         //do not add this item
                     }else{
-                        bNames.add(tMenu.Name);
+                        AddMenuItemtoList(bNames, tMenu);
                     }
                 }else if(tMenu.IsActive.equals(util.TriState.OTHER)){
                     //only add if the active user is allowed to see this Menu Item
@@ -811,7 +811,7 @@ public class MenuNode {
                         if (QLMCheck && QLMInvalidSubmenu(tMenu)){
                             //do not add this item
                         }else{
-                            bNames.add(tMenu.Name);
+                            AddMenuItemtoList(bNames, tMenu);
                         }
                     }
                 }
@@ -820,6 +820,20 @@ public class MenuNode {
         }
         System.out.println("ADM: mGetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
         return bNames;
+    }
+    
+    private static void AddMenuItemtoList(Collection<String> bNames, MenuNode tMenu ){
+        //TODO: determine if the menu item is itself a list of menu items
+        if (tMenu.ActionType.equals(Action.DynamicList)){
+            for (String tItem : Action.GetDynamicListItems(tMenu.ActionAttribute)){
+                //TODO: need to build TEMP menu nodes for each item either here or in Action
+                //likely need to associate each node with a new UIRoot node
+                //Each time you GetMenuItemNameList - as above - then clear old TEMP nodes
+                bNames.add(tItem);
+            }
+        }else{
+            bNames.add(tMenu.Name);
+        }
     }
 
     private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
@@ -1165,9 +1179,6 @@ public class MenuNode {
         ImportMenuItems(DefaultsFullPath);
         util.ClearFocusStorage();
         
-        //for Diamond we need to Hide either the Videos Menu Item or the Movies Menu Item
-        if (Diamond.IsDiamond()){
-        }
         //now build any dynamic submenus
         System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
         

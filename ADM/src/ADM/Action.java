@@ -38,6 +38,7 @@ public class Action {
     private static final String CustomActionListFile = "ADMCustomActions.properties";
     public static Map<String,CustomAction> SageMenuActions = new LinkedHashMap<String,CustomAction>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
+    public static Map<String,String> DynamicLists = new LinkedHashMap<String,String>();
     public static final String SageTVRecordingViewsTitlePropertyLocation = "sagetv_recordings/view_title/";
     private String Type = "";
     private String ButtonText = "";
@@ -65,7 +66,11 @@ public class Action {
     public static final String BrowseFileFolderRecDir = "ExecuteBrowseFileFolderRecDir";
     public static final String BrowseFileFolderNetwork = "ExecuteBrowseFileFolderNetwork";
     public static final String LaunchExternalApplication = "LaunchExternalApplication";
+    public static final String DynamicList = "AddDynamicList";
     public static final String ActionTypeDefault = "DoNothing";
+    public static final String DynamicTVRecordingsList = "admDynamicTVRecordingsList";
+    public static final String DynamicVideoPlaylist = "admDynamicVideoPlaylist";
+    
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
         this(Type,DiamondOnly,AdvancedOnly,ButtonText,"Action",Blank);
@@ -100,6 +105,8 @@ public class Action {
 
         ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
         ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
+
+        ActionList.put(DynamicList, new Action(DynamicList,Boolean.FALSE,Boolean.FALSE,"Dynamic List Item", "Dynamic List Type"));
 
         ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
 
@@ -142,6 +149,7 @@ public class Action {
 
         LoadStandardActionList();
         LoadSageCustomMenuActions();
+        LoadDynamicLists();
 
         Diamond.LoadDiamondDefaultFlows();
 
@@ -160,6 +168,7 @@ public class Action {
     public static String GetBrowseFileFolderRecDir(){ return BrowseFileFolderRecDir; }
     public static String GetBrowseFileFolderNetwork(){ return BrowseFileFolderNetwork; }
     public static String GetLaunchExternalApplication(){ return LaunchExternalApplication; }
+    public static String GetDynamicList(){ return DynamicList; }
     
         
     public static String GetButtonText(String Type){
@@ -246,6 +255,8 @@ public class Action {
             }else{
                 return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText;
             }
+        }else if(Type.equals(DynamicList)){
+            return DynamicLists.get(Attribute);
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
         }else if(Type.equals(LaunchExternalApplication)){
@@ -345,43 +356,6 @@ public class Action {
                
     }
     
-//    public static void LoadDiamondDefaultFlowsList(){
-//        String DiamondDefaultFlowsPropsPath = util.GetADMDefaultsLocation() + File.separator + DiamondDefaultFlowsListFile;
-//        DiamondDefaultFlowsKeys.clear()
-//        
-//        //read the properties from the properties file
-//        try {
-//            FileInputStream in = new FileInputStream(DiamondDefaultFlowsPropsPath);
-//            try {
-//                DiamondDefaultFlowsProps.load(in);
-//                in.close();
-//            } catch (IOException ex) {
-//                System.out.println("ADM: aLoadDiamondDefaultFlowsList: IO exception loading DiamondDefaultFlows " + util.class.getName() + ex);
-//                return;
-//            }
-//        } catch (FileNotFoundException ex) {
-//            System.out.println("ADM: aLoadDiamondDefaultFlowsList: file not found loading DiamondDefaultFlows " + util.class.getName() + ex);
-//            return;
-//        }
-//
-//        //sort the keys into value order
-//        SortedMap<String,String> ActionValuesList = new TreeMap<String,String>();
-//
-//        //Add all the Values to a sorted list
-//        for (String ActionItem : DiamondDefaultFlowsProps.stringPropertyNames()){
-//            System.out.println("ADM: aLoadDiamondDefaultFlowsList: Item = '" + ActionItem + "'");
-//            ActionValuesList.put(DiamondDefaultFlowsProps.getProperty(ActionItem),ActionItem);
-//        }
-//
-//        //build a list of keys in the order of the values
-//        for (String ActionValue : ActionValuesList.keySet()){
-//            DiamondDefaultFlowsKeys.add(ActionValuesList.get(ActionValue));
-//        }
-//        
-//        System.out.println("ADM: aLoadDiamondDefaultFlowsList: completed for '" + DiamondDefaultFlowsPropsPath + "'");
-//        return;
-//    }
-//
     public static void LoadStandardActionList(){
         Properties StandardActionProps = new Properties();
         String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
@@ -411,12 +385,31 @@ public class Action {
         return;
     }
 
+    public static void LoadDynamicLists(){
+        //Dynamic Lists are single menu items that expand themselves into a list of items of a specified type
+        DynamicLists.clear();
+        DynamicLists.put(DynamicTVRecordingsList, "TV Recordings List");
+        DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
+    }
+    
+    public static Collection<String> GetDynamicListItems(String Attribute){
+        if (Attribute.equals(DynamicTVRecordingsList)){
+            return SageTVRecordingViews.keySet();
+        }else if(Attribute.equals(DynamicVideoPlaylist)){
+            return SageTVRecordingViews.keySet();
+        }else{
+            return Collections.emptyList();
+        }
+    }
+
     public static Collection<String> GetActionList(String Type){
         //TODO: build a AllActions list to provide a search or full list to select from.
         if (Type.equals(StandardMenuAction)){
             return CustomAction.ActionListSorted.values();
         }else if(Type.equals(TVRecordingView)){
             return SageTVRecordingViews.keySet();
+        }else if(Type.equals(DynamicList)){
+            return DynamicLists.keySet();
         }else if(Type.equals(DiamondDefaultFlows)){
             return Diamond.DefaultFlow.ListSorted.values();
         }else if(Type.equals(DiamondCustomFlows)){
@@ -430,6 +423,8 @@ public class Action {
         if (Type.equals(StandardMenuAction)){
             return Boolean.TRUE;
         }else if(Type.equals(TVRecordingView)){
+            return Boolean.TRUE;
+        }else if(Type.equals(DynamicList)){
             return Boolean.TRUE;
         }else if(Type.equals(DiamondDefaultFlows)){
             return Boolean.TRUE;
