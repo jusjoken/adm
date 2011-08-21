@@ -392,16 +392,21 @@ public class Action {
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
     }
     
-    public static Collection<MenuNode> GetDynamicListItems(String Attribute){
-        Collection<MenuNode> TempMenuItems = new LinkedHashSet<MenuNode>();
+    public static Collection<String> GetDynamicListItems(String dParent, String Attribute){
+        System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "'");
+        Collection<String> TempMenuItems = new LinkedHashSet<String>();
+        Integer Counter = 0;
         if (Attribute.equals(DynamicTVRecordingsList)){
+            //System.out.println("ADM: 1 aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "'");
             for (String ItemKey : SageTVRecordingViews.keySet()){
                 //create a temp menu item for each item
-                
+                //System.out.println("ADM: 2 aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' ItemKey '" + ItemKey + "'");
+                TempMenuItems.add(MenuNode.CreateTempMenuItem(dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter));
+                Counter++;
             }
-            return SageTVRecordingViews.keySet();
+            return TempMenuItems;
         }else if(Attribute.equals(DynamicVideoPlaylist)){
-            return SageTVRecordingViews.keySet();
+            return TempMenuItems;
         }else{
             return Collections.emptyList();
         }
