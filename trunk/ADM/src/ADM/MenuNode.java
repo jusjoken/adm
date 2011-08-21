@@ -526,9 +526,14 @@ public class MenuNode {
             while (en.hasMoreElements())   {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
-                if (tMenu.IsDefault){
-                    System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
-                    return tMenu.Name;
+                //for Dynamic Lists then the SubMenuDefaults are in the MenuItems children so call this routine again
+                if (tMenu.ActionType.equals(Action.DynamicList)){
+                    return GetSubMenuDefault(tMenu.Name);
+                }else{
+                    if (tMenu.IsDefault){
+                        System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
+                        return tMenu.Name;
+                    }
                 }
             }         
         }
@@ -837,7 +842,7 @@ public class MenuNode {
         //System.out.println("ADM: mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
         if (tMenu.ActionType.equals(Action.DynamicList)){
             //System.out.println("ADM: 1 mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
-            for (String tItem : Action.GetDynamicListItems(tMenu.Name, tMenu.ActionAttribute)){
+            for (String tItem : Action.GetDynamicListItems(tMenu.Name, tMenu.ActionAttribute, tMenu.Parent)){
                 //System.out.println("ADM: 2 mAddMenuItemtoList for '" + tMenu.ButtonText + "' tItem = '" + tItem + "'");
                 //TODO: need to build TEMP menu nodes for each item either here or in Action
                 //likely need to associate each node with a new UIRoot node
@@ -850,12 +855,24 @@ public class MenuNode {
     }
 
     private static void DeleteAllTempMenuItems(){
+        //TODO: need to determine the best place to call this DELETE
+        //perhaps when the focus of a menu is LOST
+        List<String> TempItems = new LinkedList<String>();
+        String TempItemParent = "";
+        //Get Temp Items for deletion
         for (MenuNode tMenu : MenuNodeList().values()){
             if (tMenu.IsTemp){
+                TempItems.add(tMenu.Name);
+                if (TempItemParent.equals("")){
+                    TempItemParent = tMenu.Parent;
+                }
                 //tMenu.NodeItem.removeFromParent();
-                //TODO: need to delete all the temp items
+            System.out.println("ADM: mDeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
             }
         }
+//        for (String TempItem : TempItems){
+//            MenuNodeList().remove(TempItem);
+//        }
     }
     
     private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
@@ -1278,24 +1295,27 @@ public class MenuNode {
 
     //used for temp menu items created during the display of Dynamic Lists
     public static String CreateTempMenuItem(String dParent, String dActionType, String dActionAttribute, String dButtonText, Integer dSortKey){
-        String tMenuItemName = GetNewMenuItemName();
-        //Create a new MenuItem with defaults
-        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
-        //SaveMenuItemToSage(NewMenuItem);
-        //add the Node to the Tree
-        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
+        //see if this parent already has a menu item with this ActionType and ActionAttribute
+        String tMenuItemName = FindMatchingAction(MenuNodeList().get(dParent).NodeItem, dActionType, dActionAttribute);
+        if (tMenuItemName.equals(util.OptionNotFound)){
+            tMenuItemName = GetNewMenuItemName();
+            //Create a new MenuItem with defaults
+            MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+            SaveMenuItemToSage(NewMenuItem);
+            //add the Node to the Tree
+            InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
 
-        //keep track that this is a temp menu item so we can easily delete it
-        MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
+            //keep track that this is a temp menu item so we can easily delete it
+            MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
 
-        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
-        MenuNode.SetMenuItemAction(tMenuItemName,dActionAttribute);
-        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemButtonText(tMenuItemName,dButtonText);
-        MenuNode.SetMenuItemName(tMenuItemName);
-        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
-        
+            MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
+            MenuNode.SetMenuItemAction(tMenuItemName,dActionAttribute);
+            MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemButtonText(tMenuItemName,dButtonText);
+            MenuNode.SetMenuItemName(tMenuItemName);
+            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+            MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+        }
         return tMenuItemName;
     }
 
@@ -1518,6 +1538,20 @@ public class MenuNode {
         }         
         //System.out.println("ADM: mFindNode: '" + NodeKey + "' not found.");
         return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static String FindMatchingAction(DefaultMutableTreeNode Root, String ActionType, String ActionAttribute){
+        Enumeration<DefaultMutableTreeNode> en = Root.preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            if(tMenu.ActionType.equals(ActionType) && tMenu.ActionAttribute.equals(ActionAttribute)){
+                return tMenu.Name;
+            }
+        }         
+        //System.out.println("ADM: mFindNode: '" + NodeKey + "' not found.");
+        return util.OptionNotFound;
     }
     
     @SuppressWarnings("unchecked")
