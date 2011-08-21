@@ -800,6 +800,8 @@ public class MenuNode {
     public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive, Boolean QLMCheck){
         Collection<String> bNames = new LinkedHashSet<String>();
         String tActiveUser = sagex.api.Security.GetActiveSecurityProfile(new UIContext(sagex.api.Global.GetUIContextName()));
+        //cleanup previous Temp Menu Items if any
+        DeleteAllTempMenuItems();
         if (MenuNodeList().containsKey(Parent) && MenuNodeList().get(Parent).NodeItem!=null){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList().get(Parent).NodeItem.children();
             while (en.hasMoreElements())   {
@@ -832,18 +834,30 @@ public class MenuNode {
     
     private static void AddMenuItemtoList(Collection<String> bNames, MenuNode tMenu ){
         //TODO: determine if the menu item is itself a list of menu items
+        //System.out.println("ADM: mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
         if (tMenu.ActionType.equals(Action.DynamicList)){
-            for (MenuNode tItem : Action.GetDynamicListItems(tMenu.ActionAttribute)){
+            //System.out.println("ADM: 1 mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
+            for (String tItem : Action.GetDynamicListItems(tMenu.Name, tMenu.ActionAttribute)){
+                //System.out.println("ADM: 2 mAddMenuItemtoList for '" + tMenu.ButtonText + "' tItem = '" + tItem + "'");
                 //TODO: need to build TEMP menu nodes for each item either here or in Action
                 //likely need to associate each node with a new UIRoot node
                 //Each time you GetMenuItemNameList - as above - then clear old TEMP nodes
-                bNames.add(tItem.Name)
+                bNames.add(tItem);
             }
         }else{
             bNames.add(tMenu.Name);
         }
     }
 
+    private static void DeleteAllTempMenuItems(){
+        for (MenuNode tMenu : MenuNodeList().values()){
+            if (tMenu.IsTemp){
+                //tMenu.NodeItem.removeFromParent();
+                //TODO: need to delete all the temp items
+            }
+        }
+    }
+    
     private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
         if (tMenu.SubMenu==null || tMenu.SubMenu.equals(tMenu.Name)){
             return Boolean.FALSE;
@@ -1263,11 +1277,11 @@ public class MenuNode {
     }
 
     //used for temp menu items created during the display of Dynamic Lists
-    public static String CreateTempMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
+    public static String CreateTempMenuItem(String dParent, String dActionType, String dActionAttribute, String dButtonText, Integer dSortKey){
         String tMenuItemName = GetNewMenuItemName();
         //Create a new MenuItem with defaults
         MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
-        SaveMenuItemToSage(NewMenuItem);
+        //SaveMenuItemToSage(NewMenuItem);
         //add the Node to the Tree
         InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
 
@@ -1275,9 +1289,9 @@ public class MenuNode {
         MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
 
         MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
-        MenuNode.SetMenuItemAction(tMenuItemName,dKey);
+        MenuNode.SetMenuItemAction(tMenuItemName,dActionAttribute);
         MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-        MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetAttributeButtonText(dActionType, dKey, Boolean.TRUE));
+        MenuNode.SetMenuItemButtonText(tMenuItemName,dButtonText);
         MenuNode.SetMenuItemName(tMenuItemName);
         MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
         MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
