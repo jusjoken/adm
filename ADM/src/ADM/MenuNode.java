@@ -857,6 +857,7 @@ public class MenuNode {
     private static void DeleteAllTempMenuItems(){
         //TODO: need to determine the best place to call this DELETE
         //perhaps when the focus of a menu is LOST
+        //TODO: need an onSubMenuOPEN and onSubMenuCLOSE
         List<String> TempItems = new LinkedList<String>();
         String TempItemParent = "";
         //Get Temp Items for deletion
