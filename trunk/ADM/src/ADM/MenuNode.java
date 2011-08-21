@@ -56,6 +56,10 @@ public class MenuNode {
     public static Map<String,DefaultMutableTreeNode> UIroot = new LinkedHashMap<String,DefaultMutableTreeNode>();
     public static DefaultMutableTreeNode Internalroot = new DefaultMutableTreeNode(util.OptionNotFound);
     public static final String SageUserAdministrator = "Administrator";
+    public static Map<String,Collection<String>> UIMenuListLevel1 = new LinkedHashMap<String,Collection<String>>();
+    public static Map<String,Collection<String>> UIMenuListLevel2 = new LinkedHashMap<String,Collection<String>>();
+    public static Map<String,Collection<String>> UIMenuListLevel3 = new LinkedHashMap<String,Collection<String>>();
+    public static Map<String,Collection<String>> UIMenuListQLM = new LinkedHashMap<String,Collection<String>>();
 
     public MenuNode(String bName){
         //create a MenuItem with just default values
@@ -854,6 +858,85 @@ public class MenuNode {
         }
     }
 
+    public static Collection<String> GetMenuList(Integer Level){
+        String UIContext = sagex.api.Global.GetUIContextName();
+        if (Level==1){
+            if (!UIMenuListLevel1.containsKey(UIContext)){
+                return new LinkedList<String>();
+            }else{
+                return UIMenuListLevel1.get(UIContext);
+            }
+        }else if (Level==2){
+            if (!UIMenuListLevel2.containsKey(UIContext)){
+                return new LinkedList<String>();
+            }else{
+                return UIMenuListLevel2.get(UIContext);
+            }
+        }else if (Level==3){
+            if (!UIMenuListLevel3.containsKey(UIContext)){
+                return new LinkedList<String>();
+            }else{
+                return UIMenuListLevel3.get(UIContext);
+            }
+        }
+        return new LinkedList<String>();
+    }
+    
+    public static Collection<String> GetMenuListQLM(){
+        String UIContext = sagex.api.Global.GetUIContextName();
+        if (!UIMenuListQLM.containsKey(UIContext)){
+            return new LinkedList<String>();
+        }else{
+            return UIMenuListQLM.get(UIContext);
+        }
+    }
+    
+    public static void MenuBeforeOpen(Integer Level, String MenuName){
+        System.out.println("ADM: mMenuBeforeOpen: Level '" + Level + "' MenuName '" + MenuName + "'");
+        //store the Menu for this Level for later retrieval while the menu is open
+        String UIContext = sagex.api.Global.GetUIContextName();
+        if (Level==1){
+            if (!UIMenuListLevel1.containsKey(UIContext)){
+                UIMenuListLevel1.put(UIContext, new LinkedHashSet<String>());
+            }
+            UIMenuListLevel1.get(UIContext).clear();
+            UIMenuListLevel1.get(UIContext).addAll(GetMenuItemNameList(MenuName));
+        }else if (Level==2){
+            if (!UIMenuListLevel2.containsKey(UIContext)){
+                UIMenuListLevel2.put(UIContext, new LinkedHashSet<String>());
+            }
+            UIMenuListLevel2.get(UIContext).clear();
+            UIMenuListLevel2.get(UIContext).addAll(GetMenuItemNameList(MenuName));
+        }else if (Level==3){
+            if (!UIMenuListLevel3.containsKey(UIContext)){
+                UIMenuListLevel3.put(UIContext, new LinkedHashSet<String>());
+            }
+            UIMenuListLevel3.get(UIContext).clear();
+            UIMenuListLevel3.get(UIContext).addAll(GetMenuItemNameList(MenuName));
+        }
+    }
+
+    public static void MenuAfterClose(Integer Level){
+        System.out.println("ADM: mMenuAfterClose: Level '" + Level + "'");
+        //clear the Menus for this Level and delete any TEMP Menu items
+        
+    }
+    public static void MenuBeforeOpenQLM(String MenuName){
+        System.out.println("ADM: mMenuBeforeOpenQLM: MenuName '" + MenuName + "'");
+        String UIContext = sagex.api.Global.GetUIContextName();
+        //store the QLM Menu for later retrieval while the menu is open
+        if (!UIMenuListQLM.containsKey(UIContext)){
+            UIMenuListQLM.put(UIContext, new LinkedHashSet<String>());
+        }
+        UIMenuListQLM.get(UIContext).clear();
+        UIMenuListQLM.get(UIContext).addAll(GetMenuItemNameListQLM(MenuName));
+    }
+    public static void MenuAfterCloseQLM(){
+        System.out.println("ADM: mMenuAfterCloseQLM:");
+        //clear the QLM Menu and delete any TEMP Menu items
+        
+    }
+    
     private static void DeleteAllTempMenuItems(){
         //TODO: need to determine the best place to call this DELETE
         //perhaps when the focus of a menu is LOST
