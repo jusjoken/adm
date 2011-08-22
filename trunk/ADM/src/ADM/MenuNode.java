@@ -440,8 +440,17 @@ public class MenuNode {
         MenuNodeList().get(Name).IsCreatedNotLoaded = Setting;
     }
     
+    public static Boolean GetMenuItemIsTemp(String Name){
+        try {
+            return MenuNodeList().get(Name).IsTemp;
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+
     public static void SetMenuItemIsTemp(String Name, Boolean Setting){
-        MenuNodeList().get(Name).IsTemp = Setting;
+        Save(Name, "IsTemp", Setting.toString());
     }
     
     public static Boolean GetMenuItemIsDefault(String Name){
@@ -944,8 +953,12 @@ public class MenuNode {
                 //System.out.println("ADM: mDeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
             }
         }
+        String PropLocation = "";
         for (String TempItem : TempItems){
             MenuNodeList().remove(TempItem);
+            //remove them from the SageTV Properties
+            PropLocation = util.SagePropertyLocation + TempItem;
+            util.RemovePropertyAndChildren(PropLocation);
         }
         System.out.println("ADM: mDeleteAllTempMenuItems : Deleted '" + TempItems.size() + "' items");
     }
@@ -1025,7 +1038,10 @@ public class MenuNode {
             MenuNode tMenu = (MenuNode)child.getUserObject();
             //add all items except the Top Level menu
             if (!tMenu.Name.equals(util.TopMenu)){
-                FinalList.add(tMenu.Name);
+                //do not add any temp items as they should not be available in ADM Manager
+                if (!tMenu.IsTemp){
+                    FinalList.add(tMenu.Name);
+                }
             }
         }         
         System.out.println("ADM: mGetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
@@ -1181,6 +1197,7 @@ public class MenuNode {
                         NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
                         NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
                         NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
+                        NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
                         NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
                         NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
                         if (util.GetDefaultsWorkingMode()){
@@ -1473,6 +1490,8 @@ public class MenuNode {
             if (!tName.equals(util.TopMenu)){
                 if (GetMenuItemIsCreatedNotLoaded(tName) && util.GetDefaultsWorkingMode()){
                     //skip exporting this item as we are in DefaultsWorkingMode and this is a Created item so it should not be exported
+                }else if (GetMenuItemIsTemp(tName)){
+                    //skip exporting this item as it is a TEMP Menu Item and should not be exported
                 }else{
                     PropLocation = util.SagePropertyLocation + tName;
                     PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
@@ -1707,6 +1726,8 @@ public class MenuNode {
                 } catch (Exception e) {
                     MenuNodeList().get(Name).IsActive = util.TriState.YES;
                 }
+            }else if (PropType.equals("IsTemp")){
+                MenuNodeList().get(Name).IsTemp = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("IsDefault")){
                 MenuNodeList().get(Name).IsDefault = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("SubMenu")){
