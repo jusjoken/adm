@@ -856,7 +856,7 @@ public class util {
         }
     }
     
-    public static Integer GetMaxMenuItems(String Parent){
+    public static Integer GetMaxMenuItemsQLM(){
         Integer DefaultMax = 8;
         Integer LevelMax = GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/0", DefaultMax);
         return LevelMax;
@@ -869,7 +869,7 @@ public class util {
         }
         if (Level==1){
             Integer Level1Max = GetPropertyAsInteger(SageADMSettingsPropertyLocation + "/MaxMenuItems/" + Level.toString(), DefaultMax);
-            Integer TopMenuCount = MenuNode.GetMenuItemCount(util.TopMenu);
+            Integer TopMenuCount = MenuNode.GetMenuItemCount(1);
             if (Level1Max > TopMenuCount){
                 return TopMenuCount;
             }else{
