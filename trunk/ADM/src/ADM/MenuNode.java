@@ -977,17 +977,34 @@ public class MenuNode {
     }
     
     //Get the count of MenuItems for a parent that are active and do not include SageSubMenus
-    public static int GetMenuItemCountQLM(String Parent){
-        Collection<String> bNames = GetMenuItemNameListQLM(Parent);
-        //System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
-        return bNames.size();
+    public static int GetMenuItemCountQLM(){
+        String UIContext = sagex.api.Global.GetUIContextName();
+        if (!UIMenuListQLM.containsKey(UIContext)){
+            return 0;
+        }
+        return UIMenuListQLM.get(UIContext).size();
     }
 
     //Get the count of MenuItems for a parent that are active
-    public static int GetMenuItemCount(String Parent){
-        Collection<String> bNames = GetMenuItemNameList(Parent);
-        //System.out.println("ADM: mGetMenuItemCount for '" + Parent + "' :" + bNames.size());
-        return bNames.size();
+    public static int GetMenuItemCount(Integer Level){
+        String UIContext = sagex.api.Global.GetUIContextName();
+        if (Level==1){
+            if (!UIMenuListLevel1.containsKey(UIContext)){
+                return 0;
+            }
+            return UIMenuListLevel1.get(UIContext).size();
+        }else if (Level==2){
+            if (!UIMenuListLevel2.containsKey(UIContext)){
+                return 0;
+            }
+            return UIMenuListLevel2.get(UIContext).size();
+        }else if (Level==3){
+            if (!UIMenuListLevel3.containsKey(UIContext)){
+                return 0;
+            }
+            return UIMenuListLevel3.get(UIContext).size();
+        }
+        return 0;
     }
 
     //returns only menu items for a specific parent that are active
