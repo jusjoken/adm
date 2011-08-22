@@ -456,10 +456,10 @@ public class MenuNode {
     public static void SetMenuItemIsDefault(String Name, Boolean Setting){
         //System.out.println("ADM: mSetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
         if (Setting==Boolean.TRUE){
-            //System.out.println("ADM: mSetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
             //first clear existing Default settings for Menu Items with the same parent 
             ClearSubMenuDefaults(MenuNodeList().get(Name).Parent);
             Save(Name, "IsDefault", Setting.toString());
+            System.out.println("ADM: mSetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
         }else{
             //System.out.println("ADM: mSetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
             Save(Name, "IsDefault", Setting.toString());
@@ -754,24 +754,25 @@ public class MenuNode {
     
     public static Boolean IsSubMenuItem(String bParent, String Item, Boolean QLMCheck){
         //check if Item is a child of bParent
-        if (bParent==null || Item==null){
+        if (bParent==null || Item==null || !MenuNodeList().containsKey(Item)){
+            //System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found or null");
             return Boolean.FALSE;
         }
         try {
             if (MenuNodeList().get(Item).NodeItem.getParent().toString().equals(bParent)){
                 if (QLMCheck){
-                    //make sure the item is show in QLM - NO SageSubMenus
+                    //make sure the item is to show in QLM - NO SageSubMenus
                     if (MenuNodeList().get(Item).SubMenu==null || MenuNodeList().get(Item).SubMenu.equals(MenuNodeList().get(Item).Name)){
                         return Boolean.TRUE;
                     }else{
                         return Boolean.FALSE;
                     }
                 }else{
-                    System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+                    //System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
                     return Boolean.TRUE;
                 }
             }else{
-                System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
+                //System.out.println("ADM: mIsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
                 return Boolean.FALSE;
             }
         } catch (Exception e) {
@@ -809,8 +810,6 @@ public class MenuNode {
     public static Collection<String> GetMenuItemNameList(String Parent, Boolean IncludeInactive, Boolean QLMCheck){
         Collection<String> bNames = new LinkedHashSet<String>();
         String tActiveUser = sagex.api.Security.GetActiveSecurityProfile(new UIContext(sagex.api.Global.GetUIContextName()));
-        //cleanup previous Temp Menu Items if any
-        DeleteAllTempMenuItems();
         if (MenuNodeList().containsKey(Parent) && MenuNodeList().get(Parent).NodeItem!=null){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList().get(Parent).NodeItem.children();
             while (en.hasMoreElements())   {
@@ -842,15 +841,9 @@ public class MenuNode {
     }
     
     private static void AddMenuItemtoList(Collection<String> bNames, MenuNode tMenu ){
-        //TODO: determine if the menu item is itself a list of menu items
-        //System.out.println("ADM: mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
         if (tMenu.ActionType.equals(Action.DynamicList)){
-            //System.out.println("ADM: 1 mAddMenuItemtoList for '" + tMenu.ButtonText + "'");
-            for (String tItem : Action.GetDynamicListItems(tMenu.Name, tMenu.ActionAttribute, tMenu.Parent)){
-                //System.out.println("ADM: 2 mAddMenuItemtoList for '" + tMenu.ButtonText + "' tItem = '" + tItem + "'");
-                //TODO: need to build TEMP menu nodes for each item either here or in Action
-                //likely need to associate each node with a new UIRoot node
-                //Each time you GetMenuItemNameList - as above - then clear old TEMP nodes
+            //for Dynamic Lists get the list and add an item for each
+            for (String tItem : Action.GetDynamicListItems(tMenu.Name, tMenu.ActionAttribute)){
                 bNames.add(tItem);
             }
         }else{
@@ -894,6 +887,8 @@ public class MenuNode {
     public static void MenuBeforeOpen(Integer Level, String MenuName){
         System.out.println("ADM: mMenuBeforeOpen: Level '" + Level + "' MenuName '" + MenuName + "'");
         //store the Menu for this Level for later retrieval while the menu is open
+        //cleanup previous Temp Menu Items if any
+        DeleteAllTempMenuItems();
         String UIContext = sagex.api.Global.GetUIContextName();
         if (Level==1){
             if (!UIMenuListLevel1.containsKey(UIContext)){
@@ -923,6 +918,8 @@ public class MenuNode {
     }
     public static void MenuBeforeOpenQLM(String MenuName){
         System.out.println("ADM: mMenuBeforeOpenQLM: MenuName '" + MenuName + "'");
+        //cleanup previous Temp Menu Items if any
+        DeleteAllTempMenuItems();
         String UIContext = sagex.api.Global.GetUIContextName();
         //store the QLM Menu for later retrieval while the menu is open
         if (!UIMenuListQLM.containsKey(UIContext)){
@@ -938,25 +935,19 @@ public class MenuNode {
     }
     
     private static void DeleteAllTempMenuItems(){
-        //TODO: need to determine the best place to call this DELETE
-        //perhaps when the focus of a menu is LOST
-        //TODO: need an onSubMenuOPEN and onSubMenuCLOSE
         List<String> TempItems = new LinkedList<String>();
-        String TempItemParent = "";
         //Get Temp Items for deletion
         for (MenuNode tMenu : MenuNodeList().values()){
             if (tMenu.IsTemp){
                 TempItems.add(tMenu.Name);
-                if (TempItemParent.equals("")){
-                    TempItemParent = tMenu.Parent;
-                }
-                //tMenu.NodeItem.removeFromParent();
-            System.out.println("ADM: mDeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
+                tMenu.NodeItem.removeFromParent();
+                //System.out.println("ADM: mDeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
             }
         }
-//        for (String TempItem : TempItems){
-//            MenuNodeList().remove(TempItem);
-//        }
+        for (String TempItem : TempItems){
+            MenuNodeList().remove(TempItem);
+        }
+        System.out.println("ADM: mDeleteAllTempMenuItems : Deleted '" + TempItems.size() + "' items");
     }
     
     private static Boolean QLMInvalidSubmenu(MenuNode tMenu){
