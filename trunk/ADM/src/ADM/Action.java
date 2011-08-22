@@ -392,18 +392,15 @@ public class Action {
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
     }
     
-    public static Collection<String> GetDynamicListItems(String dParent, String Attribute, String dParentsParent){
-        System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "'");
+    public static Collection<String> GetDynamicListItems(String dParent, String Attribute){
         Collection<String> TempMenuItems = new LinkedHashSet<String>();
         Integer Counter = 0;
         String FirstNameforDefault = Blank;
         String ItemName = Blank;
         if (Attribute.equals(DynamicTVRecordingsList)){
-            //System.out.println("ADM: 1 aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "'");
             Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
             for (String ItemKey : SageTVRecordingViews.keySet()){
                 //create a temp menu item for each item
-                //System.out.println("ADM: 2 aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' ItemKey '" + ItemKey + "'");
                 ItemName = MenuNode.CreateTempMenuItem(dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
                 TempMenuItems.add(ItemName);
                 if (FirstNameforDefault.equals(Blank)){
@@ -414,16 +411,18 @@ public class Action {
                     break;
                 }
             }
-            System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' First = '" + FirstNameforDefault + "'");
             if (FirstNameforDefault.equals(Blank)){
                 MenuNode.ValidateSubMenuDefault(dParent);
             }else{
                 MenuNode.SetMenuItemIsDefault(FirstNameforDefault, Boolean.TRUE);
             }
+            System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicVideoPlaylist)){
+            System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else{
+            System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return Collections.emptyList();
         }
     }
