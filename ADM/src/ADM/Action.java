@@ -401,7 +401,10 @@ public class Action {
             Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
             for (String ItemKey : SageTVRecordingViews.keySet()){
                 //create a temp menu item for each item
-                ItemName = MenuNode.CreateTempMenuItem(dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
+                //ItemName = MenuNode.GetNewMenuItemName();
+                //Use a consistent name made up of the Parent + the Counter
+                ItemName = dParent + Counter.toString();
+                MenuNode.CreateTempMenuItem(ItemName, dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
                 TempMenuItems.add(ItemName);
                 if (FirstNameforDefault.equals(Blank)){
                     FirstNameforDefault = ItemName;

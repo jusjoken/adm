@@ -768,7 +768,10 @@ public class MenuNode {
             return Boolean.FALSE;
         }
         try {
-            if (MenuNodeList().get(Item).NodeItem.getParent().toString().equals(bParent)){
+            if (MenuNodeList().get(Item).IsTemp){
+                //as Temp items are not directly related to the Parent passed in then return TRUE as it is in the list as above
+                return Boolean.TRUE;
+            }else if (MenuNodeList().get(Item).NodeItem.getParent().toString().equals(bParent)){
                 if (QLMCheck){
                     //make sure the item is to show in QLM - NO SageSubMenus
                     if (MenuNodeList().get(Item).SubMenu==null || MenuNodeList().get(Item).SubMenu.equals(MenuNodeList().get(Item).Name)){
@@ -1329,22 +1332,22 @@ public class MenuNode {
         
         //now build any dynamic submenus
         System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
-        
-        //build the TV Recordings submenu
-        String sSubMenu = "admRecordings";
-        //determine the max number of TV Recording Views to add
-        Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
         Integer Counter = 0;
-        for (String vName: Action.SageTVRecordingViews.keySet()){
-            CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
-            Counter++;
-            if (Counter>=ViewCount){
-                break;
-            }
-        }
-        //ensure there is 1 default item
-        ValidateSubMenuDefault(sSubMenu);
-        SortKeyUpdate(sSubMenu);
+        
+//        //build the TV Recordings submenu
+//        String sSubMenu = "admRecordings";
+//        //determine the max number of TV Recording Views to add
+//        Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
+//        for (String vName: Action.SageTVRecordingViews.keySet()){
+//            CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
+//            Counter++;
+//            if (Counter>=ViewCount){
+//                break;
+//            }
+//        }
+//        //ensure there is 1 default item
+//        ValidateSubMenuDefault(sSubMenu);
+//        SortKeyUpdate(sSubMenu);
         
         //buld Diamond Videos Menu
         if (Diamond.IsDiamond()){
@@ -1403,29 +1406,25 @@ public class MenuNode {
     }
 
     //used for temp menu items created during the display of Dynamic Lists
-    public static String CreateTempMenuItem(String dParent, String dActionType, String dActionAttribute, String dButtonText, Integer dSortKey){
+    public static void CreateTempMenuItem(String tMenuItemName, String dParent, String dActionType, String dActionAttribute, String dButtonText, Integer dSortKey){
         //see if this parent already has a menu item with this ActionType and ActionAttribute
-        String tMenuItemName = FindMatchingAction(MenuNodeList().get(dParent).NodeItem, dActionType, dActionAttribute);
-        if (tMenuItemName.equals(util.OptionNotFound)){
-            tMenuItemName = GetNewMenuItemName();
+        //String tMenuItemName = FindMatchingAction(MenuNodeList().get(dParent).NodeItem, dActionType, dActionAttribute);
             //Create a new MenuItem with defaults
-            MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
-            SaveMenuItemToSage(NewMenuItem);
-            //add the Node to the Tree
-            InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
+        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+        SaveMenuItemToSage(NewMenuItem);
+        //add the Node to the Tree
+        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
 
-            //keep track that this is a temp menu item so we can easily delete it
-            MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
+        //keep track that this is a temp menu item so we can easily delete it
+        MenuNode.SetMenuItemIsTemp(tMenuItemName, Boolean.TRUE);
 
-            MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
-            MenuNode.SetMenuItemAction(tMenuItemName,dActionAttribute);
-            MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemButtonText(tMenuItemName,dButtonText);
-            MenuNode.SetMenuItemName(tMenuItemName);
-            MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-            MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
-        }
-        return tMenuItemName;
+        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
+        MenuNode.SetMenuItemAction(tMenuItemName,dActionAttribute);
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,dButtonText);
+        MenuNode.SetMenuItemName(tMenuItemName);
+        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
     }
 
     public static Boolean ImportMenuItems(String ImportPath){
