@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,6 +24,8 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import sagex.UIContext;
+import sagex.SageAPI;
+import sagex.api.PlaylistAPI;
 
 /**
  *
@@ -426,10 +429,37 @@ public class Action {
             return TempMenuItems;
         }else{
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
-            return Collections.emptyList();
+            return TempMenuItems;
         }
     }
 
+    private static Collection<String> GetPlayList(Boolean IsVideo, String dParent){
+        //based on IsVideo this will create MenuItems for 
+        // true = Vidoes
+        // false = Music
+        String ItemName = Blank;
+        Collection<String> TempMenuItems = new LinkedHashSet<String>();
+        Object[] AllPlayLists = sagex.api.PlaylistAPI.GetPlaylists();
+        //Create a menu item for each of the playlists
+        Integer Counter = 0;
+        for (Object Playlist : AllPlayLists){
+            if (sagex.api.PlaylistAPI.DoesPlaylistHaveVideo(Playlist)==IsVideo){
+                //skip specific Playlists
+                if (sagex.api.PlaylistAPI.GetName(Playlist).equals("DVD BURN PLAYLIST") || sagex.api.PlaylistAPI.GetName(Playlist).equals("Now Playing")){
+                    //skip these playlists
+                }else{
+                    //now creage a Menu Item for this Playlist
+                    ItemName = dParent + Counter.toString();
+                    MenuNode.CreateTempMenuItem(ItemName, dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
+                    TempMenuItems.add(ItemName);
+                    Counter++;
+                }
+            }
+        }
+        
+        return TempMenuItems;
+    }
+    
     public static Collection<String> GetActionList(String Type){
         //TODO: build a AllActions list to provide a search or full list to select from.
         if (Type.equals(StandardMenuAction)){
