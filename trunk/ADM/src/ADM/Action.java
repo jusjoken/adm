@@ -37,6 +37,7 @@ public class Action {
     private static final String VarNull = "VarNull";
     private static final String SageADMCustomActionsPropertyLocation = "ADM/custom_actions";
     private static final String UseAttributeValue = "UseAttributeValue";
+    private static final String UseAttributeObjectValue = "UseAttributeObjectValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
     private static final String CustomActionListFile = "ADMCustomActions.properties";
     public static Map<String,CustomAction> SageMenuActions = new LinkedHashMap<String,CustomAction>();
@@ -56,6 +57,7 @@ public class Action {
     private static final String VarTypeSetProp = "VarTypeSetProp";
     private Boolean AdvancedOnly = Boolean.FALSE;
     private Boolean DiamondOnly = Boolean.FALSE;
+    private Boolean InternalOnly = Boolean.FALSE;
     private static Map<String,Action> ActionList = new LinkedHashMap<String,Action>();
     public static final String WidgetbySymbol = "ExecuteWidget";
     public static final String BrowseVideoFolder = "ExecuteBrowseVideoFolder";
@@ -69,10 +71,12 @@ public class Action {
     public static final String BrowseFileFolderRecDir = "ExecuteBrowseFileFolderRecDir";
     public static final String BrowseFileFolderNetwork = "ExecuteBrowseFileFolderNetwork";
     public static final String LaunchExternalApplication = "LaunchExternalApplication";
+    public static final String LaunchPlayList = "LaunchPlayList";
     public static final String DynamicList = "AddDynamicList";
     public static final String ActionTypeDefault = "DoNothing";
     public static final String DynamicTVRecordingsList = "admDynamicTVRecordingsList";
     public static final String DynamicVideoPlaylist = "admDynamicVideoPlaylist";
+    public static final String DynamicMusicPlaylist = "admDynamicMusicPlaylist";
     
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -110,6 +114,10 @@ public class Action {
         ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
 
         ActionList.put(DynamicList, new Action(DynamicList,Boolean.FALSE,Boolean.FALSE,"Dynamic List Item", "Dynamic List Type"));
+
+        ActionList.put(LaunchPlayList, new Action(LaunchPlayList,Boolean.FALSE,Boolean.FALSE,"LaunchPlayList", "LaunchPlayList","OPUS4A-183733"));
+        ActionList.get(LaunchPlayList).InternalOnly = Boolean.TRUE;
+        ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"PlaylistItem", UseAttributeObjectValue));
 
         ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
 
@@ -171,6 +179,7 @@ public class Action {
     public static String GetBrowseFileFolderRecDir(){ return BrowseFileFolderRecDir; }
     public static String GetBrowseFileFolderNetwork(){ return BrowseFileFolderNetwork; }
     public static String GetLaunchExternalApplication(){ return LaunchExternalApplication; }
+    public static String GetLaunchPlayList(){ return LaunchPlayList; }
     public static String GetDynamicList(){ return DynamicList; }
     
         
@@ -194,30 +203,32 @@ public class Action {
         return ActionList.get(Type).DiamondOnly;
     }
     
+    public static Boolean GetInternalOnly(String Type){
+        return ActionList.get(Type).InternalOnly;
+    }
+    
     public static List<ActionVariable> GetActionVariables(String Type){
         return ActionList.get(Type).ActionVariables;
     }
     
     public static Collection<String> GetTypes(){
-        if (util.IsAdvancedMode() && Diamond.IsDiamond()){
-            return ActionList.keySet();
-        }else{
-            Collection<String> tempList = new LinkedHashSet<String>();
-            for (String Item : ActionList.keySet()){
-                if (GetAdvancedOnly(Item)){
-                    if (util.IsAdvancedMode()){
-                        tempList.add(Item);
-                    }
-                }else if (GetDiamondOnly(Item)){
-                    if (Diamond.IsDiamond()){
-                        tempList.add(Item);
-                    }
-                }else{
+        Collection<String> tempList = new LinkedHashSet<String>();
+        for (String Item : ActionList.keySet()){
+            if (GetAdvancedOnly(Item)){
+                if (util.IsAdvancedMode()){
                     tempList.add(Item);
                 }
+            }else if (GetDiamondOnly(Item)){
+                if (Diamond.IsDiamond()){
+                    tempList.add(Item);
+                }
+            }else if (GetInternalOnly(Item)){
+                //do not add these types of items as they should not show on any lists
+            }else{
+                tempList.add(Item);
             }
-            return tempList;
         }
+        return tempList;
     }
 
     public static Boolean IsValidAction(String Type){
@@ -260,6 +271,9 @@ public class Action {
             }
         }else if(Type.equals(DynamicList)){
             return DynamicLists.get(Attribute);
+        }else if(Type.equals(LaunchPlayList)){
+            //should not be used as this is an internal only item and should not be displayed
+            return "Invalid use of this Internal PlayList item";
         }else if(Type.equals(DiamondCustomFlows)){
             return Diamond.GetViewName(Attribute);
         }else if(Type.equals(LaunchExternalApplication)){
@@ -290,7 +304,11 @@ public class Action {
             }else{
                 //see if there are any ActionVariables that need to be evaluated
                 for (ActionVariable tActionVar : GetActionVariables(tActionType)){
-                    tActionVar.EvaluateVariable(tActionAttribute);
+                    if (tActionVar.Val.equals(UseAttributeObjectValue)){
+                        tActionVar.EvaluateVariable(MenuNode.GetMenuItemActionObject(MenuItemName));
+                    }else{
+                        tActionVar.EvaluateVariable(tActionAttribute);
+                    }
                 }
                 //determine what to execute
                 if (tActionType.equals(LaunchExternalApplication)){
@@ -393,6 +411,7 @@ public class Action {
         DynamicLists.clear();
         DynamicLists.put(DynamicTVRecordingsList, "TV Recordings List");
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
+        DynamicLists.put(DynamicMusicPlaylist, "Music Playlist");
     }
     
     public static Collection<String> GetDynamicListItems(String dParent, String Attribute){
@@ -426,7 +445,10 @@ public class Action {
             return TempMenuItems;
         }else if(Attribute.equals(DynamicVideoPlaylist)){
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
-            return TempMenuItems;
+            return GetPlayList(Boolean.TRUE, dParent);
+        }else if(Attribute.equals(DynamicMusicPlaylist)){
+            System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            return GetPlayList(Boolean.FALSE, dParent);
         }else{
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
@@ -450,7 +472,8 @@ public class Action {
                 }else{
                     //now creage a Menu Item for this Playlist
                     ItemName = dParent + Counter.toString();
-                    MenuNode.CreateTempMenuItem(ItemName, dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
+                    MenuNode.CreateTempMenuItem(ItemName, dParent, LaunchPlayList, ItemName, sagex.api.PlaylistAPI.GetName(new UIContext(sagex.api.Global.GetUIContextName()), Playlist), Counter);
+                    MenuNode.SetMenuItemActionObject(ItemName, Playlist);
                     TempMenuItems.add(ItemName);
                     Counter++;
                 }
@@ -661,9 +684,10 @@ public class Action {
         public String getVal(){
             return this.Val;
         }
-        public void EvaluateVariable(String Attribute){
-            String tVal = this.Val;
-            if (this.Val.equals(UseAttributeValue)){
+        //using an Object rather than a string as for PlayLists you need to pass an Object into a Global Variable
+        public void EvaluateVariable(Object Attribute){
+            Object tVal = this.Val;
+            if (this.Val.equals(UseAttributeValue) || this.Val.equals(UseAttributeObjectValue)){
                 tVal = Attribute;
             }else if (this.Val.equals(VarNull)){
                 tVal = null;
@@ -673,7 +697,7 @@ public class Action {
             }else if (this.VarType.equals(VarTypeStatic)){
                 sagex.api.Global.AddStaticContext(new UIContext(sagex.api.Global.GetUIContextName()), this.Var, tVal);
             }else if (this.VarType.equals(VarTypeSetProp)){
-                util.SetProperty(this.Var, tVal);
+                util.SetProperty(this.Var, tVal.toString());
             }
             System.out.println("ADM: aEvaluateVariable - Type '" + this.VarType + "' setting '" + this.Var + "' to '" + tVal + "' for Attribute '" + Attribute + "' original Val ='" + this.Val + "'");
         }
