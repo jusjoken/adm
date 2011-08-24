@@ -118,6 +118,7 @@ public class Action {
         ActionList.put(LaunchPlayList, new Action(LaunchPlayList,Boolean.FALSE,Boolean.FALSE,"LaunchPlayList", "LaunchPlayList","OPUS4A-183733"));
         ActionList.get(LaunchPlayList).InternalOnly = Boolean.TRUE;
         ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"PlaylistItem", UseAttributeObjectValue));
+        ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"BasePlaylistUnit", UseAttributeValue));
 
         ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
 
@@ -444,11 +445,13 @@ public class Action {
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicVideoPlaylist)){
+            TempMenuItems = GetPlayList(Boolean.TRUE, dParent);
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
-            return GetPlayList(Boolean.TRUE, dParent);
+            return TempMenuItems;
         }else if(Attribute.equals(DynamicMusicPlaylist)){
+            TempMenuItems = GetPlayList(Boolean.FALSE, dParent);
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
-            return GetPlayList(Boolean.FALSE, dParent);
+            return TempMenuItems;
         }else{
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
@@ -461,6 +464,12 @@ public class Action {
         // false = Music
         String ItemName = Blank;
         Collection<String> TempMenuItems = new LinkedHashSet<String>();
+        String PlayListItemType = "";
+        if (IsVideo){
+            PlayListItemType = "xVideo";
+        }else{
+            PlayListItemType = "xSong";
+        }
         Object[] AllPlayLists = sagex.api.PlaylistAPI.GetPlaylists();
         //Create a menu item for each of the playlists
         Integer Counter = 0;
@@ -472,7 +481,7 @@ public class Action {
                 }else{
                     //now creage a Menu Item for this Playlist
                     ItemName = dParent + Counter.toString();
-                    MenuNode.CreateTempMenuItem(ItemName, dParent, LaunchPlayList, ItemName, sagex.api.PlaylistAPI.GetName(new UIContext(sagex.api.Global.GetUIContextName()), Playlist), Counter);
+                    MenuNode.CreateTempMenuItem(ItemName, dParent, LaunchPlayList, PlayListItemType, sagex.api.PlaylistAPI.GetName(new UIContext(sagex.api.Global.GetUIContextName()), Playlist), Counter);
                     MenuNode.SetMenuItemActionObject(ItemName, Playlist);
                     TempMenuItems.add(ItemName);
                     Counter++;

@@ -550,14 +550,18 @@ public class MenuNode {
     
     @SuppressWarnings("unchecked")
     public static String GetSubMenuDefault(String bParent){
+        String FirstChildName = util.OptionNotFound;
         if (MenuNodeList().get(bParent).NodeItem.getChildCount()>0){
             Enumeration<DefaultMutableTreeNode> en = MenuNodeList().get(bParent).NodeItem.children();
             while (en.hasMoreElements())   {
                 DefaultMutableTreeNode child = en.nextElement();
                 MenuNode tMenu = (MenuNode)child.getUserObject();
-                //for Dynamic Lists then the SubMenuDefaults are in the MenuItems children so call this routine again
+                if (FirstChildName.equals(util.OptionNotFound)){
+                    FirstChildName = tMenu.Name;
+                }
+                //for Dynamic Lists skip the item as you don't want to consider the Dynamic list item as the default as it does not display
                 if (tMenu.ActionType.equals(Action.DynamicList)){
-                    return GetSubMenuDefault(tMenu.Name);
+                    //skip
                 }else{
                     if (tMenu.IsDefault){
                         System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
@@ -566,8 +570,40 @@ public class MenuNode {
                 }
             }         
         }
-        System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' - none found");
-        return "";
+        //if you get here then NOT FOUND so find the first item and return it 
+        if (FirstChildName.equals(util.OptionNotFound)){
+            System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' - none found");
+            return "";
+        }else{
+            if (GetMenuItemActionType(FirstChildName).equals(Action.DynamicList)){
+                System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' - not found so returning Dynamic Lists FirstChild '" + FirstChildName + "'");
+                return GetSubMenuFirstChild(FirstChildName);
+            }else{
+                System.out.println("ADM: mGetSubMenuDefault for '" + bParent + "' - not found so returning FirstChild '" + FirstChildName + "'");
+                return FirstChildName;
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String GetSubMenuFirstChild(String bParent){
+        String FirstChildName = util.OptionNotFound;
+        if (MenuNodeList().get(bParent).NodeItem.getChildCount()>0){
+            Enumeration<DefaultMutableTreeNode> en = MenuNodeList().get(bParent).NodeItem.children();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+                FirstChildName = tMenu.Name;
+                break;
+            }         
+        }
+        if (FirstChildName.equals(util.OptionNotFound)){
+            System.out.println("ADM: mGetSubMenuFirstChild for '" + bParent + "' - none found");
+            return "";
+        }else{
+            System.out.println("ADM: mGetSubMenuFirstChild for '" + bParent + "' - FirstChild '" + FirstChildName + "'");
+            return FirstChildName;
+        }
     }
 
     public static Integer GetMenuItemLevel(String Name){
