@@ -35,6 +35,7 @@ public class MenuNode {
     private String ButtonText = "";
     private String SubMenu = "";
     private String ActionAttribute = "";
+    private Object ActionObject = null;
     private String ActionType = "";
     private String BGImageFile = "";
     private String BGImageFilePath = "";
@@ -104,6 +105,21 @@ public class MenuNode {
 
     public static void SetMenuItemAction(String Name, String Setting){
         Save(Name, "Action", Setting);
+    }
+
+    public static Object GetMenuItemActionObject(String Name){
+        //System.out.println("ADM: mGetMenuItemActionObject for '" + Name + "' = '" + MenuNodeList().get(Name).ActionObject + "'");
+        try {
+            return MenuNodeList().get(Name).ActionObject;
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+
+    public static void SetMenuItemActionObject(String Name, Object Setting){
+        //this is saved in memory only and not written to the properties file
+        MenuNodeList().get(Name).ActionObject = Setting;
     }
 
     public static String GetMenuItemActionType(String Name){
