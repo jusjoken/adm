@@ -456,15 +456,12 @@ public class Action {
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicDiamondCustomFlows)){
-            //only show these items if the Diamond Custom Movies view is turned on in Diamond
-            if (Diamond.UseDiamondMovies()){
-                Counter = 0;
-                for (String vFlow: Diamond.GetCustomViews()){
-                    ItemName = dParent + Counter.toString();
-                    MenuNode.CreateTempMenuItem(ItemName, dParent, DiamondCustomFlows, vFlow, GetAttributeButtonText(DiamondCustomFlows, vFlow, Boolean.TRUE), Counter);
-                    TempMenuItems.add(ItemName);
-                    Counter++;
-                }
+            Counter = 0;
+            for (String vFlow: Diamond.GetCustomViews()){
+                ItemName = dParent + Counter.toString();
+                MenuNode.CreateTempMenuItem(ItemName, dParent, DiamondCustomFlows, vFlow, GetAttributeButtonText(DiamondCustomFlows, vFlow, Boolean.TRUE), Counter);
+                TempMenuItems.add(ItemName);
+                Counter++;
             }
             return TempMenuItems;
         }else{
