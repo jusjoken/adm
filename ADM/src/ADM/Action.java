@@ -481,7 +481,7 @@ public class Action {
                 }else{
                     //now creage a Menu Item for this Playlist
                     ItemName = dParent + Counter.toString();
-                    MenuNode.CreateTempMenuItem(ItemName, dParent, LaunchPlayList, PlayListItemType, sagex.api.PlaylistAPI.GetName(new UIContext(sagex.api.Global.GetUIContextName()), Playlist), Counter);
+                    MenuNode.CreateTempMenuItem(ItemName, dParent, LaunchPlayList, PlayListItemType, GetPlayListButtonText(Playlist), Counter);
                     MenuNode.SetMenuItemActionObject(ItemName, Playlist);
                     TempMenuItems.add(ItemName);
                     Counter++;
@@ -490,6 +490,16 @@ public class Action {
         }
         
         return TempMenuItems;
+    }
+    
+    private static String GetPlayListButtonText(Object Playlist){
+        String PLName = sagex.api.PlaylistAPI.GetName(new UIContext(sagex.api.Global.GetUIContextName()),Playlist);
+        //Get name after last /, if the string has any.
+        Integer SlashPos = PLName.lastIndexOf("/");
+        if (SlashPos!=-1){
+            PLName = ".." + PLName.substring( SlashPos+1, -1 );
+        }
+        return PLName;
     }
     
     public static Collection<String> GetActionList(String Type){

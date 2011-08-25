@@ -190,7 +190,10 @@ public class util {
         EditOptions.add("admEditMenuItem"); //Edit current Menu Item
         EditOptions.add("admAddMenuItem"); //Add current Menu Item below
         if (MenuNode.GetMenuItemLevel(Name)<3){
-            EditOptions.add("admAddSubMenuItem"); //Add SubMenu to current Menu Item
+            //do not allow a child to be added to a Dynamic list item
+            if (!MenuNode.GetMenuItemActionType(Name).equals(Action.DynamicList)){
+                EditOptions.add("admAddSubMenuItem"); //Add SubMenu to current Menu Item
+            }
         }
         EditOptions.add("admDeleteMenuItem"); //Delete current Menu Item
         EditOptions.add("admCloseEdit"); //Close the Edit Menu

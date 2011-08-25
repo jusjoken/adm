@@ -1118,8 +1118,12 @@ public class MenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
+            //only add level 1 and 2 menu items as valid parents
             if (child.getLevel()<3){
-                ValidParentList.add(tMenu.Name);
+                //do not add DynamicList items as valid parents
+                if (!tMenu.ActionType.equals(Action.DynamicList)){
+                    ValidParentList.add(tMenu.Name);
+                }
             }
         }         
         System.out.println("ADM: mGetMenuItemParentList: '" + ValidParentList + "'");
@@ -1135,7 +1139,10 @@ public class MenuNode {
             DefaultMutableTreeNode child = en.nextElement();
             MenuNode tMenu = (MenuNode)child.getUserObject();
             if (child.getLevel()==SpecificLevel-1){
-                ValidParentList.add(tMenu.Name);
+                //do not add DynamicList items as valid parents
+                if (!tMenu.ActionType.equals(Action.DynamicList)){
+                    ValidParentList.add(tMenu.Name);
+                }
             }
         }         
         System.out.println("ADM: mGetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
@@ -1479,6 +1486,16 @@ public class MenuNode {
         MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
     }
 
+    public static Boolean IsEditAllowed(String Name){
+        //check if this MenuItem should be allowed to be edited in the ADM Manager interface
+        //Temp items are created and then deleted so they should not be allowed to be edited
+        if (GetMenuItemIsTemp(Name)){
+            return Boolean.FALSE;
+        }else{
+            return Boolean.TRUE;
+        }
+    }
+    
     public static Boolean ImportMenuItems(String ImportPath){
 
         if (ImportPath==null){
