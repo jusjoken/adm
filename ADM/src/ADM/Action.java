@@ -77,6 +77,7 @@ public class Action {
     public static final String DynamicTVRecordingsList = "admDynamicTVRecordingsList";
     public static final String DynamicVideoPlaylist = "admDynamicVideoPlaylist";
     public static final String DynamicMusicPlaylist = "admDynamicMusicPlaylist";
+    public static final String DynamicDiamondCustomFlows = "admDynamicDiamondCustomFlows";
     
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -413,6 +414,9 @@ public class Action {
         DynamicLists.put(DynamicTVRecordingsList, "TV Recordings List");
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
         DynamicLists.put(DynamicMusicPlaylist, "Music Playlist");
+        if (Diamond.IsDiamond()){
+            DynamicLists.put(DynamicDiamondCustomFlows, "Diamond Custom Flows");
+        }
     }
     
     public static Collection<String> GetDynamicListItems(String dParent, String Attribute){
@@ -424,7 +428,6 @@ public class Action {
             Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
             for (String ItemKey : SageTVRecordingViews.keySet()){
                 //create a temp menu item for each item
-                //ItemName = MenuNode.GetNewMenuItemName();
                 //Use a consistent name made up of the Parent + the Counter
                 ItemName = dParent + Counter.toString();
                 MenuNode.CreateTempMenuItem(ItemName, dParent, TVRecordingView, ItemKey, GetSageTVRecordingViewsButtonText(ItemKey), Counter);
@@ -451,6 +454,18 @@ public class Action {
         }else if(Attribute.equals(DynamicMusicPlaylist)){
             TempMenuItems = GetPlayList(Boolean.FALSE, dParent);
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            return TempMenuItems;
+        }else if(Attribute.equals(DynamicDiamondCustomFlows)){
+            //only show these items if the Diamond Custom Movies view is turned on in Diamond
+            if (Diamond.UseDiamondMovies()){
+                Counter = 0;
+                for (String vFlow: Diamond.GetCustomViews()){
+                    ItemName = dParent + Counter.toString();
+                    MenuNode.CreateTempMenuItem(ItemName, dParent, DiamondCustomFlows, vFlow, GetAttributeButtonText(DiamondCustomFlows, vFlow, Boolean.TRUE), Counter);
+                    TempMenuItems.add(ItemName);
+                    Counter++;
+                }
+            }
             return TempMenuItems;
         }else{
             System.out.println("ADM: aGetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
