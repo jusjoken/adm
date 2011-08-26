@@ -1393,25 +1393,30 @@ public class MenuNode {
         System.out.println("ADM: mLoadMenuItemDefaults: building any dynamic submenus");
         Integer Counter = 0;
         
-//        //build the TV Recordings submenu
-//        String sSubMenu = "admRecordings";
-//        //determine the max number of TV Recording Views to add
-//        Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
-//        for (String vName: Action.SageTVRecordingViews.keySet()){
-//            CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
-//            Counter++;
-//            if (Counter>=ViewCount){
-//                break;
-//            }
-//        }
-//        //ensure there is 1 default item
+        //build the TV Recordings submenu
+        String sSubMenu = "admRecordings";
+        //determine the max number of TV Recording Views to add
+        Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
+        String NewMenuItemName = "";
+        String FirstItem = "";
+        for (String vName: Action.SageTVRecordingViews.keySet()){
+            NewMenuItemName = CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
+            if (Counter==0){
+                FirstItem = NewMenuItemName;
+            }
+            Counter++;
+            if (Counter>=ViewCount){
+                break;
+            }
+        }
+        //ensure there is 1 default item
+        SetMenuItemIsDefault(FirstItem, Boolean.TRUE);
 //        ValidateSubMenuDefault(sSubMenu);
-//        SortKeyUpdate(sSubMenu);
+        SortKeyUpdate(sSubMenu);
         
         //buld Diamond Videos Menu
         if (Diamond.IsDiamond()){
             String SageTVMenuVideos = "admSageTVVideos";
-            String NewMenuItemName = "";
             if (Diamond.UseDiamondMovies()){
                 //force the Parent Name to be Movies
                 SetMenuItemButtonText(SageTVMenuVideos, "Movies");
@@ -1442,29 +1447,28 @@ public class MenuNode {
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
     
-// NO LONGER USED - was used to create a menu item on load of the default items - used ShowIF instead now    
-//    public static String CreateDynamicMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
-//        String tMenuItemName = GetNewMenuItemName();
-//        //Create a new MenuItem with defaults
-//        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
-//        SaveMenuItemToSage(NewMenuItem);
-//        //add the Node to the Tree
-//        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
-//
-//        //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
-//        MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
-//
-//        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
-//        MenuNode.SetMenuItemAction(tMenuItemName,dKey);
-//        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
-//        MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetAttributeButtonText(dActionType, dKey, Boolean.TRUE));
-//        MenuNode.SetMenuItemName(tMenuItemName);
-//        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
-//        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
-//        
-//        return tMenuItemName;
-//    }
-//
+    public static String CreateDynamicMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
+        String tMenuItemName = GetNewMenuItemName();
+        //Create a new MenuItem with defaults
+        MenuNode NewMenuItem = new MenuNode(dParent,tMenuItemName,dSortKey,util.ButtonTextDefault,null,util.ActionTypeDefault,null,null,Boolean.FALSE,util.TriState.YES);
+        SaveMenuItemToSage(NewMenuItem);
+        //add the Node to the Tree
+        InsertNode(MenuNodeList().get(dParent).NodeItem, NewMenuItem, dSortKey);
+
+        //keep track that this is a dynamically created menu item so in some cases we do not export it when in DefaultsWorkingMode
+        MenuNode.SetMenuItemIsCreatedNotLoaded(tMenuItemName, Boolean.TRUE);
+
+        MenuNode.SetMenuItemActionType(tMenuItemName,dActionType);
+        MenuNode.SetMenuItemAction(tMenuItemName,dKey);
+        MenuNode.SetMenuItemBGImageFile(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemButtonText(tMenuItemName,Action.GetAttributeButtonText(dActionType, dKey, Boolean.TRUE));
+        MenuNode.SetMenuItemName(tMenuItemName);
+        MenuNode.SetMenuItemSubMenu(tMenuItemName,util.ListNone);
+        MenuNode.SetMenuItemIsActive(tMenuItemName,util.TriState.YES);
+        
+        return tMenuItemName;
+    }
+
     //used for temp menu items created during the display of Dynamic Lists
     public static void CreateTempMenuItem(String tMenuItemName, String dParent, String dActionType, String dActionAttribute, String dButtonText, Integer dSortKey){
         //see if this parent already has a menu item with this ActionType and ActionAttribute
@@ -1494,6 +1498,15 @@ public class MenuNode {
             return Boolean.FALSE;
         }else{
             return Boolean.TRUE;
+        }
+    }
+    
+    public static Boolean IsSageSubmenuAllowed(String Name){
+        //check if this MenuItem should be allowed to have a SageSubmenu
+        if (GetMenuItemLevel(Name)<3 && !GetMenuItemHasSubMenu(Name) && !GetMenuItemActionType(Name).equals(Action.DynamicList)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
         }
     }
     
