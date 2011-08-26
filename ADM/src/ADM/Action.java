@@ -12,20 +12,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import sagex.UIContext;
-import sagex.SageAPI;
-import sagex.api.PlaylistAPI;
 
 /**
  *
@@ -709,6 +708,8 @@ public class Action {
                 String tCopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
                 CustomAction tAction = new CustomAction(tCustomActionName,tButtonText, tWidgetSymbol, tCopyModeAttributeVar);
                 SageMenuActions.put(tCustomActionName,tAction);
+                
+                //load any action variables
                 Integer Counter = 0;
                 Boolean Found = Boolean.TRUE;
                 do {
@@ -722,6 +723,23 @@ public class Action {
                         tVar.Val = util.GetProperty(AVPropLocation + "/Val", "");
                         SageMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
                         System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
+                    }else{
+                        Found = Boolean.FALSE;
+                    }
+                } while (Found);
+
+                //load any action categories
+                Counter = 0;
+                Found = Boolean.TRUE;
+                String tCategory = "";
+                do {
+                    Counter++;
+                    //first test if the current action category is available
+                    String AVPropLocation = PropLocation + "/ActionCategory/" + Counter;
+                    if (util.HasProperty(AVPropLocation)){
+                        tCategory = util.GetProperty(AVPropLocation, Blank);
+                        SageMenuActions.get(tCustomActionName).ActionCategories.add(tCategory);
+                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -806,11 +824,14 @@ public class Action {
         private String WidgetSymbol = "";
         private String CopyModeAttributeVar = Blank;
         private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
+        private List<String> ActionCategories = new LinkedList<String>();
         public static Collection<String> WidgetSymbols = new LinkedHashSet<String>();
         //the combination of the Name and CopymodeAttributeVar fields make the CustomAction unique for the CopyMode
         public static Collection<String> CopyModeUniqueIDs = new LinkedHashSet<String>();
         //need a list of keys that are sorted by the ButtonText
         public static SortedMap<String,String> ActionListSorted = new TreeMap<String,String>();
+        //unique set of All Categories
+        public static Set<String> AllActionCategories = new HashSet<String>();
 
         
 //        public CustomAction(String Name, String ButtonText){
@@ -833,6 +854,15 @@ public class Action {
             }
             CopyModeUniqueIDs.add(UniqueID(CopyModeAttributeVar,Name));
             ActionListSorted.put(this.ButtonText, Name);
+        }
+        
+        public void AddCategory(String aCategory){
+            ActionCategories.add(aCategory);
+            AllActionCategories.add(aCategory);
+        }
+        
+        public Boolean HasCategory(String aCategory){
+            return ActionCategories.contains(aCategory);
         }
         
         public void Execute(String Attribute){
