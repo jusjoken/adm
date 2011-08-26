@@ -243,6 +243,26 @@ public class Action {
         }
     }
     
+    public static String GetAllActionsAttributeButtonText(String AAType){
+        return GetAllActionsAttributeButtonText(AAType, Boolean.FALSE);
+    }
+    //splits the All Actions Type (Key) using the ListToken to get the Button Text
+    public static String GetAllActionsAttributeButtonText(String AAType, Boolean IgnoreAdvanced){
+        //the AAType is made up of the ActionType + ListToken + Attribute (Key)
+        String tAttribute = GetAllActionsAttribute(AAType);
+        String tType = GetAllActionsType(AAType);
+        if (tAttribute.equals(util.OptionNotFound)){
+            if(tType.equals(util.OptionNotFound)){
+                //bad conversion
+                return util.OptionNotFound;
+            }else{
+                return GetButtonText(tType);
+            }
+        }else{
+            return GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
+        }
+    }
+    
     public static String GetAttributeButtonText(String Type, String Attribute){
         return GetAttributeButtonText(Type, Attribute, Boolean.FALSE);
     }
@@ -512,6 +532,52 @@ public class Action {
             PLName = ".." + PLName.substring( SlashPos+1, -1 );
         }
         return PLName;
+    }
+    
+    //returns a sorted list of ALL the actions
+    public static Collection<String> GetAllActionsList(){
+        SortedMap<String,String> AllActionsSorted = new TreeMap<String,String>();
+        for (String aType : GetTypes()){
+            if (HasActionList(aType)){
+                for (String aAttribute : GetActionList(aType)){
+                    AllActionsSorted.put( GetAttributeButtonText(aType,aAttribute), GetAllActionsKey(aType, aAttribute));
+                }
+            }else{
+                AllActionsSorted.put(GetButtonText(aType), aType);
+            }
+        }
+        //System.out.println("ADM: aGetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
+        return AllActionsSorted.values();
+    }
+
+    public static String GetAllActionsKey(String aType, String aAttribute){
+        if (HasActionList(aType)){
+            return aType + util.ListToken + aAttribute;
+        }else{
+            return aType;
+        }
+    }
+    
+    public static String GetAllActionsAttribute(String AAType){
+        //the AAType is made up of the ActionType + ListToken + Attribute (Key)
+        List<String> tList = util.ConvertStringtoList(AAType);
+        if (tList.size()==2){
+            return tList.get(1);
+        }else{
+            //bad conversion or no attribute
+            return util.OptionNotFound;
+        }
+    }
+    
+    public static String GetAllActionsType(String AAType){
+        //the AAType is made up of the ActionType + ListToken + Attribute (Key)
+        List<String> tList = util.ConvertStringtoList(AAType);
+        if (tList.size()>=1){
+            return tList.get(0);
+        }else{
+            //bad conversion
+            return util.OptionNotFound;
+        }
     }
     
     public static Collection<String> GetActionList(String Type){

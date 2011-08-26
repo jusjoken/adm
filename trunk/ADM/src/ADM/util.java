@@ -34,6 +34,9 @@ public class util {
     public static final String SageBackgroundsPropertyLocation = "ADM/backgrounds/";
     public static final String SageADMSettingsPropertyLocation = "ADM/settings";
     public static final String AdvancedModePropertyLocation = "ADM/settings/advanced_mode";
+    public static final String UseADMPropertyLocation = "ADM/settings/use_adm";
+    public static final String UseQLMPropertyLocation = "ADM/settings/use_qlm";
+    public static final String ADMCopyModePropertyLocation = "ADM/settings/admcopymode";
     public static final String TopMenu = "xTopMenu";
     public static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
     public static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
@@ -556,11 +559,55 @@ public class util {
     }
 
     public static Boolean IsAdvancedMode(){
-        if ("true".equals(GetProperty(AdvancedModePropertyLocation, "false"))){
+        if (GetPropertyAsBoolean(AdvancedModePropertyLocation, Boolean.FALSE)){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
         }
+    }
+    
+    public static void ChangeAdvancedMode(){
+        Boolean NewValue = !GetPropertyAsBoolean(AdvancedModePropertyLocation, Boolean.FALSE);
+        SetProperty(AdvancedModePropertyLocation, NewValue.toString());
+    }
+    
+    public static Boolean UseADM(){
+        if (GetPropertyAsBoolean(UseADMPropertyLocation, Boolean.TRUE)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static void ChangeUseADM(){
+        Boolean NewValue = !GetPropertyAsBoolean(UseADMPropertyLocation, Boolean.FALSE);
+        SetProperty(UseADMPropertyLocation, NewValue.toString());
+    }
+    
+    public static Boolean UseQLM(){
+        if (GetPropertyAsBoolean(UseQLMPropertyLocation, Boolean.FALSE)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static void ChangeUseQLM(){
+        Boolean NewValue = !GetPropertyAsBoolean(UseQLMPropertyLocation, Boolean.FALSE);
+        SetProperty(UseQLMPropertyLocation, NewValue.toString());
+    }
+    
+    public static Boolean ADMCopyMode(){
+        if (GetPropertyAsBoolean(ADMCopyModePropertyLocation, Boolean.FALSE)){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static void ChangeADMCopyMode(){
+        Boolean NewValue = !GetPropertyAsBoolean(ADMCopyModePropertyLocation, Boolean.FALSE);
+        SetProperty(ADMCopyModePropertyLocation, NewValue.toString());
     }
     
     public static String GetSubMenuListButtonText(String Option, Integer Level){
