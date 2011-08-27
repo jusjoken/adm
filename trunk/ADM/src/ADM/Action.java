@@ -38,7 +38,6 @@ public class Action {
     private static final String UseAttributeValue = "UseAttributeValue";
     private static final String UseAttributeObjectValue = "UseAttributeObjectValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
-    private static final String CustomActionListFile = "ADMCustomActions.properties";
     public static Map<String,CustomAction> SageMenuActions = new LinkedHashMap<String,CustomAction>();
     public static Map<String,String>  SageTVRecordingViews = new LinkedHashMap<String,String>();
     public static Map<String,String> DynamicLists = new LinkedHashMap<String,String>();
@@ -160,7 +159,6 @@ public class Action {
         CustomAction.WidgetSymbols.clear();
 
         LoadStandardActionList();
-        LoadSageCustomMenuActions();
         LoadDynamicLists();
 
         Diamond.LoadDiamondDefaultFlows();
@@ -398,35 +396,35 @@ public class Action {
                
     }
     
-    public static void LoadStandardActionList(){
-        Properties StandardActionProps = new Properties();
-        String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
-        
-        //read the properties from the properties file
-        try {
-            FileInputStream in = new FileInputStream(StandardActionPropsPath);
-            try {
-                StandardActionProps.load(in);
-                in.close();
-            } catch (IOException ex) {
-                System.out.println("ADM: aLoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
-                return;
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("ADM: aLoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
-            return;
-        }
-
-        //Add all the Actions as Custom Actions
-        for (String ActionItem : StandardActionProps.stringPropertyNames()){
-            CustomAction tAction = new CustomAction(ActionItem, StandardActionProps.getProperty(ActionItem),ActionItem);
-            SageMenuActions.put(ActionItem, tAction);
-        }
-
-        System.out.println("ADM: aLoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
-        return;
-    }
-
+//    public static void LoadStandardActionList(){
+//        Properties StandardActionProps = new Properties();
+//        String StandardActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
+//        
+//        //read the properties from the properties file
+//        try {
+//            FileInputStream in = new FileInputStream(StandardActionPropsPath);
+//            try {
+//                StandardActionProps.load(in);
+//                in.close();
+//            } catch (IOException ex) {
+//                System.out.println("ADM: aLoadStandardActionList: IO exception loading standard actions " + util.class.getName() + ex);
+//                return;
+//            }
+//        } catch (FileNotFoundException ex) {
+//            System.out.println("ADM: aLoadStandardActionList: file not found loading standard actions " + util.class.getName() + ex);
+//            return;
+//        }
+//
+//        //Add all the Actions as Custom Actions
+//        for (String ActionItem : StandardActionProps.stringPropertyNames()){
+//            CustomAction tAction = new CustomAction(ActionItem, StandardActionProps.getProperty(ActionItem),ActionItem);
+//            SageMenuActions.put(ActionItem, tAction);
+//        }
+//
+//        System.out.println("ADM: aLoadStandardActionList: completed for '" + StandardActionPropsPath + "'");
+//        return;
+//    }
+//
     public static void LoadDynamicLists(){
         //Dynamic Lists are single menu items that expand themselves into a list of items of a specified type
         DynamicLists.clear();
@@ -666,9 +664,9 @@ public class Action {
         }
     }
 
-    private static void LoadSageCustomMenuActions(){
+    public static void LoadStandardActionList(){
         Properties CustomActionProps = new Properties();
-        String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + CustomActionListFile;
+        String CustomActionPropsPath = util.GetADMDefaultsLocation() + File.separator + StandardActionListFile;
         //read the properties from the properties file
         try {
             FileInputStream in = new FileInputStream(CustomActionPropsPath);
@@ -676,11 +674,11 @@ public class Action {
                 CustomActionProps.load(in);
                 in.close();
             } catch (IOException ex) {
-                System.out.println("ADM: aLoadSageCustomMenuActions: IO exception loading custom actions " + util.class.getName() + ex);
+                System.out.println("ADM: aLoadStandardActionList: IO exception loading actions " + util.class.getName() + ex);
                 return;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ADM: aLoadSageCustomMenuActions: file not found loading custom actions " + util.class.getName() + ex);
+            System.out.println("ADM: aLoadStandardActionList: file not found loading actions " + util.class.getName() + ex);
             return;
         }
 
@@ -701,7 +699,7 @@ public class Action {
         if (CustomActionNames.length>0){
             String PropLocation = "";
             for (String tCustomActionName : CustomActionNames){
-                System.out.println("ADM: aLoadSageCustomMenuActions: loading '" + tCustomActionName + "' Custom Menu Action");
+                System.out.println("ADM: aLoadStandardActionList: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
                 String tButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
                 String tWidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
@@ -722,7 +720,7 @@ public class Action {
                         tVar.Var = util.GetProperty(AVPropLocation + "/Var", "");
                         tVar.Val = util.GetProperty(AVPropLocation + "/Val", "");
                         SageMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
-                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
+                        System.out.println("ADM: aLoadStandardActionList: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -739,7 +737,7 @@ public class Action {
                     if (util.HasProperty(AVPropLocation)){
                         tCategory = util.GetProperty(AVPropLocation, Blank);
                         SageMenuActions.get(tCustomActionName).ActionCategories.add(tCategory);
-                        System.out.println("ADM: aLoadSageCustomMenuActions: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "'");
+                        System.out.println("ADM: aLoadStandardActionList: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "' Categories '" + CustomAction.AllActionCategories + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -749,7 +747,7 @@ public class Action {
         
         //clean up existing Custom Actions from the SageTV properties file as they are no longer needed
         util.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
-        System.out.println("ADM: aLoadSageCustomMenuActions: completed loading '" + SageMenuActions.size() + "' Custom Menu Actions");
+        System.out.println("ADM: aLoadStandardActionList: completed loading '" + SageMenuActions.size() + "' Custom Menu Actions");
     }
 
     private static void LoadSageTVRecordingViews(){
