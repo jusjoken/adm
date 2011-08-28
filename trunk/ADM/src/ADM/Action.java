@@ -784,6 +784,10 @@ public class Action {
     }
         
     public static String GetActionCategoryFilter(){
+        return util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+    }
+    
+    public static String GetActionCategoryFilterButtonText(){
         String tFilter = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
         if (tFilter.equals(Blank) || tFilter.equals(ActionCategoryShowAll)){
             return "-Not Filtered-";
@@ -805,6 +809,20 @@ public class Action {
         if (tCategory.equals(Category)){
             util.TriState tSticky = util.GetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
             if (tSticky.equals(util.TriState.OTHER) || tSticky.equals(util.TriState.YES)){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static Boolean GetActionCategoryFilterStickyIsSticky(String Category){
+        String tCategory = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+        if (tCategory.equals(Category)){
+            util.TriState tSticky = util.GetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
+            if (tSticky.equals(util.TriState.OTHER)){
                 return Boolean.TRUE;
             }else{
                 return Boolean.FALSE;
