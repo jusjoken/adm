@@ -185,6 +185,7 @@ public class Action {
     public static String GetLaunchExternalApplication(){ return LaunchExternalApplication; }
     public static String GetLaunchPlayList(){ return LaunchPlayList; }
     public static String GetDynamicList(){ return DynamicList; }
+    public static String GetActionTypeDefault(){ return ActionTypeDefault; }
     
         
     public static String GetButtonText(String Type){
@@ -540,12 +541,15 @@ public class Action {
     public static Collection<String> GetAllActionsList(){
         SortedMap<String,String> AllActionsSorted = new TreeMap<String,String>();
         for (String aType : GetTypes()){
-            if (HasActionList(aType)){
-                for (String aAttribute : GetActionList(aType)){
-                    AllActionsSorted.put( GetAttributeButtonText(aType,aAttribute), GetAllActionsKey(aType, aAttribute));
+            //do not add Do Nothing to the list
+            if (!aType.equals(ActionTypeDefault)){
+                if (HasActionList(aType)){
+                    for (String aAttribute : GetActionList(aType)){
+                        AllActionsSorted.put( GetAttributeButtonText(aType,aAttribute), GetAllActionsKey(aType, aAttribute));
+                    }
+                }else{
+                    AllActionsSorted.put(GetButtonText(aType), aType);
                 }
-            }else{
-                AllActionsSorted.put(GetButtonText(aType), aType);
             }
         }
         //System.out.println("ADM: aGetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
@@ -783,6 +787,22 @@ public class Action {
         return CustomAction.AllActionCategories;
     }
         
+    public static String GetAllActionCategoriesFooter(String Name){
+        String Prefix = "Current Action: ";
+        String tActionType = MenuNode.GetMenuItemActionType(Name);
+        String tActionAttribute = MenuNode.GetActionAttributeButtonText(Name);
+        String ReturnValue = Prefix;
+        if (tActionType.equals(ActionTypeDefault)){
+            return "";
+        }else{
+            ReturnValue = ReturnValue + tActionType;
+            if (!tActionAttribute.equals(util.OptionNotFound)){
+                ReturnValue = ReturnValue + "\n " + tActionAttribute;
+            }
+        }
+        return ReturnValue;
+    }
+    
     public static String GetActionCategoryFilter(){
         return util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
     }
