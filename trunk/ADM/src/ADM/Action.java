@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import sagex.UIContext;
 
 /**
@@ -35,6 +37,8 @@ public class Action {
     private static final String Blank = "admActionBlank";
     private static final String VarNull = "VarNull";
     private static final String SageADMCustomActionsPropertyLocation = "ADM/custom_actions";
+    private static final String ActionCategoryFilterPropertyLocation = "ADM/action_category/filter";
+    private static final String ActionCategoryFilterStickyPropertyLocation = "ADM/action_category/sticky";
     private static final String UseAttributeValue = "UseAttributeValue";
     private static final String UseAttributeObjectValue = "UseAttributeObjectValue";
     private static final String StandardActionListFile = "ADMStandardActions.properties";
@@ -76,6 +80,7 @@ public class Action {
     public static final String DynamicVideoPlaylist = "admDynamicVideoPlaylist";
     public static final String DynamicMusicPlaylist = "admDynamicMusicPlaylist";
     public static final String DynamicDiamondCustomFlows = "admDynamicDiamondCustomFlows";
+    public static final String ActionCategoryShowAll = "admActionCategoryShowAll";
     
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -736,7 +741,7 @@ public class Action {
                     String AVPropLocation = PropLocation + "/ActionCategory/" + Counter;
                     if (util.HasProperty(AVPropLocation)){
                         tCategory = util.GetProperty(AVPropLocation, Blank);
-                        SageMenuActions.get(tCustomActionName).ActionCategories.add(tCategory);
+                        SageMenuActions.get(tCustomActionName).AddCategory(tCategory);
                         System.out.println("ADM: aLoadStandardActionList: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "' Categories '" + CustomAction.AllActionCategories + "'");
                     }else{
                         Found = Boolean.FALSE;
@@ -774,6 +779,61 @@ public class Action {
         util.SetProperty(SageTVRecordingViewsTitlePropertyLocation + ViewType, Name);
     }
 
+    public static Collection<String> GetAllActionCategories(){
+        return CustomAction.AllActionCategories;
+    }
+        
+    public static String GetActionCategoryFilter(){
+        String tFilter = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+        if (tFilter.equals(Blank) || tFilter.equals(ActionCategoryShowAll)){
+            return "-Not Filtered-";
+        }else{
+            if (GetActionCategoryFilterSticky().equals(util.TriState.OTHER)){
+                return "[" + tFilter + "]";
+            }else{
+                return "-" + tFilter + "-";
+            }
+        }
+    }
+    
+    public static util.TriState GetActionCategoryFilterSticky(){
+        return util.GetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
+    }
+    
+    public static Boolean GetActionCategoryFilterStickyIsChecked(String Category){
+        String tCategory = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+        if (tCategory.equals(Category)){
+            util.TriState tSticky = util.GetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
+            if (tSticky.equals(util.TriState.OTHER) || tSticky.equals(util.TriState.YES)){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    public static void ChangeActionCategoryFilter(String Category){
+        String prevCategory = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+        util.TriState prevSticky = util.GetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
+        util.TriState newSticky = util.TriState.YES;
+        String newCategory = Category;
+        if (prevCategory.equals(Category)){
+            if (prevSticky.equals(util.TriState.YES)){
+                newSticky = util.TriState.OTHER;
+            }else if (prevSticky.equals(util.TriState.OTHER)){
+                newSticky = util.TriState.NO;
+                newCategory = ActionCategoryShowAll;
+            }else{
+                newSticky = util.TriState.YES;
+            }
+        }
+        //store the newCategory
+        util.SetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, newSticky);
+        util.SetProperty(ActionCategoryFilterPropertyLocation, newCategory);
+    }
+    
     public static class ActionVariable{
         private String Var = "";
         private String Val = "";
@@ -829,7 +889,7 @@ public class Action {
         //need a list of keys that are sorted by the ButtonText
         public static SortedMap<String,String> ActionListSorted = new TreeMap<String,String>();
         //unique set of All Categories
-        public static Set<String> AllActionCategories = new HashSet<String>();
+        public static SortedSet<String> AllActionCategories = new TreeSet<String>();
 
         
 //        public CustomAction(String Name, String ButtonText){
@@ -862,7 +922,6 @@ public class Action {
         public Boolean HasCategory(String aCategory){
             return ActionCategories.contains(aCategory);
         }
-        
         public void Execute(String Attribute){
             //evaluate all the ActionVariables first
             for (ActionVariable ActionVar : ActionVariables){
