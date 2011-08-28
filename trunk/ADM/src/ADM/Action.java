@@ -54,6 +54,7 @@ public class Action {
     private static final ActionVariable BlankActionVariable = new ActionVariable(Blank, Blank, Blank);
     private ActionVariable EvalExpression = BlankActionVariable;
     private List<ActionVariable> ActionVariables = new LinkedList<ActionVariable>();
+    private List<String> ActionCategories = new LinkedList<String>();
     private static final String VarTypeGlobal = "VarTypeGlobal";
     private static final String VarTypeStatic = "VarTypeStatic";
     private static final String VarTypeSetProp = "VarTypeSetProp";
@@ -81,6 +82,7 @@ public class Action {
     public static final String DynamicMusicPlaylist = "admDynamicMusicPlaylist";
     public static final String DynamicDiamondCustomFlows = "admDynamicDiamondCustomFlows";
     public static final String ActionCategoryShowAll = "admActionCategoryShowAll";
+    public static final String ActionCategoryOther = "Other (no category)";
     
 
     public Action(String Type, Boolean DiamondOnly, Boolean AdvancedOnly, String ButtonText){
@@ -110,12 +112,14 @@ public class Action {
 
         ActionList.put(BrowseVideoFolder, new Action(BrowseVideoFolder,Boolean.FALSE,Boolean.FALSE,"Video Browser with specific Folder","Video Browser Folder","OPUS4A-174637"));
         ActionList.get(BrowseVideoFolder).ActionVariables.add(new ActionVariable(VarTypeGlobal,"gCurrentVideoBrowserFolder", UseAttributeValue));
+        ActionList.get(BrowseVideoFolder).ActionCategories.add("Video");
 
 
         ActionList.put(StandardMenuAction, new Action(StandardMenuAction,Boolean.FALSE,Boolean.FALSE,"Execute Standard Sage Menu Action", "Standard Action"));
 
         ActionList.put(TVRecordingView, new Action(TVRecordingView,Boolean.FALSE,Boolean.FALSE,"Launch Specific TV Recordings View", "TV Recordings View","OPUS4A-174116"));
         ActionList.get(TVRecordingView).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewFilter", UseAttributeValue));
+        ActionList.get(TVRecordingView).ActionCategories.add("TV");
 
         ActionList.put(DynamicList, new Action(DynamicList,Boolean.FALSE,Boolean.FALSE,"Dynamic List Item", "Dynamic List Type"));
 
@@ -125,34 +129,41 @@ public class Action {
         ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"BasePlaylistUnit", UseAttributeValue));
 
         ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
+        ActionList.get(DiamondDefaultFlows).ActionCategories.add("Video");
 
         ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
         ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
+        ActionList.get(DiamondCustomFlows).ActionCategories.add("Video");
 
         ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
         ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xLocal"));
         ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/local", UseAttributeValue));
+        ActionList.get(BrowseFileFolderLocal).ActionCategories.add("File Systems");
 
         ActionList.put(BrowseFileFolderServer, new Action(BrowseFileFolderServer,Boolean.FALSE,Boolean.FALSE,"File Browser: Server","Server File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
         ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xServer"));
         ActionList.get(BrowseFileFolderServer).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/server", UseAttributeValue));
+        ActionList.get(BrowseFileFolderServer).ActionCategories.add("File Systems");
 
         ActionList.put(BrowseFileFolderImports, new Action(BrowseFileFolderImports,Boolean.FALSE,Boolean.FALSE,"File Browser: Imports","Imports File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
         ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xImports"));
         ActionList.get(BrowseFileFolderImports).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/imports", UseAttributeValue));
+        ActionList.get(BrowseFileFolderImports).ActionCategories.add("File Systems");
 
         ActionList.put(BrowseFileFolderRecDir, new Action(BrowseFileFolderRecDir,Boolean.FALSE,Boolean.FALSE,"File Browser: Recordings","Recording File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
         ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xRecDirs"));
         ActionList.get(BrowseFileFolderRecDir).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/rec_dirs", UseAttributeValue));
+        ActionList.get(BrowseFileFolderRecDir).ActionCategories.add("File Systems");
 
         ActionList.put(BrowseFileFolderNetwork, new Action(BrowseFileFolderNetwork,Boolean.FALSE,Boolean.FALSE,"File Browser: Network","Network File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
         ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_style", "xNetwork"));
         ActionList.get(BrowseFileFolderNetwork).ActionVariables.add(new ActionVariable(VarTypeSetProp,"file_browser/last_folder/network", UseAttributeValue));
+        ActionList.get(BrowseFileFolderNetwork).ActionCategories.add("File Systems");
 
         ActionList.put(LaunchExternalApplication, new Action(LaunchExternalApplication,Boolean.FALSE,Boolean.FALSE,"Launch External Application", "Application Settings"));
 
@@ -162,6 +173,8 @@ public class Action {
         CustomAction.ActionListSorted.clear();
         CustomAction.CopyModeUniqueIDs.clear();
         CustomAction.WidgetSymbols.clear();
+        CustomAction.AllActionCategories.clear();
+        CustomAction.AllActionCategories.add(ActionCategoryOther);
 
         LoadStandardActionList();
         LoadDynamicLists();
@@ -545,15 +558,59 @@ public class Action {
             if (!aType.equals(ActionTypeDefault)){
                 if (HasActionList(aType)){
                     for (String aAttribute : GetActionList(aType)){
-                        AllActionsSorted.put( GetAttributeButtonText(aType,aAttribute), GetAllActionsKey(aType, aAttribute));
+                        AllActionsListAdd(AllActionsSorted, GetAttributeButtonText(aType,aAttribute), aType, aAttribute);
                     }
                 }else{
-                    AllActionsSorted.put(GetButtonText(aType), aType);
+                    AllActionsListAdd(AllActionsSorted, GetButtonText(aType), aType, Blank);
                 }
             }
         }
         //System.out.println("ADM: aGetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
         return AllActionsSorted.values();
+    }
+    
+    private static void AllActionsListAdd(SortedMap<String,String> AllActionsSorted, String bButtonText, String bType, String bAttribute){
+        //filter the list based on the selected Category Filter
+        if (GetActionCategoryFilter().equals(ActionCategoryShowAll)){
+            System.out.println("ADM: aAllActionsListAdd: No Filter - adding '" + bButtonText + "'");
+            AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+        }else{
+            String tFilter = GetActionCategoryFilter();
+            //determine if this is a CustomAction
+            if (SageMenuActions.containsKey(bAttribute)){
+                if (tFilter.equals(ActionCategoryOther)){
+                    if (SageMenuActions.get(bAttribute).ActionCategories.isEmpty()){
+                        System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding as No Categories and Other");
+                        AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+                    }
+                }else{
+                    if (SageMenuActions.get(bAttribute).HasCategory(tFilter)){
+                        System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding");
+                        AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+                    }
+                }
+            }else{
+                //Other Action
+                if (ActionList.containsKey(bType)){
+                    System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
+                    if (tFilter.equals(ActionCategoryOther)){
+                        if (ActionList.get(bType).ActionCategories.isEmpty()){
+                            System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
+                            AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+                        }
+                    }else{
+                        if (ActionList.get(bType).ActionCategories.contains(tFilter)){
+                            System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
+                            AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+                        }
+                    }
+                }else{
+                    //do an Add so you don't miss anything that didn't match either of the above checks - should be nothing
+                    System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' NO MATCH SO ADDING ANYWAY '" + bType + "' ButtonText '" + bButtonText + "'");
+                    AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
+                }
+            }
+        }
     }
 
     public static String GetAllActionsKey(String aType, String aAttribute){
@@ -804,12 +861,12 @@ public class Action {
     }
     
     public static String GetActionCategoryFilter(){
-        return util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
+        return util.GetProperty(ActionCategoryFilterPropertyLocation, ActionCategoryShowAll);
     }
     
     public static String GetActionCategoryFilterButtonText(){
-        String tFilter = util.GetProperty(ActionCategoryFilterPropertyLocation, Blank);
-        if (tFilter.equals(Blank) || tFilter.equals(ActionCategoryShowAll)){
+        String tFilter = util.GetProperty(ActionCategoryFilterPropertyLocation, ActionCategoryShowAll);
+        if (tFilter.equals(ActionCategoryShowAll)){
             return "-Not Filtered-";
         }else{
             if (GetActionCategoryFilterSticky().equals(util.TriState.OTHER)){
