@@ -259,6 +259,9 @@ public class Action {
         }
     }
     
+    public static String GetAllActionsAttributeButtonText(String Type, String Attribute){
+        return GetAllActionsAttributeButtonText(GetAllActionsKey(Type, Attribute), Boolean.FALSE);
+    }
     public static String GetAllActionsAttributeButtonText(String AAType){
         return GetAllActionsAttributeButtonText(AAType, Boolean.FALSE);
     }
@@ -275,7 +278,11 @@ public class Action {
                 return GetButtonText(tType);
             }
         }else{
-            return GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
+            if(tType.equals(TVRecordingView)){
+                return GetSageTVRecordingViewsActionButtonText(tAttribute);
+            }else{
+                return GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
+            }
         }
     }
     
@@ -559,7 +566,7 @@ public class Action {
             if (!aType.equals(ActionTypeDefault)){
                 if (HasActionList(aType)){
                     for (String aAttribute : GetActionList(aType)){
-                        AllActionsListAdd(AllActionsSorted, GetAttributeButtonText(aType,aAttribute), aType, aAttribute);
+                        AllActionsListAdd(AllActionsSorted, GetAllActionsAttributeButtonText(aType,aAttribute), aType, aAttribute);
                     }
                 }else{
                     AllActionsListAdd(AllActionsSorted, GetButtonText(aType), aType, Blank);
@@ -849,9 +856,9 @@ public class Action {
         SageTVRecordingViews.clear();
         //put the ViewType and Default View Name into a list
         SageTVRecordingViews.put("xAll","All Recordings");
-        SageTVRecordingViews.put("xRecordings","Archived Recordings");
-        SageTVRecordingViews.put("xArchives","Recorded Movies");
-        SageTVRecordingViews.put("xMovies","Current Recordings");
+        SageTVRecordingViews.put("xRecordings","Current Recordings");
+        SageTVRecordingViews.put("xArchives","Archived Recordings");
+        SageTVRecordingViews.put("xMovies","Recorded Movies");
         //SageTVRecordingViews.put("xPartials","");
         SageTVRecordingViews.put("xView5","Recording View5");
         SageTVRecordingViews.put("xView6","Recording View6");
@@ -860,6 +867,11 @@ public class Action {
     }
 
     public static String GetSageTVRecordingViewsButtonText(String Name){
+        //return the stored name from Sage or the Default Name if nothing is stored
+        return util.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
+    }
+    
+    public static String GetSageTVRecordingViewsActionButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
         return "Recordings - " + util.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
