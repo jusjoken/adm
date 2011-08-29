@@ -287,7 +287,7 @@ public class Action {
         if (Type.equals(StandardMenuAction)){
             //determine if using Advanced options
             if (util.IsAdvancedMode() && !IgnoreAdvanced){
-                return SageMenuActions.get(Attribute).ButtonText + " (" + Attribute + ")";
+                return SageMenuActions.get(Attribute).ButtonText + " \n  (" + Attribute + ")";
             }else{
                 return SageMenuActions.get(Attribute).ButtonText;
             }
@@ -303,7 +303,7 @@ public class Action {
             return GetSageTVRecordingViewsButtonText(Attribute);
         }else if(Type.equals(DiamondDefaultFlows)){
             if (util.IsAdvancedMode() && !IgnoreAdvanced){
-                return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText + " (" + Attribute + ")";
+                return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText + " \n  (" + Attribute + ")";
             }else{
                 return Diamond.DiamondDefaultFlows.get(Attribute).ButtonText;
             }
@@ -551,6 +551,7 @@ public class Action {
     }
     
     //returns a sorted list of ALL the actions
+    private static Integer AllActionsListCount = 0;
     public static Collection<String> GetAllActionsList(){
         SortedMap<String,String> AllActionsSorted = new TreeMap<String,String>();
         for (String aType : GetTypes()){
@@ -566,13 +567,14 @@ public class Action {
             }
         }
         //System.out.println("ADM: aGetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
+        AllActionsListCount = AllActionsSorted.size();
         return AllActionsSorted.values();
     }
-    
+
     private static void AllActionsListAdd(SortedMap<String,String> AllActionsSorted, String bButtonText, String bType, String bAttribute){
         //filter the list based on the selected Category Filter
         if (GetActionCategoryFilter().equals(ActionCategoryShowAll)){
-            System.out.println("ADM: aAllActionsListAdd: No Filter - adding '" + bButtonText + "'");
+            //System.out.println("ADM: aAllActionsListAdd: No Filter - adding '" + bButtonText + "'");
             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
         }else{
             String tFilter = GetActionCategoryFilter();
@@ -580,27 +582,27 @@ public class Action {
             if (SageMenuActions.containsKey(bAttribute)){
                 if (tFilter.equals(ActionCategoryOther)){
                     if (SageMenuActions.get(bAttribute).ActionCategories.isEmpty()){
-                        System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding as No Categories and Other");
+                        //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding as No Categories and Other");
                         AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                     }
                 }else{
                     if (SageMenuActions.get(bAttribute).HasCategory(tFilter)){
-                        System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding");
+                        //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding");
                         AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                     }
                 }
             }else{
                 //Other Action
                 if (ActionList.containsKey(bType)){
-                    System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
+                    //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
                     if (tFilter.equals(ActionCategoryOther)){
                         if (ActionList.get(bType).ActionCategories.isEmpty()){
-                            System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
+                            //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
                     }else{
                         if (ActionList.get(bType).ActionCategories.contains(tFilter)){
-                            System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
+                            //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
                     }
@@ -613,6 +615,27 @@ public class Action {
         }
     }
 
+    public static Integer GetAllActionsListCount(){
+        return AllActionsListCount;
+    }
+    
+    public static String GetAllActionsInitialFocus(String Name){
+        Collection<String> AllActionsList = new LinkedList<String>();
+        AllActionsList = GetAllActionsList();
+        //if the current Action is in the list return it as focus otherwise return the first item
+        String tKey = GetAllActionsKey(MenuNode.GetMenuItemActionType(Name), MenuNode.GetMenuItemAction(Name));
+        if (AllActionsList.contains(tKey)){
+            return tKey;
+        }else{
+            String FirstItem = "";
+            for (String Item : AllActionsList){
+                FirstItem = Item;
+                break;
+            }
+            return FirstItem;
+        }
+    }
+    
     public static String GetAllActionsKey(String aType, String aAttribute){
         if (HasActionList(aType)){
             return aType + util.ListToken + aAttribute;
@@ -767,6 +790,12 @@ public class Action {
             for (String tCustomActionName : CustomActionNames){
                 System.out.println("ADM: aLoadStandardActionList: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
+                Boolean tDiamondOnly = util.GetPropertyAsBoolean(PropLocation + "/DiamondOnly", Boolean.FALSE);
+                if (!Diamond.IsDiamond() && tDiamondOnly){
+                    //as Diamond is not installed and this is a DiamondOnly Action - Skip it
+                    System.out.println("ADM: aLoadStandardActionList: Skipping DiamondOnly item '" + tCustomActionName + "'");
+                    continue;
+                }
                 String tButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
                 String tWidgetSymbol = util.GetProperty(PropLocation + "/WidgetSymbol", "");
                 String tCopyModeAttributeVar = util.GetProperty(PropLocation + "/CopyModeAttributeVar", Blank);
@@ -832,7 +861,7 @@ public class Action {
 
     public static String GetSageTVRecordingViewsButtonText(String Name){
         //return the stored name from Sage or the Default Name if nothing is stored
-        return util.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
+        return "Recordings - " + util.GetProperty(SageTVRecordingViewsTitlePropertyLocation + Name, SageTVRecordingViews.get(Name));
     }
     
     public static void SetSageTVRecordingViewsButtonText(String ViewType, String Name){
@@ -860,6 +889,18 @@ public class Action {
         return ReturnValue;
     }
     
+    public static void ActionCategoryFilterReset(){
+        if (GetActionCategoryFilterSticky().equals(util.TriState.OTHER)){
+            System.out.println("ADM: aActionCategoryFilterReset: sticky found so no change");
+            //leave it as is as it is supposed to be sticky
+        }else{
+            //reset the Filter to the ShowAll filter
+            System.out.println("ADM: aActionCategoryFilterReset: reseting to Show All");
+            util.SetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, util.TriState.NO);
+            util.SetProperty(ActionCategoryFilterPropertyLocation, ActionCategoryShowAll);
+        }
+    }
+    
     public static String GetActionCategoryFilter(){
         return util.GetProperty(ActionCategoryFilterPropertyLocation, ActionCategoryShowAll);
     }
@@ -869,11 +910,7 @@ public class Action {
         if (tFilter.equals(ActionCategoryShowAll)){
             return "-Not Filtered-";
         }else{
-            if (GetActionCategoryFilterSticky().equals(util.TriState.OTHER)){
-                return "[" + tFilter + "]";
-            }else{
-                return "-" + tFilter + "-";
-            }
+            return " ";
         }
     }
     
