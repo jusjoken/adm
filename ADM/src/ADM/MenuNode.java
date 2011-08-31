@@ -1398,7 +1398,7 @@ public class MenuNode {
         //determine the max number of TV Recording Views to add
         Integer ViewCount = util.GetPropertyAsInteger("sagetv_recordings/" + "view_count", 4);
         String NewMenuItemName = "";
-        String FirstItem = "";
+        String FirstItem = util.OptionNotFound;
         for (String vName: Action.SageTVRecordingViews.keySet()){
             NewMenuItemName = CreateDynamicMenuItem(vName, sSubMenu, Action.TVRecordingView, Counter);
             if (Counter==0){
@@ -1410,9 +1410,10 @@ public class MenuNode {
             }
         }
         //ensure there is 1 default item
-        SetMenuItemIsDefault(FirstItem, Boolean.TRUE);
-//        ValidateSubMenuDefault(sSubMenu);
-        SortKeyUpdate(sSubMenu);
+        if (!FirstItem.equals(util.OptionNotFound)){
+            SetMenuItemIsDefault(FirstItem, Boolean.TRUE);
+            SortKeyUpdate(sSubMenu);
+        }
         
         //buld Diamond Videos Menu
         if (Diamond.IsDiamond()){
@@ -1443,7 +1444,6 @@ public class MenuNode {
             ValidateSubMenuDefault(SageTVMenuVideos);
             SortKeyUpdate(SageTVMenuVideos);
         }
-        
         System.out.println("ADM: mLoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
     

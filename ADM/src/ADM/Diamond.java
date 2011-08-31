@@ -125,9 +125,19 @@ public class Diamond {
         
     }
 
+    public static void LoadDiamondWidgetsRecordingData(){
+        String DiamondWidgetsLoadRecordingsAction = "PLUCKYHD-437950";
+        Action.ExecuteWidget(DiamondWidgetsLoadRecordingsAction);
+    }
+    
     //Use the diamond widget width property and return it for the panel width
     public static Double DiamondWidgetsPanelWidth(){
         return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
+    }
+
+    //see if the Widget panel is using the Tab Style
+    public static Boolean UseDiamondWidgetsPanelTabStyle(){
+        return util.GetPropertyAsBoolean("JOrton/MainMenu/MenuWidgetTabStyle", Boolean.FALSE);
     }
 
     public static void LoadDiamondDefaultFlows(){

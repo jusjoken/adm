@@ -123,6 +123,18 @@ public class Action {
 
         ActionList.put(DynamicList, new Action(DynamicList,Boolean.FALSE,Boolean.FALSE,"Dynamic List Item", "Dynamic List Type"));
 
+        ActionList.put(DynamicTVRecordingsList, new Action(DynamicTVRecordingsList,Boolean.FALSE,Boolean.FALSE,"DynamicTVRecordingsList", "DynamicTVRecordingsList"));
+        ActionList.get(DynamicTVRecordingsList).InternalOnly = Boolean.TRUE;
+
+        ActionList.put(DynamicVideoPlaylist, new Action(DynamicVideoPlaylist,Boolean.FALSE,Boolean.FALSE,"DynamicVideoPlaylist", "DynamicVideoPlaylist"));
+        ActionList.get(DynamicVideoPlaylist).InternalOnly = Boolean.TRUE;
+
+        ActionList.put(DynamicMusicPlaylist, new Action(DynamicMusicPlaylist,Boolean.FALSE,Boolean.FALSE,"DynamicMusicPlaylist", "DynamicMusicPlaylist"));
+        ActionList.get(DynamicMusicPlaylist).InternalOnly = Boolean.TRUE;
+
+        ActionList.put(DynamicDiamondCustomFlows, new Action(DynamicDiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"DynamicDiamondCustomFlows", "DynamicDiamondCustomFlows"));
+        ActionList.get(DynamicDiamondCustomFlows).InternalOnly = Boolean.TRUE;
+        
         ActionList.put(LaunchPlayList, new Action(LaunchPlayList,Boolean.FALSE,Boolean.FALSE,"LaunchPlayList", "LaunchPlayList","OPUS4A-183733"));
         ActionList.get(LaunchPlayList).InternalOnly = Boolean.TRUE;
         ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"PlaylistItem", UseAttributeObjectValue));
@@ -130,10 +142,12 @@ public class Action {
 
         ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
         ActionList.get(DiamondDefaultFlows).ActionCategories.add("Video");
+        ActionList.get(DiamondDefaultFlows).ActionCategories.add("Diamond");
 
         ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
         ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
         ActionList.get(DiamondCustomFlows).ActionCategories.add("Video");
+        ActionList.get(DiamondCustomFlows).ActionCategories.add("Diamond");
 
         ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
@@ -455,10 +469,18 @@ public class Action {
         //Dynamic Lists are single menu items that expand themselves into a list of items of a specified type
         DynamicLists.clear();
         DynamicLists.put(DynamicTVRecordingsList, "TV Recordings List");
+        ActionList.get(DynamicTVRecordingsList).ActionCategories.add("TV");
+        
         DynamicLists.put(DynamicVideoPlaylist, "Video Playlist");
+        ActionList.get(DynamicVideoPlaylist).ActionCategories.add("Video");
+
         DynamicLists.put(DynamicMusicPlaylist, "Music Playlist");
+        ActionList.get(DynamicMusicPlaylist).ActionCategories.add("Music");
+
         if (Diamond.IsDiamond()){
             DynamicLists.put(DynamicDiamondCustomFlows, "Diamond Custom Flows");
+            ActionList.get(DynamicDiamondCustomFlows).ActionCategories.add("Diamond");
+            ActionList.get(DynamicDiamondCustomFlows).ActionCategories.add("Video");
         }
     }
     
@@ -601,14 +623,19 @@ public class Action {
             }else{
                 //Other Action
                 if (ActionList.containsKey(bType)){
+                    String CheckType = bType;
+                    if (bType.equals(DynamicList)){
+                        //System.out.println("ADM: aAllActionsListAdd: Dynamic List item - Attribute '" + bAttribute + "'");
+                        CheckType = bAttribute;
+                    }
                     //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
                     if (tFilter.equals(ActionCategoryOther)){
-                        if (ActionList.get(bType).ActionCategories.isEmpty()){
+                        if (ActionList.get(CheckType).ActionCategories.isEmpty()){
                             //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
                     }else{
-                        if (ActionList.get(bType).ActionCategories.contains(tFilter)){
+                        if (ActionList.get(CheckType).ActionCategories.contains(tFilter)){
                             //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
@@ -887,7 +914,7 @@ public class Action {
         
     public static String GetAllActionCategoriesFooter(String Name){
         String Prefix = "Current Action: ";
-        String tActionType = MenuNode.GetMenuItemActionType(Name);
+        String tActionType = GetButtonText(MenuNode.GetMenuItemActionType(Name));
         String tActionAttribute = MenuNode.GetActionAttributeButtonText(Name);
         String ReturnValue = Prefix;
         if (tActionType.equals(ActionTypeDefault)){
