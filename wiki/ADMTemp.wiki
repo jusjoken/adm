@@ -593,7 +593,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
         * Each of the built in Diamond Default Flows will be displayed first
         * After the Default Flows all the standard video menu items will be added
     * ADM will detect which of these 2 menus you have enabled in Diamond and create a customized menu accordingly
-  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Diamond Videos_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Diamond Movies_ || _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Diamond Videos_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies-ppc.JPG] _Diamond Movies_ || _click to view_ ||
   * Replace videos with Diamond Movies
     * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager by customizing the menu items
   * Hide Main Menu Items
