@@ -117,7 +117,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Other user suggestions if a feature is missing
 
 == QLM - Quick Launch Menu ==
-||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu-ppc.JPG] _QLM_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond-ppc.JPG] _QLM Diamond_ || _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu-ppc.JPG] _QLM_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond-ppc.JPG] _QLM Diamond_ || _click to view_ ||
 === QLM Features ===
     * Optional feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throught SageTV
     * Turn this on within ADM Manager - see below
