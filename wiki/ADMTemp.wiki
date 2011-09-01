@@ -128,7 +128,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Use the Options button to display QLM Menu Options - see below
     * With Diamond you can also optionally have the diamond Widgets displayed with the QLM.  See [#Diamond_Specific_Functions]
 
-||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions-ppc.JPG] _Options_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions-ppc.JPG] _Menu Options_ || _click to view_ ||
+  ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions-ppc.JPG] _Options_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions-ppc.JPG] _Menu Options_ || _click to view_ ||
 === QLM Options ===
     * Configure QLM Options from ADM Manager by selection QLM Options from the left side items
     * The following options can be configured here....
