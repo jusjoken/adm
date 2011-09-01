@@ -13,6 +13,34 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 
 = Details =
 
+== Changes in Version 0.42 ==
+
+  * New Quick Launch Menu (QLM)
+    * Optional new feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throught SageTV
+    * With Diamond you can also optionally have the diamond Widgets displayed with the QLM
+  * Updated Action management
+    * Used when editing or creating Menu Items for the selection of the Action to perform
+    * Simpler approach (I hope) to selecting and finding the appropriate action (from a list of 120 available actions)
+    * Can be filtered by Music, TV, Video, etc
+    * Filter can be set to "sticky" to be available for subsequent uses when creating/adusting multiple similar menu items
+  * New Dynamic List Actions
+    * These menu items will be replaced with a dynamic list of menu items when they are displayed in the menus
+    * Available Types
+      * Music Playlist - current list of Music Playlists
+      * Video Playlist - current list of Video Playlists
+      * TV Revordings - list of 4-8 recording views depending on your settings
+      * Diamond Custom Flows - list of currently configured Diamond Custom Flows
+  * New Malore Actions
+    * Malore menu actions have been added/updated to work with the CopyMode 
+    * New Malore Menu Actions are now available to jump directly to a specific Alternate View
+  * Updated Default Menus
+    * All menu items in the Default Menus are now ADM controllable menu items
+    * Removed the use of any SageTV submenus from the default menus as they are less flexible
+    * Note: SageTV Submenus are still supported and can be used with ADM except in the new QLM feature
+    * Previous Users of ADM: if you have minor modifications to your ADM menus then I recommend loading the Default Menus with this version and then applying your minor modifications again.  This will allow you to take full advantage of showing/hiding all menu items as well as use the new QLM feature.  If you have larger modifications and your current menus are working well for you then there is no need to change as this version is fully backwards compatible.
+  * ADM Manager option buttons (left side) now scrollable when required
+  * Other minor fixes
+
 == Changes in Version 0.40 ==
 
   * New User Based Menu Item control
