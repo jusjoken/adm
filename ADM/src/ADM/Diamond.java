@@ -112,24 +112,22 @@ public class Diamond {
     private static void DiamondWidgetswithQLM(Boolean Load){
         //show the Diamond Widgets
         String DiamondWidgetsPanelSymbol = "AOSCS-679196";
-        //AOSCS-679196 or JUSJOKEN-167710 or JUSJOKEN-1236101
         String QLMWidgetsParentPanelSymbol = "JUSJOKEN-1236101";
-        //JUSJOKEN-1236101 or JUSJOKEN-1079122
+
+        String DiamondRecordingDataSymbol = "PLUCKYHD-437950";
+        String QLMRecordingDataParentPanelSymbol = "JUSJOKEN-2168359";
         
         //connect/disconnect the Widget panel from it's parent
         if (Load){
             sagex.api.WidgetAPI.InsertWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMWidgetsParentPanelSymbol, DiamondWidgetsPanelSymbol,0);
+            sagex.api.WidgetAPI.InsertWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMRecordingDataParentPanelSymbol, DiamondRecordingDataSymbol,0);
         }else{
             sagex.api.WidgetAPI.RemoveWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMWidgetsParentPanelSymbol, DiamondWidgetsPanelSymbol);
+            sagex.api.WidgetAPI.RemoveWidgetChild(new UIContext(sagex.api.Global.GetUIContextName()), QLMRecordingDataParentPanelSymbol, DiamondRecordingDataSymbol);
         }
         
     }
 
-    public static void LoadDiamondWidgetsRecordingData(){
-        String DiamondWidgetsLoadRecordingsAction = "PLUCKYHD-437950";
-        Action.ExecuteWidget(DiamondWidgetsLoadRecordingsAction);
-    }
-    
     //Use the diamond widget width property and return it for the panel width
     public static Double DiamondWidgetsPanelWidth(){
         return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
