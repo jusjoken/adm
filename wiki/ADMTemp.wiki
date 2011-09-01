@@ -16,7 +16,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 == Changes in Version 0.42 ==
 
   * New Quick Launch Menu (QLM)
-    * Optional new feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throught SageTV
+    * Optional new feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throughout SageTV
     * With Diamond you can also optionally have the diamond Widgets displayed with the QLM
   * Updated Action management
     * Used when editing or creating Menu Items for the selection of the Action to perform
@@ -119,8 +119,8 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
 == QLM - Quick Launch Menu ==
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu-ppc.JPG] _QLM_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond.JPG http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond-ppc.JPG] _QLM Diamond_ || _click to view_ ||
 === QLM Features ===
-    * Optional feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throught SageTV
-    * Turn this on within ADM Manager - see below
+    * Optional feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throughout SageTV
+    * To enable - see below
     * QLM is a single panel Menu that pops up in place on the left side of any SageTV screen when the Home key is pressed.  The exception is that it will not pop up on the SageTV Main Menu screen for obvious reasons.
     * All ADM Menu items are available on this menu and function as they do on the Main Menu.  The exception is that SageTV Submenus are not available.  If you are missing a menu item on QLM then go to ADM Manager and change the item to contain each of the appropriate ADM Menu Items rather than a SageTV Submenu.
     * The QLM footer indicates the "bread crumb" trail so you know which menu the current items belong to.
@@ -136,7 +136,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * Max Menu Items before Scroll - set how many items appear on the menu at one time before scrolling.
       * Menu Title - set the title that apprears in the Menu Header - can be left blank if you do not want a title to display
       * Show Diamond Widgets with QLM - only available for Diamond users - will display the Diamond Widgets on the right side of the screen when QLM is open
-      * Home/Left behaviour - use Left/Right or Select to move between the following options.  This affects the behaviour of these buttons while QLM is open.
+      * Home/Left behavior - use Left/Right or Select to move between the following options.  This affects the behavior of these buttons while QLM is open.
         * Home: Close QLM - Left: Close QLM
         * Home: Main Menu - Left: Close QLM
         * Home: Close QLM - Left: Main Menu
@@ -144,7 +144,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Available directly from QLM when the menu is displayed
     * Use the Options button to bring up the QLM Menu Options
     * Depending on the item and the current settings you can....
-      * Edit Menu Item 'xxxxxx' - brings up the Edit dialog that is available in ADM Manager.  You can edit the name or any of the Menu Item's settings.
+      * Edit Menu Item 'xxxxxx' - brings up the Edit dialog that is available in ADM Manager.  You can edit the name or any of the Menu Item's settings. A shortcut to this is pressing the Info button.
       * Goto SageTV Main Menu - closes QLM and jumps to the SageTV Main Menu
       * Close QLM - Closes the QLM Menu
       * Close - closes the QLM Options dialog but leaves QLM open
