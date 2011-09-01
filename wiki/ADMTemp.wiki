@@ -165,12 +165,13 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   * Note: Export/Import files are not meant to be manually edited and may cause issues within ADM if this is done.
 
 === Load Default Menus ===
-  * loads either a Standard Sage menu item list or a Diamond list if Diamond is detected
+  * Loads a dynamic list of menus items based on your current SageTV configuration (not including plugins other than Diamond)
   * A confirmation will be displayed
   * current Menus are backed up to ADMbackup.properties in the userdata/ADM folder
   * Default menus are designed to "mimic" the structure of the built in SageTV menus
   * Note: Default menus will NOT include any menu customizations from other installed plugins.  These must later be manually added or copied using the ADM Copy Mode
   * Default menus after being loaded can then by edited and saved by using the Export feature
+  * Default menus as of 0.42 no longer use the SageTV Submenu function and all menu items should be able to be edited at all levels
 
 === ADM Options ===
 
@@ -207,6 +208,7 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
       * Adds a new menu item at the same level as the current Menu Item. See [#Creating_new_Menu_and_Submenu_Items].
     * Add Submenu Item below
       * Adds a new menu item at the next higher level as the current Menu Item (current level + 1). See [#Creating_new_Menu_and_Submenu_Items].
+      * not always available if a submenu can not be added at that level
     * Delete
       * See [#Deleting_Menu_Items]
 
@@ -219,12 +221,36 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Selecting Top Level will move the Menu Item to be a Level 1 menu item. See [#Menu_Structure_Terms]
     * Note: if you select a Parent that is using a Sage Submenu then the Submenu setting for that Parent will be cleared.
     
-  ==== Action Types / Action ====
-    ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionStandard-ppc.JPG] _Standard Action_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionByWidgetSymbol-ppc.JPG] _By Widget Symbol_ || _click to view_ ||
+  * Sage Submenu
+    * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
+    * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
+    * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
+    * See also [#Children/Submenus]
+
+  * Default Menu Item
+    * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
+    * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
+    * there must be 1 and only 1 default and ADM will enfore this
+    * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
+
+  ==== Action Management ====
+    ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionManager.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionManager-ppc.JPG] _Action Manager_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered.JPG http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered-ppc.JPG] _Filtered_ || _click to view_ ||
     
-    * Execute Standard Sage Menu Action
-      * Select from a list of Standard Actions 
+    * Selecting an Action
+      * Select from a list of Actions on the right hand side - approximately 120 different actions available as of 0.42
       * The selected Action will launch when the Menu Item is selected within the SageTV menu system
+      * If more information is needed from the user then another dialog may open. See [#Special_Action_Types]
+    * Filtering the Action List
+      * The left hand side contains Action Categories that can be used to filter the right hand Action List
+      * The default is that all Actions are listed - Not Filtered - 
+      * One filter can be enabled at a time
+      * Filters toggle between the following states
+        * Off - by default - radio button is disabled - no filtering for this item
+        * On - radio button is enabled - the list is filtered by this Action Category
+        * Sticky - radio button is enabled - text is displayed in red - the list is filtered by this Action Category
+        * Sticky - a sticky item will still be selected the next time the Action dialog is opened.  This is handy when creating a number of menu items for the same category of actions, such as TV or Music.
+
+  ==== Special Action Types ====
 
     * Execute Widget by Symbol (Advanced mode only)
       * Offers a text entry box to type a Widget Symbol to use for the Menu Item Action
@@ -283,6 +309,16 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
             * Exit Sage after application launch
             * Do nothing with Sage
 
+    * Dynamic Lists
+      * These menu items will be replaced with a dynamic list of menu items when they are displayed in the menus
+      * The replacement is "in place". The Dynamic Item you create will not be displayed on menus but in it's place will be the specific list of items.
+      * Available Types
+        * Music Playlist - current list of Music Playlists
+        * Video Playlist - current list of Video Playlists
+        * TV Revordings - list of 4-8 recording views depending on your settings
+        * Diamond Custom Flows - list of currently configured Diamond Custom Flows
+      * Note: as these items are replaced with a list of items these actions can not have Child or Submenu items associated to them
+
     * Diamond Default Flows
       * Select from a list of Diamond built in Flows
       * The selected Default Flow will launch when the Menu Item is selected within the SageTV menu system
@@ -290,18 +326,6 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Diamond Custom Flows
       * Select from a list of Custom Diamond Flows. These flows must be created within Diamond using Custom Views Setup.
       * The selected Custom Flow will launch when the Menu Item is selected within the SageTV menu system
-
-  * Sage Submenu
-    * if available and entered then this Menu Item will use a Standard SageTV Submenu instead of one created in ADM
-    * Only available if there are no existing Children Menu Items associated to this Menu Item (this Menu Item as their Parent)
-    * Note: if you set another Menu Item to have this Menu Item as it's Parent, then the Submenu setting will be cleared.
-    * See also [#Children/Submenus]
-
-  * Default Menu Item
-    * this item if set to Yes will show as the selected menu item when a menu opens in SageTV
-    * only 1 menu item in a Menu Group can be the default so setting one to the default will remove the current default
-    * there must be 1 and only 1 default and ADM will enfore this
-    * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
 
   ==== Background Image ====
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG] _Select Background_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG] _Custom Background_ || _click to view_ ||
@@ -553,15 +577,19 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG] _Movies_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG] _Videos_ || _click to view_ ||
   * Default Menu
     * A Diamond Specific menu will load on initial run (newly installed) and when Load Default Menus is selected
-    * This menu will have 2 unique menus at the Top Level
-      * Movies - configured to launch the diamond Movies Menu with your customized diamond Movie views
-        * This is the menu you create and modify with Diamond tools (not a copy)
-      * Videos - configured to launch the Sage Videos built in menu that Diamond customizes
-    * ADM will detect which of these 2 menus you have enabled in Diamond and set the opposite to be not Shown
-    * You can manually edit either or both of the menus by setting the Show Menu Item property. you can show both if you want.
+    * This menu will be dynamically created to reflect your current setting of Replace videos with Diamond Movies
+      * On (Movies)
+        * Uses a Dynamic List item to display the list of Diamond Custom flows at the top of the menu
+        * After the Custom Flows all the standard video menu items will be added
+        * Note: the custom flows list will change dynamically when you use the Diamond Tools to add/change Diamond Custom Flows
+      * Off (Videos)
+        * Each of the built in Diamond Default Flows will be displayed first
+        * After the Default Flows all the standard video menu items will be added
+    * ADM will detect which of these 2 menus you have enabled in Diamond and create a customized menu accordingly
+****** need to update these images below    
   ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG] _Default Menu_ ||[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos.JPG http://dl.dropbox.com/u/7826058/ADM/ADMDiamondShowHideVideos-ppc.JPG] _Show-Hide_ || _click to view_ ||
   * Replace videos with Diamond Movies
-    * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager using the Show Menu Item property.
+    * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager by customizing the menu items
   * Hide Main Menu Items
     * This function of Diamond will not affect the visibility of the Main Menu items. You must set these manually within ADM Manager using the Show Menu Item property.
   * Background Images
@@ -569,10 +597,12 @@ Also check out the [http://code.google.com/p/sagetv-adm/wiki/ADMFAQ FAQ]
     * Custom Backgrounds can be added and assigned to override this Diamond behaviour
   * Diamond Movies - Custom and Default Flows
     * Action types available to launch specific Default and Custom Flows
+    * Action type available to provide a Dynamic List of Diamond Custom Flows
   * TV Views
     * TV Recordings views which Diamond uses are standard SageTV Recordings View with added customizations
     * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
     * ADM Copy mode can be used to create these Menu Items as well
+    * A Dynamic List item is also available - TV Recordings List - which will display the 4-8 Recording Views dynamically
   * Future !ToDos to support Diamond
     * Check out the [#ToDo_List]
       
