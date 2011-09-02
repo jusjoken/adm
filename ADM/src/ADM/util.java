@@ -13,6 +13,7 @@ import sagex.UIContext;
 import java.util.Properties;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -24,7 +25,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.420";
+    public static String Version = "0.421";
     public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
@@ -897,12 +898,13 @@ public class util {
         if (tValue.equals(OptionNotFound) || tValue.equals("") || tValue==null){
             return new LinkedList<String>();
         }else{
-            List<String> tList = new LinkedList<String>();
-            StringTokenizer st = new StringTokenizer(tValue, ListToken); 
-            while(st.hasMoreTokens()) { 
-                tList.add(st.nextToken());
-            } 
-            return tList;
+//            List<String> tList = new LinkedList<String>();
+//            StringTokenizer st = new StringTokenizer(tValue, ListToken); 
+//            while(st.hasMoreTokens()) { 
+//                tList.add(st.nextToken());
+//            } 
+//            return tList;
+            return Arrays.asList(tValue.split(ListToken));
         }
     }
     
