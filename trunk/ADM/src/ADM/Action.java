@@ -284,6 +284,7 @@ public class Action {
         //the AAType is made up of the ActionType + ListToken + Attribute (Key)
         String tAttribute = GetAllActionsAttribute(AAType);
         String tType = GetAllActionsType(AAType);
+        //System.out.println("ADM: aGetAllActionsAttributeButtonText - AAType '" + AAType + "' Type/Attribute '" + tType + "' - '" + tAttribute + "'");
         if (tAttribute.equals(util.OptionNotFound)){
             if(tType.equals(util.OptionNotFound)){
                 //bad conversion
@@ -294,6 +295,10 @@ public class Action {
         }else{
             if(tType.equals(TVRecordingView)){
                 return GetSageTVRecordingViewsActionButtonText(tAttribute);
+            }else if(tType.equals(DiamondDefaultFlows)){
+                return GetButtonText(tType) + " - " + GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
+            }else if(tType.equals(DiamondCustomFlows)){
+                return GetButtonText(tType) + " - " + GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
             }else{
                 return GetAttributeButtonText(tType, tAttribute, IgnoreAdvanced);
             }
@@ -603,7 +608,7 @@ public class Action {
     private static void AllActionsListAdd(SortedMap<String,String> AllActionsSorted, String bButtonText, String bType, String bAttribute){
         //filter the list based on the selected Category Filter
         if (GetActionCategoryFilter().equals(ActionCategoryShowAll)){
-            //System.out.println("ADM: aAllActionsListAdd: No Filter - adding '" + bButtonText + "'");
+            //System.out.println("ADM: aAllActionsListAdd: No Filter - adding '" + bButtonText + "' Type/Attribute '" + bType + "' - '" + bAttribute + "'");
             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
         }else{
             String tFilter = GetActionCategoryFilter();
@@ -616,7 +621,7 @@ public class Action {
                     }
                 }else{
                     if (SageMenuActions.get(bAttribute).HasCategory(tFilter)){
-                        //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding");
+                        //System.out.println("ADM: aAllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bType + "' - '" + bAttribute + "' Adding");
                         AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                     }
                 }
@@ -681,6 +686,7 @@ public class Action {
     public static String GetAllActionsAttribute(String AAType){
         //the AAType is made up of the ActionType + ListToken + Attribute (Key)
         List<String> tList = util.ConvertStringtoList(AAType);
+        System.out.println("ADM: aGetAllActionsAttribute: AAType '" + AAType + "' List '" + tList + "'");
         if (tList.size()==2){
             return tList.get(1);
         }else{
