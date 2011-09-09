@@ -25,7 +25,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.421";
+    public static String Version = "0.424";
     public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
@@ -39,8 +39,8 @@ public class util {
     public static final String UseQLMPropertyLocation = "ADM/settings/use_qlm";
     public static final String ADMCopyModePropertyLocation = "ADM/settings/admcopymode";
     public static final String TopMenu = "xTopMenu";
-    public static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "userdata" + File.separator + "ADM";
-    public static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
+//    public static final String ADMLocation = sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "userdata" + File.separator + "ADM";
+//    public static final String ADMDefaultsLocation = sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
     private static final String SageBGVariablesListFile = "ADMSageBGVariables.properties";
     private static final String SageSubMenusLevel1ListFile = "ADMSageSubMenus1.properties";
     private static final String SageSubMenusLevel2ListFile = "ADMSageSubMenus2.properties";
@@ -94,13 +94,13 @@ public class util {
             
             //ensure the ADM file location exists
             try{
-                boolean success = (new File(ADMLocation)).mkdirs();
+                boolean success = (new File(ADMLocation())).mkdirs();
                 if (success) {
-                    System.out.println("ADM: uInitADM - Directories created for '" + ADMLocation + "'");
+                    System.out.println("ADM: uInitADM - Directories created for '" + ADMLocation() + "'");
                    }
 
                 }catch (Exception ex){//Catch exception if any
-                    System.out.println("ADM: uInitADM - error creating '" + ADMLocation + "'" + ex.getMessage());
+                    System.out.println("ADM: uInitADM - error creating '" + ADMLocation() + "'" + ex.getMessage());
                 }
             
             //also load the BGVariables for BG Images on Top Level Menus
@@ -223,7 +223,7 @@ public class util {
     }
     
     public static void LoadSubMenuListLevel1(){
-        String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel1ListFile;
+        String SubMenuPropsPath = ADMDefaultsLocation() + File.separator + SageSubMenusLevel1ListFile;
         SageSubMenusLevel1Keys.clear();
         SageSubMenusKeys.clear();
         
@@ -264,7 +264,7 @@ public class util {
     }
 
     public static void LoadSubMenuListLevel2(){
-        String SubMenuPropsPath = ADMDefaultsLocation + File.separator + SageSubMenusLevel2ListFile;
+        String SubMenuPropsPath = ADMDefaultsLocation() + File.separator + SageSubMenusLevel2ListFile;
         SageSubMenusLevel2Keys.clear();
         
         //read the properties from the properties file
@@ -304,7 +304,7 @@ public class util {
     }
 
     public static void LoadSageBGVariablesList(){
-        String StandardActionPropsPath = ADMDefaultsLocation + File.separator + SageBGVariablesListFile;
+        String StandardActionPropsPath = ADMDefaultsLocation() + File.separator + SageBGVariablesListFile;
         SageBGVariablesKeys.clear();
         
         //read the properties from the properties file
@@ -647,14 +647,6 @@ public class util {
         return Version;
     }
     
-    public static String GetADMLocation() {
-        return ADMLocation;
-    }
-    
-    public static String GetADMDefaultsLocation(){
-        return ADMDefaultsLocation;
-    }
-
     public static String GetOptionNotFound(){
         return util.OptionNotFound;
     }
@@ -1023,5 +1015,19 @@ public class util {
     private static void CloseOptionsMenu(){
         sagex.api.Global.CloseOptionsMenu(new UIContext(sagex.api.Global.GetUIContextName()));
     }
+
+    public static String ADMLocation(){
+        return sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "userdata" + File.separator + "ADM";
+    }
+    public static String ADMDefaultsLocation(){
+        return  sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
+    }
+    public static String GetADMLocation() {
+        return ADMLocation();
+    }
+    public static String GetADMDefaultsLocation(){
+        return ADMDefaultsLocation();
+    }
+
     
 }

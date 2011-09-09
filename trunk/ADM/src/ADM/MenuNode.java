@@ -1384,7 +1384,7 @@ public class MenuNode {
     public static void LoadMenuItemDefaults(){
         //load default MenuItems from one or more default .properties file
         String DefaultPropFile = "ADMDefault.properties";
-        String DefaultsFullPath = util.ADMDefaultsLocation + File.separator + DefaultPropFile;
+        String DefaultsFullPath = util.ADMDefaultsLocation() + File.separator + DefaultPropFile;
         
         ImportMenuItems(DefaultsFullPath);
         util.ClearFocusStorage();
@@ -1562,7 +1562,7 @@ public class MenuNode {
  
     public static void ExportMenuItems(String ExportFile){
         String PropLocation = "";
-        String ExportFilePath = util.ADMLocation + File.separator + ExportFile;
+        String ExportFilePath = util.ADMLocation() + File.separator + ExportFile;
         //System.out.println("ADM: mExportMenuItems: Full Path = '" + ExportFilePath + "'");
         
         //iterate through all the MenuItems and save to a Property Collection
