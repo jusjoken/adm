@@ -1213,7 +1213,7 @@ public class MenuNode {
     //prepare the environment for a new load or a delete
     public static void CleanMenuNodeListandTree(){
         String UIContext = sagex.api.Global.GetUIContextName();
-        ListAllNodes(UIContext + "-before");
+        //ListAllNodes(UIContext + "-before");
         //create and store the top menu node
         if (UIroot.containsKey(UIContext)){
             System.out.println("ADM: mCleanMenuNodeListandTree: clearing root for '" + UIContext + "'");
@@ -1226,10 +1226,9 @@ public class MenuNode {
             System.out.println("ADM: mCleanMenuNodeListandTree: clearing MenuNodeList for '" + UIContext + "'");
             UIMenuNodeList.remove(UIContext);
         }
-        ListAllNodes(UIContext + "-middle");
         MenuNodeList().clear();
         root().removeAllChildren();
-        ListAllNodes(UIContext + "-after");
+        //ListAllNodes(UIContext + "-after");
         
     }
     
