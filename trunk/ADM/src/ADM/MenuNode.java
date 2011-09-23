@@ -1213,6 +1213,7 @@ public class MenuNode {
     //prepare the environment for a new load or a delete
     public static void CleanMenuNodeListandTree(){
         String UIContext = sagex.api.Global.GetUIContextName();
+        ListAllNodes(UIContext + "-before");
         //create and store the top menu node
         if (UIroot.containsKey(UIContext)){
             System.out.println("ADM: mCleanMenuNodeListandTree: clearing root for '" + UIContext + "'");
@@ -1225,8 +1226,10 @@ public class MenuNode {
             System.out.println("ADM: mCleanMenuNodeListandTree: clearing MenuNodeList for '" + UIContext + "'");
             UIMenuNodeList.remove(UIContext);
         }
+        ListAllNodes(UIContext + "-middle");
         MenuNodeList().clear();
         root().removeAllChildren();
+        ListAllNodes(UIContext + "-after");
         
     }
     
@@ -1761,6 +1764,16 @@ public class MenuNode {
         }         
         //System.out.println("ADM: mNodeExists: '" + NodeKey + "' not found.");
         return Boolean.FALSE;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static void ListAllNodes(String LogText){
+        Enumeration<DefaultMutableTreeNode> en = root().preorderEnumeration();
+        while (en.hasMoreElements())   {
+            DefaultMutableTreeNode child = en.nextElement();
+            MenuNode tMenu = (MenuNode)child.getUserObject();
+            System.out.println("ADM: mListAllNodes(" + LogText + "}: '" + tMenu.Name + "' ButtonText = '" + tMenu.ButtonText + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+        }         
     }
     
     public static String GetPath(DefaultMutableTreeNode Node){
