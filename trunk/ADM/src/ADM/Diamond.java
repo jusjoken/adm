@@ -60,7 +60,7 @@ public class Diamond {
     
     public static Boolean IsDiamond(){
         String DiamondPluginID = "DiamondSTVi";
-        String DiamondWidgetSymbol = "AOSCS-65";
+        String DiamondWidgetSymbol = "JUSJOKEN-3084835";
         // check to see if the Diamond Plugin is installed
         Object[] FoundWidget = new Object[1];
         FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), DiamondWidgetSymbol);

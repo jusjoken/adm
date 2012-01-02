@@ -20,12 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.SortedMap;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.424";
+    public static String Version = "0.430";
     public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
@@ -1029,5 +1028,5 @@ public class util {
         return ADMDefaultsLocation();
     }
 
-    
+   
 }
