@@ -1016,10 +1016,12 @@ public class util {
     }
 
     public static String ADMLocation(){
-        return sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "userdata" + File.separator + "ADM";
+        //return sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "userdata" + File.separator + "ADM";
+        return getSageTVRootDir() + File.separator + "userdata" + File.separator + "ADM";
     }
     public static String ADMDefaultsLocation(){
-        return  sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
+        //return  sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
+        return  getSageTVRootDir() + File.separator + "STVs" + File.separator + "ADM" + File.separator + "defaults";
     }
     public static String GetADMLocation() {
         return ADMLocation();
@@ -1028,5 +1030,8 @@ public class util {
         return ADMDefaultsLocation();
     }
 
+    public static String getSageTVRootDir() {
+        return new File(System.getProperty(SageADMBasePropertyLocation + "/sagetvHomeDir", ".")).toString();
+    }    
    
 }
