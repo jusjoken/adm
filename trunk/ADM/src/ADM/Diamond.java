@@ -59,7 +59,7 @@ public class Diamond {
     }
     
     public static Boolean IsDiamond(){
-        if (IsDiamondLegacy() || Isgemstone()){
+        if (IsDiamondLegacy() || gemcalls.Isgemstone()){
             return Boolean.TRUE;
         }else{
             return Boolean.FALSE;
@@ -68,24 +68,11 @@ public class Diamond {
     
     //will only return true if this is the legacy version of Diamond (pre-gemstone)
     public static Boolean IsDiamondLegacy(){
-        String DiamondPluginID = "DiamondSTVi"; //TODO: change to DiamondLegacy when that plugin is created
         String DiamondWidgetSymbol = "AOSCS-65"; 
         // check to see if the Diamond Plugin is installed
         Object[] FoundWidget = new Object[1];
         FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), DiamondWidgetSymbol);
-        if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
-
-    public static Boolean Isgemstone(){
-        String DiamondPluginID = "DiamondSTVi";
-        String DiamondWidgetSymbol = "JUSJOKEN-3084835";
-        // check to see if the gemstone Plugin is installed
-        Object[] FoundWidget = new Object[1];
-        FoundWidget[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), DiamondWidgetSymbol);
-        if (sagex.api.PluginAPI.IsPluginEnabled(sagex.api.PluginAPI.GetAvailablePluginForID(DiamondPluginID)) || FoundWidget[0]!=null){
+        if (FoundWidget[0]!=null){
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
