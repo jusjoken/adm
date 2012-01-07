@@ -23,16 +23,7 @@ public class Diamond {
     public static final String PropName="JOrton/CustomViews";
     public static Map<String,Diamond.DefaultFlow> DiamondDefaultFlows = new LinkedHashMap<String,Diamond.DefaultFlow>();
 
-//    public static Object GetCustomViews(){
-//        String views=util.GetProperty(PropName,"");
-//        if(views.contains(";")){	
-//            System.out.println("ADM Diamond : GetCustomViews = '" + views.split(";") + "'");
-//            return views.split(";");
-//        }
-//        System.out.println("ADM Diamond : GetCustomViews = '" + views + "'");
-//        return views;
-//    }
-//
+    //Diamond Legacy call
     public static Collection<String> GetCustomViews(){
         String views=util.GetProperty(PropName,"");
         if(views.contains(";")){	
@@ -43,6 +34,7 @@ public class Diamond {
         return Arrays.asList(views);
     }
 
+    //Diamond Legacy call
     public static String GetViewName(String name){
         String[] SplitString = name.split("&&");
         if (SplitString.length == 2) {
@@ -54,6 +46,7 @@ public class Diamond {
         }
     }
 
+    //Diamond Legacy call
     public static void RenameFlow(String OldName, String NewName){
         //sagediamond.CustomViews.RenameView();
     }
@@ -78,28 +71,11 @@ public class Diamond {
         return Boolean.FALSE;
     }
 
+    //Diamond Legacy call
     public static Boolean UseDiamondMovies(){
-        String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
-        if (util.GetPropertyAsBoolean(DiamondVideoMenuCheckProp, Boolean.FALSE)){
-            return Boolean.TRUE;
-        }else{
-            return Boolean.FALSE;
-        }
-    }
-    
-    public static Boolean ShowWidgetswithQLM(){
-        //ensure Diamond is installed and enabled
-        if (!IsDiamond()){
-            return Boolean.FALSE;
-        }
-        //ensure at minimum that the option is enabled in QLM
-        Boolean OptionOn = util.GetPropertyAsBoolean(util.SageADMSettingsPropertyLocation + "/qlm_show_diamond_widgets", Boolean.FALSE);
-        if (OptionOn){
-            //now ensure that the Diamond Widget options are turned on and should be showing
-            String WidgetPanel = "JOrton/MainMenu/WidgetPanel";
-            String Off = "Off";
-            if (!util.GetProperty(WidgetPanel + "1", Off).equals(Off) || !util.GetProperty(WidgetPanel + "2", Off).equals(Off) || !util.GetProperty(WidgetPanel + "3", Off).equals(Off) || !util.GetProperty(WidgetPanel + "4", Off).equals(Off)){
-                //as at least one panel is On then Show the Widget Panel
+        if (IsDiamondLegacy()){
+            String DiamondVideoMenuCheckProp = "JOrton/MainMenu/ShowDiamondMoviesTab";
+            if (util.GetPropertyAsBoolean(DiamondVideoMenuCheckProp, Boolean.FALSE)){
                 return Boolean.TRUE;
             }else{
                 return Boolean.FALSE;
@@ -109,14 +85,44 @@ public class Diamond {
         }
     }
     
+    //gemstone OR Diamond Legacy
+    public static Boolean ShowWidgetswithQLM(){
+        //ensure Diamond is installed and enabled
+        if (!IsDiamond()){
+            return Boolean.FALSE;
+        }
+        //ensure at minimum that the option is enabled in QLM
+        Boolean OptionOn = util.GetPropertyAsBoolean(util.SageADMSettingsPropertyLocation + "/qlm_show_diamond_widgets", Boolean.FALSE);
+        if (OptionOn){
+            if (gemcalls.Isgemstone()){  //check for new gemstone version of Diamond
+                return gemcalls.ShowWidgetswithQLM();
+            }else{  //legacy Diamond
+                //now ensure that the Diamond Widget options are turned on and should be showing
+                String WidgetPanel = "JOrton/MainMenu/WidgetPanel";
+                String Off = "Off";
+                if (!util.GetProperty(WidgetPanel + "1", Off).equals(Off) || !util.GetProperty(WidgetPanel + "2", Off).equals(Off) || !util.GetProperty(WidgetPanel + "3", Off).equals(Off) || !util.GetProperty(WidgetPanel + "4", Off).equals(Off)){
+                    //as at least one panel is On then Show the Widget Panel
+                    return Boolean.TRUE;
+                }else{
+                    return Boolean.FALSE;
+                }
+            }
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+    
+    //gemstone OR Diamond Legacy
     public static void LoadDiamondWidgetswithQLM(){
         DiamondWidgetswithQLM(Boolean.TRUE);
     }
     
+    //gemstone OR Diamond Legacy
     public static void UnloadDiamondWidgetswithQLM(){
         DiamondWidgetswithQLM(Boolean.FALSE);
     }
     
+    //gemstone OR Diamond Legacy
     private static void DiamondWidgetswithQLM(Boolean Load){
         //show the Diamond Widgets
         String DiamondWidgetsPanelSymbol = "AOSCS-679196";
@@ -136,16 +142,27 @@ public class Diamond {
         
     }
 
+    //gemstone OR Diamond Legacy
     //Use the diamond widget width property and return it for the panel width
     public static Double DiamondWidgetsPanelWidth(){
-        return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
+        if (IsDiamondLegacy()){
+            return util.GetPropertyAsInteger("JOrton/MainMenu/MenuWidgetWidth", 6)*0.038;
+        }else{
+            return gemcalls.GetWidgetsWidth()*0.038;
+        }
     }
 
+    //gemstone OR Diamond Legacy
     //see if the Widget panel is using the Tab Style
     public static Boolean UseDiamondWidgetsPanelTabStyle(){
-        return util.GetPropertyAsBoolean("JOrton/MainMenu/MenuWidgetTabStyle", Boolean.FALSE);
+        if (IsDiamondLegacy()){
+            return util.GetPropertyAsBoolean("JOrton/MainMenu/MenuWidgetTabStyle", Boolean.FALSE);
+        }else{
+            return gemcalls.WidgetsUseTabStyle();
+        }
     }
 
+    //Diamond Legacy call
     public static void LoadDiamondDefaultFlows(){
         DiamondDefaultFlows.clear();
         DiamondDefaultFlows.put("LCKOF-346154", new DefaultFlow("Wall Flow", "LCKOF-346154", 0,Boolean.TRUE));
@@ -156,6 +173,7 @@ public class Diamond {
         DiamondDefaultFlows.put("LCKOF-392395", new DefaultFlow("360 Flow", "LCKOF-392395", 5));
     }
     
+    //Diamond Legacy call
     public static class DefaultFlow{
         public String ButtonText = "";
         public String WidgetSymbol = "";

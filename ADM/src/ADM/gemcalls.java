@@ -7,6 +7,7 @@ package ADM;
 import java.util.ArrayList;
 import sagex.UIContext;
 import Diamond.Flow;
+import Diamond.Widget;
 
 /**
  *
@@ -26,13 +27,49 @@ public class gemcalls {
     }
 
     public static ArrayList<String> GetFlows(){
-        ArrayList<String> tList = new ArrayList<String>();
+        ArrayList<String> tReturn = new ArrayList<String>();
         try {
-            tList = Flow.GetFlows();
+            tReturn = Flow.GetFlows();
         } catch (NoClassDefFoundError e) {
             System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
         }
-        return tList;
+        return tReturn;
     }
     
+    public static Boolean ShowWidgetswithQLM(){
+        Boolean tReturn = Boolean.FALSE;
+        try {
+            tReturn = Widget.GetUseWidgets();
+        } catch (NoClassDefFoundError e) {
+            System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
+        }
+        if (tReturn){
+            try {
+                tReturn = Widget.ShowWidgets();
+            } catch (NoClassDefFoundError e) {
+                System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
+            }
+        }
+        return tReturn;
+    }
+
+    public static Integer GetWidgetsWidth(){
+        Integer tReturn = 7;
+        try {
+            tReturn = Widget.GetWidgetsWidth();
+        } catch (NoClassDefFoundError e) {
+            System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
+        }
+        return tReturn;
+    }
+
+    public static Boolean WidgetsUseTabStyle(){
+        Boolean tReturn = Boolean.FALSE;
+        try {
+            tReturn = Widget.UseTabStyle();
+        } catch (NoClassDefFoundError e) {
+            System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
+        }
+        return tReturn;
+    }
 }
