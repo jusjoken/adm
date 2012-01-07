@@ -40,6 +40,7 @@ public class MenuNode {
     private String BGImageFile = "";
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
+    private Boolean ToDelete = Boolean.FALSE;
     private util.TriState IsActive = util.TriState.YES;
     private List<String> BlockedSageUsersList = new LinkedList<String>();
     private Integer SortKey = 0;
@@ -446,6 +447,15 @@ public class MenuNode {
     public static Boolean GetMenuItemIsCreatedNotLoaded(String Name){
         try {
             return MenuNodeList().get(Name).IsCreatedNotLoaded;
+        } catch (Exception e) {
+            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            return null;
+        }
+    }
+
+    public static Boolean GetMenuItemToDelete(String Name){
+        try {
+            return MenuNodeList().get(Name).ToDelete;
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
@@ -1251,24 +1261,28 @@ public class MenuNode {
                     PropLocation = util.SagePropertyLocation + tMenuItemName;
                     //check the hidden ShowIF property and skip if it is FALSE
                     if (util.GetPropertyEvalAsBoolean(PropLocation + "/ShowIF", Boolean.TRUE) || util.GetDefaultsWorkingMode()){
-                        MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                        NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
-                        NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
-                        NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
-                        NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
-                        NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
-                        NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
-                        NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
-                        NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
-                        NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
-                        NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
-                        NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
-                        NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
-                        if (util.GetDefaultsWorkingMode()){
-                            NewMenuItem.ShowIF = util.GetProperty(PropLocation + "/ShowIF", util.OptionNotFound);
+                        if (util.GetPropertyEvalAsBoolean(PropLocation + "/ToDelete", Boolean.FALSE)){
+                            System.out.println("ADM: mLoadMenuItemsFromSage: skipped - '" + tMenuItemName + "' due to Marked for Delete");
+                        }else{
+                            MenuNode NewMenuItem = new MenuNode(tMenuItemName);
+                            NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
+                            NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
+                            NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
+                            NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                            NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
+                            NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
+                            NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
+                            NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
+                            NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
+                            NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
+                            NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
+                            NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
+                            if (util.GetDefaultsWorkingMode()){
+                                NewMenuItem.ShowIF = util.GetProperty(PropLocation + "/ShowIF", util.OptionNotFound);
+                            }
+                            NewMenuItem.ActionExternal.Load();
+                            System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                         }
-                        NewMenuItem.ActionExternal.Load();
-                        System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                     }else{
                         System.out.println("ADM: mLoadMenuItemsFromSage: skipped - '" + tMenuItemName + "' due to ShowIF ");
                     }
@@ -1334,6 +1348,7 @@ public class MenuNode {
             util.SetProperty(PropLocation + "/SortKey", tMenu.SortKey.toString());
             util.SetProperty(PropLocation + "/SubMenu", tMenu.SubMenu);
             util.SetProperty(PropLocation + "/IsDefault", tMenu.IsDefault.toString());
+            util.SetProperty(PropLocation + "/ToDelete", tMenu.ToDelete.toString());
             util.SetProperty(PropLocation + "/IsActive", tMenu.IsActive.toString());
             util.SetPropertyAsList(PropLocation + "/BlockedSageUsersList", tMenu.BlockedSageUsersList);
         }
@@ -1342,6 +1357,8 @@ public class MenuNode {
     public static void DeleteMenuItem(String Name){
         //store the parent for later cleanup
         String OldParent = GetMenuItemParent(Name);
+        //mark for deletion to capture issue where an item is not deleting
+        MenuNodeList().get(Name).ToDelete = Boolean.TRUE;
         //do all the deletes first
         MenuNodeList().get(Name).NodeItem.removeAllChildren();
         MenuNodeList().get(Name).NodeItem.removeFromParent();
@@ -1576,6 +1593,8 @@ public class MenuNode {
                     //skip exporting this item as we are in DefaultsWorkingMode and this is a Created item so it should not be exported
                 }else if (GetMenuItemIsTemp(tName)){
                     //skip exporting this item as it is a TEMP Menu Item and should not be exported
+                }else if (GetMenuItemToDelete(tName)){
+                    //skip exporting this item as it is marked for deletion
                 }else{
                     PropLocation = util.SagePropertyLocation + tName;
                     PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
@@ -1822,6 +1841,8 @@ public class MenuNode {
                 }
             }else if (PropType.equals("IsTemp")){
                 MenuNodeList().get(Name).IsTemp = Boolean.parseBoolean(Setting);
+            }else if (PropType.equals("ToDelete")){
+                MenuNodeList().get(Name).ToDelete = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("IsDefault")){
                 MenuNodeList().get(Name).IsDefault = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("SubMenu")){
