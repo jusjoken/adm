@@ -30,7 +30,7 @@ public class gemcalls {
         try {
             tList = Flow.GetFlows();
         } catch (NoClassDefFoundError e) {
-            System.out.println("ADM gemcalls : gemstone class not found for Flow.GetFlows");
+            System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
         }
         return tList;
     }
