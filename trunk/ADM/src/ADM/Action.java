@@ -132,22 +132,28 @@ public class Action {
         ActionList.put(DynamicMusicPlaylist, new Action(DynamicMusicPlaylist,Boolean.FALSE,Boolean.FALSE,"DynamicMusicPlaylist", "DynamicMusicPlaylist"));
         ActionList.get(DynamicMusicPlaylist).InternalOnly = Boolean.TRUE;
 
-        ActionList.put(DynamicDiamondCustomFlows, new Action(DynamicDiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"DynamicDiamondCustomFlows", "DynamicDiamondCustomFlows"));
-        ActionList.get(DynamicDiamondCustomFlows).InternalOnly = Boolean.TRUE;
+        if (Diamond.IsDiamondLegacy()){
+            ActionList.put(DynamicDiamondCustomFlows, new Action(DynamicDiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"DynamicDiamondCustomFlows", "DynamicDiamondCustomFlows"));
+            ActionList.get(DynamicDiamondCustomFlows).InternalOnly = Boolean.TRUE;
+        }
         
         ActionList.put(LaunchPlayList, new Action(LaunchPlayList,Boolean.FALSE,Boolean.FALSE,"LaunchPlayList", "LaunchPlayList","OPUS4A-183733"));
         ActionList.get(LaunchPlayList).InternalOnly = Boolean.TRUE;
         ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"PlaylistItem", UseAttributeObjectValue));
         ActionList.get(LaunchPlayList).ActionVariables.add(new ActionVariable(VarTypeGlobal,"BasePlaylistUnit", UseAttributeValue));
 
-        ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
-        ActionList.get(DiamondDefaultFlows).ActionCategories.add("Video");
-        ActionList.get(DiamondDefaultFlows).ActionCategories.add("Diamond");
+        if (Diamond.IsDiamondLegacy()){
+            ActionList.put(DiamondDefaultFlows, new Action(DiamondDefaultFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Default Flow", "Diamond Default Flow"));
+            ActionList.get(DiamondDefaultFlows).ActionCategories.add("Video");
+            ActionList.get(DiamondDefaultFlows).ActionCategories.add("Diamond");
+        }
 
-        ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
-        ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
-        ActionList.get(DiamondCustomFlows).ActionCategories.add("Video");
-        ActionList.get(DiamondCustomFlows).ActionCategories.add("Diamond");
+        if (Diamond.IsDiamondLegacy()){
+            ActionList.put(DiamondCustomFlows, new Action(DiamondCustomFlows,Boolean.TRUE,Boolean.FALSE,"Diamond Custom Flow", "Diamond Custom Flow","AOSCS-679216"));
+            ActionList.get(DiamondCustomFlows).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ViewCell", UseAttributeValue));
+            ActionList.get(DiamondCustomFlows).ActionCategories.add("Video");
+            ActionList.get(DiamondCustomFlows).ActionCategories.add("Diamond");
+        }
 
         ActionList.put(BrowseFileFolderLocal, new Action(BrowseFileFolderLocal,Boolean.FALSE,Boolean.FALSE,"File Browser: Local","Local File Path","BASE-51703"));
         ActionList.get(BrowseFileFolderLocal).ActionVariables.add(new ActionVariable(VarTypeGlobal,"ForceReload", "true"));
@@ -193,7 +199,9 @@ public class Action {
         LoadStandardActionList();
         LoadDynamicLists();
 
-        Diamond.LoadDiamondDefaultFlows();
+        if (Diamond.IsDiamondLegacy()){
+            Diamond.LoadDiamondDefaultFlows();
+        }
 
         LoadSageTVRecordingViews();
     }
@@ -482,7 +490,7 @@ public class Action {
         DynamicLists.put(DynamicMusicPlaylist, "Music Playlist");
         ActionList.get(DynamicMusicPlaylist).ActionCategories.add("Music");
 
-        if (Diamond.IsDiamond()){
+        if (Diamond.IsDiamondLegacy()){
             DynamicLists.put(DynamicDiamondCustomFlows, "Diamond Custom Flows");
             ActionList.get(DynamicDiamondCustomFlows).ActionCategories.add("Diamond");
             ActionList.get(DynamicDiamondCustomFlows).ActionCategories.add("Video");
@@ -830,10 +838,18 @@ public class Action {
             for (String tCustomActionName : CustomActionNames){
                 System.out.println("ADM: aLoadStandardActionList: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
+                //check for legacy Diamond only actions
                 Boolean tDiamondOnly = util.GetPropertyAsBoolean(PropLocation + "/DiamondOnly", Boolean.FALSE);
-                if (!Diamond.IsDiamond() && tDiamondOnly){
+                if (!Diamond.IsDiamondLegacy() && tDiamondOnly){
                     //as Diamond is not installed and this is a DiamondOnly Action - Skip it
                     System.out.println("ADM: aLoadStandardActionList: Skipping DiamondOnly item '" + tCustomActionName + "'");
+                    continue;
+                }
+                //check for gemstone only actions
+                Boolean tGemstoneOnly = util.GetPropertyAsBoolean(PropLocation + "/GemstoneOnly", Boolean.FALSE);
+                if (!gemcalls.Isgemstone() && tGemstoneOnly){
+                    //as gemstone is not installed and this is a GemstoneOnly Action - Skip it
+                    System.out.println("ADM: aLoadStandardActionList: Skipping GemstoneOnly item '" + tCustomActionName + "'");
                     continue;
                 }
                 String tButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
