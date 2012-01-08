@@ -280,6 +280,8 @@ public class Action {
                 if (util.IsAdvancedMode()){
                     tempList.add(Item);
                 }
+            }else if (GetInternalOnly(Item)){
+                //do not add these types of items as they should not show on any lists
             }else if (GetDiamondOnly(Item)){
                 if (Diamond.IsDiamond()){
                     tempList.add(Item);
@@ -288,8 +290,6 @@ public class Action {
                 if (gemcalls.Isgemstone()){
                     tempList.add(Item);
                 }
-            }else if (GetInternalOnly(Item)){
-                //do not add these types of items as they should not show on any lists
             }else{
                 tempList.add(Item);
             }
