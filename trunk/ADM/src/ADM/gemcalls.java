@@ -36,6 +36,16 @@ public class gemcalls {
         return tReturn;
     }
     
+    public static String GetFlowName(String name){
+        String tReturn = "";
+        try {
+            tReturn = Flow.GetFlowName(name);
+        } catch (NoClassDefFoundError e) {
+            System.out.println("ADM gemcalls : gemstone class not found '" + e + "'");
+        }
+        return tReturn;
+    }
+    
     public static Boolean ShowWidgetswithQLM(){
         Boolean tReturn = Boolean.FALSE;
         try {
