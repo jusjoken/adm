@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import sagex.UIContext;
@@ -1110,7 +1113,41 @@ public class MenuNode {
             }
         }         
         System.out.println("ADM: mGetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
+        MenuNode.LogRoot("GetMenuItemSortedList");
+        
         return FinalList;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static void LogRoot(String ID){
+        //TEMP 
+        String UIContext = sagex.api.Global.GetUIContextName();
+        Integer maxitems = 10;
+        Integer counter = 0;
+//        System.out.println("ADM: TEMP****: Checking roots");
+//        for (String temp:UIroot.keySet()){
+            System.out.println("ADM: " + ID + "****: Checking root - '" + UIContext + "'");
+
+            Enumeration<DefaultMutableTreeNode> en;
+            //Menu Items in Tree Order
+            en = root().preorderEnumeration();
+            while (en.hasMoreElements())   {
+                DefaultMutableTreeNode child = en.nextElement();
+                MenuNode tMenu = (MenuNode)child.getUserObject();
+                //add all items except the Top Level menu
+                if (!tMenu.Name.equals(util.TopMenu)){
+                    //do not add any temp items as they should not be available in ADM Manager
+                    if (!tMenu.IsTemp){
+                        System.out.println("ADM: TEMP****: Adding item - '" + tMenu.Name + "' '" + tMenu.ButtonText + "'");
+                    }
+                }
+                counter++;
+                if (counter>=maxitems){
+                    break;
+                }
+            }         
+//        }
+        
     }
 
     public static Collection<String> GetParentListforMenuItem(String Name){
@@ -1250,8 +1287,23 @@ public class MenuNode {
         
         //find all MenuItem Name entries from the SageTV properties file
         String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation);
+        try {
+            String[] MenuItemNames2 = util.GetSubpropertiesThatAreBranchesUI(util.SagePropertyLocation);
+            System.out.println("ADM: TEST: sage base '" + Arrays.asList(MenuItemNames2) + "'");
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(MenuNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("ADM: TEST: Context '" + sagex.api.Global.GetUIContextName() + "' MenuItemNames '" + Arrays.asList(MenuItemNames) + "'");
+        System.out.println("ADM: TEST: admRecordings HasProperty '" + util.HasProperty(util.SagePropertyLocation + "admRecordings/ButtonText") + "'");
+        System.out.println("ADM: TEST: admRecordings using util '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+        System.out.println("ADM: TEST: admRecordings getP withcontext '" + sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+        System.out.println("ADM: TEST: admRecordings getP withoutcontext'" + sagex.api.Configuration.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+        try {
+            System.out.println("ADM: TEST: admRecordings getP base sage call'" + util.GetPropertyUI(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(MenuNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        
         if (MenuItemNames.length>0){
             
             //load MenuItems
@@ -1356,16 +1408,21 @@ public class MenuNode {
     
     public static void DeleteMenuItem(String Name){
         //store the parent for later cleanup
+        MenuNode.LogRoot("DeleteMenuItemstart");
         String OldParent = GetMenuItemParent(Name);
         //mark for deletion to capture issue where an item is not deleting
         MenuNodeList().get(Name).ToDelete = Boolean.TRUE;
         //do all the deletes first
         MenuNodeList().get(Name).NodeItem.removeAllChildren();
         MenuNodeList().get(Name).NodeItem.removeFromParent();
+        //force delete this item from the properties
+        util.RemovePropertyAndChildren(util.SagePropertyLocation + Name + "/");
         //Make sure there is still one default Menu Item
         ValidateSubMenuDefault(OldParent);
         //rebuild any lists
+        MenuNode.LogRoot("DeleteMenuItembeforesave");
         SaveMenuItemsToSage();
+        MenuNode.LogRoot("DeleteMenuItemaftersave");
         System.out.println("ADM: mDeleteMenuItem: deleted '" + Name + "'");
     }
     
@@ -1891,6 +1948,18 @@ public class MenuNode {
 
     public static DefaultMutableTreeNode root(){
         String UIContext = sagex.api.Global.GetUIContextName();
+        if (!UIroot.containsKey(UIContext)){
+            System.out.println("ADM: mroot: creating root for '" + UIContext + "'");
+            MenuNode rootNode = new MenuNode(util.TopMenu);
+            UIroot.put(UIContext,new DefaultMutableTreeNode(rootNode));
+            rootNode.NodeItem = UIroot.get(UIContext);
+            rootNode.ButtonText = "Top Level";
+        }
+        //System.out.println("ADM: mroot: '" + UIContext + "'");
+        return UIroot.get(UIContext);
+    }
+
+    public static DefaultMutableTreeNode root(String UIContext){
         if (!UIroot.containsKey(UIContext)){
             System.out.println("ADM: mroot: creating root for '" + UIContext + "'");
             MenuNode rootNode = new MenuNode(util.TopMenu);

@@ -13,6 +13,7 @@ import sagex.UIContext;
 import java.util.Properties;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -128,8 +129,10 @@ public class util {
 
         }
         //initiate items that may differ per UIContext - the UI needs to ensure this only gets loaded once
+        MenuNode.LogRoot("InitADMbefore");
         MenuNode.LoadMenuItemsFromSage();
         System.out.println("ADM: uInitADM - UI level initialization complete.");
+        MenuNode.LogRoot("InitADMafter");
            
 
     }
@@ -1033,4 +1036,37 @@ public class util {
         return new File(System.getProperty(SageADMBasePropertyLocation + "/sagetvHomeDir", ".")).toString();
     }    
    
+    public static String[] GetSubpropertiesThatAreBranchesUI(String property)
+	throws InvocationTargetException 
+	{
+            return (String[])ApiUI(sagex.api.Global.GetUIContextName(),"GetSubpropertiesThatAreBranches", new Object[]{property});
+	}
+    public static String GetPropertyUI(String property, String defval)
+	throws InvocationTargetException 
+	{
+		return StringApi("GetProperty", new Object[]{property,defval});
+	}
+    public static String StringApi(String function, Object[] args)
+	throws InvocationTargetException, ClassCastException
+	{
+		return (String)ApiUI(sagex.api.Global.GetUIContextName(),function,args);
+	}
+    public static Object ApiUI(String context, String function, Object[] args)
+    throws InvocationTargetException {
+        try { 
+            try {
+                return sage.SageTV.apiUI(context,function,args);
+            } catch ( NoSuchMethodError e ) {
+                if ( context.equals("SAGETV_PROCESS_LOCAL_UI"))
+                    // fallback to 2.2 API
+                    return sage.SageTV.api(function,args);
+                return null;
+            }
+        } catch (InvocationTargetException e) {
+            if ( args != null)
+                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs="+Integer.toString(args.length));
+            else
+                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs=0");
+        }
+    }    
 }
