@@ -1323,7 +1323,7 @@ public class MenuNode {
                             NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
                             NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
                             NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
-                            NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0"));
+                            NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", null));  //TODO: try setting this to null to see if the extra SortKey entry on delete gets fixed - was "0"
                             NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
                             NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
                             NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
