@@ -1069,4 +1069,11 @@ public class util {
                 throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs=0");
         }
     }    
+    
+//    public static void TestConfig(){
+//        Configuration config = new PropertiesConfiguration("usergui.properties");
+//        //http://commons.apache.org/configuration/
+//        
+//
+//    }
 }
