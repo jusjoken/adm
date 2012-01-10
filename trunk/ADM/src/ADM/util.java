@@ -1069,6 +1069,38 @@ public class util {
                 throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs=0");
         }
     }    
+
+    public static Boolean Test(){
+        if (sagex.api.Global.IsRemoteUI(new UIContext(sagex.api.Global.GetUIContextName()))){
+            String rUI = sagex.api.Global.GetUIContextName();
+            System.out.println("ADM: TEST: Remote UI '" + rUI + "'");
+            String pFile = sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "clients" + File.separator + rUI + ".properties";
+
+            Properties MenuItemProps = new Properties();
+
+            //read the properties from the properties file
+            try {
+                FileInputStream in = new FileInputStream(pFile);
+                try {
+                    MenuItemProps.load(in);
+                    in.close();
+                } catch (IOException ex) {
+                    System.out.println("ADM: TEST: IO exception inporting menus " + util.class.getName() + ex);
+                    return false;
+                }
+            } catch (FileNotFoundException ex) {
+                System.out.println("ADM: TEST: file not found inporting menus " + util.class.getName() + ex);
+                return false;
+            }
+            System.out.println("ADM: TEST: admRecordings SageGet '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText",null) + "'");
+            System.out.println("ADM: TEST: admRecordings TestGet '" + MenuItemProps.getProperty(util.SagePropertyLocation + "admRecordings/ButtonText","NOTHING") + "'");
+            
+        }else{
+            System.out.println("ADM: TEST: Not a Remote UI");
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
     
 //    public static void TestConfig(){
 //        Configuration config = new PropertiesConfiguration("usergui.properties");
