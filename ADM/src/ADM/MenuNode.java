@@ -1285,6 +1285,7 @@ public class MenuNode {
         //cleanup the Nodes and the Tree prior to loading
         CleanMenuNodeListandTree();
         
+        util.Test();
         //find all MenuItem Name entries from the SageTV properties file
         String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation);
         try {
@@ -1293,6 +1294,7 @@ public class MenuNode {
         } catch (InvocationTargetException ex) {
             Logger.getLogger(MenuNode.class.getName()).log(Level.SEVERE, null, ex);
         }
+        //java_util_Arrays_asList(GetSubpropertiesThatAreBranches("ADM/menuitem/")
         System.out.println("ADM: TEST: Context '" + sagex.api.Global.GetUIContextName() + "' MenuItemNames '" + Arrays.asList(MenuItemNames) + "'");
         System.out.println("ADM: TEST: admRecordings HasProperty '" + util.HasProperty(util.SagePropertyLocation + "admRecordings/ButtonText") + "'");
         System.out.println("ADM: TEST: admRecordings using util '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
