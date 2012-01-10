@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import sagex.UIContext;
@@ -43,7 +40,6 @@ public class MenuNode {
     private String BGImageFile = "";
     private String BGImageFilePath = "";
     private Boolean IsDefault = false;
-    private Boolean ToDelete = Boolean.FALSE;
     private util.TriState IsActive = util.TriState.YES;
     private List<String> BlockedSageUsersList = new LinkedList<String>();
     private Integer SortKey = 0;
@@ -450,15 +446,6 @@ public class MenuNode {
     public static Boolean GetMenuItemIsCreatedNotLoaded(String Name){
         try {
             return MenuNodeList().get(Name).IsCreatedNotLoaded;
-        } catch (Exception e) {
-            System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
-            return null;
-        }
-    }
-
-    public static Boolean GetMenuItemToDelete(String Name){
-        try {
-            return MenuNodeList().get(Name).ToDelete;
         } catch (Exception e) {
             System.out.println("ADM: mGet... ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
@@ -1113,43 +1100,9 @@ public class MenuNode {
             }
         }         
         System.out.println("ADM: mGetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
-        MenuNode.LogRoot("GetMenuItemSortedList");
-        
         return FinalList;
     }
     
-    @SuppressWarnings("unchecked")
-    public static void LogRoot(String ID){
-        //TEMP 
-        String UIContext = sagex.api.Global.GetUIContextName();
-        Integer maxitems = 10;
-        Integer counter = 0;
-//        System.out.println("ADM: TEMP****: Checking roots");
-//        for (String temp:UIroot.keySet()){
-            System.out.println("ADM: " + ID + "****: Checking root - '" + UIContext + "'");
-
-            Enumeration<DefaultMutableTreeNode> en;
-            //Menu Items in Tree Order
-            en = root().preorderEnumeration();
-            while (en.hasMoreElements())   {
-                DefaultMutableTreeNode child = en.nextElement();
-                MenuNode tMenu = (MenuNode)child.getUserObject();
-                //add all items except the Top Level menu
-                if (!tMenu.Name.equals(util.TopMenu)){
-                    //do not add any temp items as they should not be available in ADM Manager
-                    if (!tMenu.IsTemp){
-                        System.out.println("ADM: TEMP****: Adding item - '" + tMenu.Name + "' '" + tMenu.ButtonText + "'");
-                    }
-                }
-                counter++;
-                if (counter>=maxitems){
-                    break;
-                }
-            }         
-//        }
-        
-    }
-
     public static Collection<String> GetParentListforMenuItem(String Name){
         if (Name.equals(GetMenuItemSubMenu(Name)) || GetMenuItemSubMenu(Name)==null){
             return GetMenuItemParentList();
@@ -1279,34 +1232,79 @@ public class MenuNode {
         
     }
     
+    public static Collection<String> GetMenuItemsList(){
+        Collection<String> MenuList = new LinkedHashSet<String>();
+        String rUI = sagex.api.Global.GetUIContextName();
+        UIContext cUI = new UIContext(rUI);
+        //get the list of menu items from Sage
+        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(cUI,util.SagePropertyLocation);
+        if (MenuItemNames.length>0){
+            //validate that each Menu Item is a fully valid menu item and not just a remnant Sage property
+            //for RemoteUI's use a modified process for validation as the GetProperty for a RemoteUI will 
+            //  misleadingly return the Servers property if the client property is not set
+            if (sagex.api.Global.IsRemoteUI(cUI)){
+                //process the RemoteUI's property file directly
+                System.out.println("ADM: mGetMenuItemsList: Remote UI '" + rUI + "'");
+                //make sure the properties file has been saved first
+                sagex.api.Configuration.SaveProperties(cUI);
+                //get the RemoteUI properties file
+                String pFile = sagex.api.Utility.GetWorkingDirectory(cUI) + File.separator + "clients" + File.separator + rUI + ".properties";
+
+                Properties MenuItemProps = new Properties();
+
+                //read the properties from the properties file
+                try {
+                    FileInputStream in = new FileInputStream(pFile);
+                    try {
+                        MenuItemProps.load(in);
+                        in.close();
+                    } catch (IOException ex) {
+                        System.out.println("ADM: mGetMenuItemsList: IO exception loading properties " + util.class.getName() + ex);
+                        return MenuList;
+                    }
+                } catch (FileNotFoundException ex) {
+                    System.out.println("ADM: mGetMenuItemsList: file not found loading properties " + util.class.getName() + ex);
+                    return MenuList;
+                }
+                
+                for (String tMenuItemName : MenuItemNames){
+                    if (MenuItemProps.getProperty(util.SagePropertyLocation + tMenuItemName + "/Name",util.OptionNotFound).equals(tMenuItemName)){
+                        MenuList.add(tMenuItemName);
+                    }else{
+                        System.out.println("ADM: mGetMenuItemsList: skipping invalid menuitem '" + tMenuItemName + "'");
+                    }
+                }
+            }else{
+                //process the clients's properties using Sage functions
+                System.out.println("ADM: mGetMenuItemsList: Client UI '" + rUI + "'");
+                for (String tMenuItemName : MenuItemNames){
+                    if (util.HasProperty(util.SagePropertyLocation + tMenuItemName + "/Name")){
+                        MenuList.add(tMenuItemName);
+                    }else{
+                        System.out.println("ADM: mGetMenuItemsList: skipping invalid menuitem '" + tMenuItemName + "'");
+                    }
+                }
+            }
+        }
+        return MenuList;
+    }
+    
     public static void LoadMenuItemsFromSage(){
         String PropLocation = "";
 
         //cleanup the Nodes and the Tree prior to loading
         CleanMenuNodeListandTree();
         
-        util.Test();
         //find all MenuItem Name entries from the SageTV properties file
-        String[] MenuItemNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation);
-        try {
-            String[] MenuItemNames2 = util.GetSubpropertiesThatAreBranchesUI(util.SagePropertyLocation);
-            System.out.println("ADM: TEST: sage base '" + Arrays.asList(MenuItemNames2) + "'");
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(MenuNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Collection<String> MenuItemNames = GetMenuItemsList();
         //java_util_Arrays_asList(GetSubpropertiesThatAreBranches("ADM/menuitem/")
-        System.out.println("ADM: TEST: Context '" + sagex.api.Global.GetUIContextName() + "' MenuItemNames '" + Arrays.asList(MenuItemNames) + "'");
-        System.out.println("ADM: TEST: admRecordings HasProperty '" + util.HasProperty(util.SagePropertyLocation + "admRecordings/ButtonText") + "'");
-        System.out.println("ADM: TEST: admRecordings using util '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
-        System.out.println("ADM: TEST: admRecordings getP withcontext '" + sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
-        System.out.println("ADM: TEST: admRecordings getP withoutcontext'" + sagex.api.Configuration.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
-        try {
-            System.out.println("ADM: TEST: admRecordings getP base sage call'" + util.GetPropertyUI(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(MenuNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        System.out.println("ADM: TEST: Context '" + sagex.api.Global.GetUIContextName() + "' MenuItemNames '" + Arrays.asList(MenuItemNames) + "'");
+//        System.out.println("ADM: TEST: admRecordings HasProperty '" + util.HasProperty(util.SagePropertyLocation + "admRecordings/ButtonText") + "'");
+//        System.out.println("ADM: TEST: admRecordings using util '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+//        System.out.println("ADM: TEST: admRecordings getP withcontext '" + sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
+//        System.out.println("ADM: TEST: admRecordings getP withoutcontext'" + sagex.api.Configuration.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText", util.ButtonTextDefault) + "'");
 
-        if (MenuItemNames.length>0){
+        if (MenuItemNames.size()>0){
             
             //load MenuItems
             for (String tMenuItemName : MenuItemNames){
@@ -1315,28 +1313,24 @@ public class MenuNode {
                     PropLocation = util.SagePropertyLocation + tMenuItemName;
                     //check the hidden ShowIF property and skip if it is FALSE
                     if (util.GetPropertyEvalAsBoolean(PropLocation + "/ShowIF", Boolean.TRUE) || util.GetDefaultsWorkingMode()){
-                        if (util.GetPropertyEvalAsBoolean(PropLocation + "/ToDelete", Boolean.FALSE)){
-                            System.out.println("ADM: mLoadMenuItemsFromSage: skipped - '" + tMenuItemName + "' due to Marked for Delete");
-                        }else{
-                            MenuNode NewMenuItem = new MenuNode(tMenuItemName);
-                            NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
-                            NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
-                            NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
-                            NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
-                            NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
-                            NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
-                            NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", null));  //TODO: try setting this to null to see if the extra SortKey entry on delete gets fixed - was "0"
-                            NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
-                            NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
-                            NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
-                            NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
-                            NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
-                            if (util.GetDefaultsWorkingMode()){
-                                NewMenuItem.ShowIF = util.GetProperty(PropLocation + "/ShowIF", util.OptionNotFound);
-                            }
-                            NewMenuItem.ActionExternal.Load();
-                            System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                        MenuNode NewMenuItem = new MenuNode(tMenuItemName);
+                        NewMenuItem.ActionAttribute = util.GetProperty(PropLocation + "/Action", null);
+                        NewMenuItem.ActionType = util.GetProperty(PropLocation + "/ActionType", util.ActionTypeDefault);
+                        NewMenuItem.SetBGImageFileandPath(util.GetProperty(PropLocation + "/BGImageFile", null));
+                        NewMenuItem.ButtonText = util.GetProperty(PropLocation + "/ButtonText", util.ButtonTextDefault);
+                        NewMenuItem.Name = util.GetProperty(PropLocation + "/Name", tMenuItemName);
+                        NewMenuItem.Parent = util.GetProperty(PropLocation + "/Parent", "xTopMenu");
+                        NewMenuItem.setSortKey(util.GetProperty(PropLocation + "/SortKey", "0")); 
+                        NewMenuItem.SubMenu = util.GetProperty(PropLocation + "/SubMenu", null);
+                        NewMenuItem.IsDefault = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsDefault", "false"));
+                        NewMenuItem.IsTemp = Boolean.parseBoolean(util.GetProperty(PropLocation + "/IsTemp", "false"));
+                        NewMenuItem.IsActive = util.GetPropertyAsTriState(PropLocation + "/IsActive", util.TriState.YES);
+                        NewMenuItem.BlockedSageUsersList = util.GetPropertyAsList(PropLocation + "/BlockedSageUsersList");
+                        if (util.GetDefaultsWorkingMode()){
+                            NewMenuItem.ShowIF = util.GetProperty(PropLocation + "/ShowIF", util.OptionNotFound);
                         }
+                        NewMenuItem.ActionExternal.Load();
+                        System.out.println("ADM: mLoadMenuItemsFromSage: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                     }else{
                         System.out.println("ADM: mLoadMenuItemsFromSage: skipped - '" + tMenuItemName + "' due to ShowIF ");
                     }
@@ -1402,7 +1396,6 @@ public class MenuNode {
             util.SetProperty(PropLocation + "/SortKey", tMenu.SortKey.toString());
             util.SetProperty(PropLocation + "/SubMenu", tMenu.SubMenu);
             util.SetProperty(PropLocation + "/IsDefault", tMenu.IsDefault.toString());
-            util.SetProperty(PropLocation + "/ToDelete", tMenu.ToDelete.toString());
             util.SetProperty(PropLocation + "/IsActive", tMenu.IsActive.toString());
             util.SetPropertyAsList(PropLocation + "/BlockedSageUsersList", tMenu.BlockedSageUsersList);
         }
@@ -1410,21 +1403,14 @@ public class MenuNode {
     
     public static void DeleteMenuItem(String Name){
         //store the parent for later cleanup
-        MenuNode.LogRoot("DeleteMenuItemstart");
         String OldParent = GetMenuItemParent(Name);
-        //mark for deletion to capture issue where an item is not deleting
-        MenuNodeList().get(Name).ToDelete = Boolean.TRUE;
         //do all the deletes first
         MenuNodeList().get(Name).NodeItem.removeAllChildren();
         MenuNodeList().get(Name).NodeItem.removeFromParent();
-        //force delete this item from the properties
-        util.RemovePropertyAndChildren(util.SagePropertyLocation + Name + "/");
         //Make sure there is still one default Menu Item
         ValidateSubMenuDefault(OldParent);
         //rebuild any lists
-        MenuNode.LogRoot("DeleteMenuItembeforesave");
         SaveMenuItemsToSage();
-        MenuNode.LogRoot("DeleteMenuItemaftersave");
         System.out.println("ADM: mDeleteMenuItem: deleted '" + Name + "'");
     }
     
@@ -1652,8 +1638,6 @@ public class MenuNode {
                     //skip exporting this item as we are in DefaultsWorkingMode and this is a Created item so it should not be exported
                 }else if (GetMenuItemIsTemp(tName)){
                     //skip exporting this item as it is a TEMP Menu Item and should not be exported
-                }else if (GetMenuItemToDelete(tName)){
-                    //skip exporting this item as it is marked for deletion
                 }else{
                     PropLocation = util.SagePropertyLocation + tName;
                     PropertyAdd(MenuItemProps,PropLocation + "/Action",GetMenuItemAction(tName));
@@ -1900,8 +1884,6 @@ public class MenuNode {
                 }
             }else if (PropType.equals("IsTemp")){
                 MenuNodeList().get(Name).IsTemp = Boolean.parseBoolean(Setting);
-            }else if (PropType.equals("ToDelete")){
-                MenuNodeList().get(Name).ToDelete = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("IsDefault")){
                 MenuNodeList().get(Name).IsDefault = Boolean.parseBoolean(Setting);
             }else if (PropType.equals("SubMenu")){

@@ -13,7 +13,6 @@ import sagex.UIContext;
 import java.util.Properties;
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -25,7 +24,7 @@ import java.util.TreeMap;
 
 public class util {
 
-    public static String Version = "0.500";
+    public static String Version = "0.501";
     public static final String ListToken = ":&&:";
     public static final String PropertyComment = "---ADM MenuItem Properties - Do Not Manually Edit---";
     public static final String PropertyBackupFile = "ADMbackup.properties";
@@ -129,11 +128,8 @@ public class util {
 
         }
         //initiate items that may differ per UIContext - the UI needs to ensure this only gets loaded once
-        MenuNode.LogRoot("InitADMbefore");
         MenuNode.LoadMenuItemsFromSage();
         System.out.println("ADM: uInitADM - UI level initialization complete.");
-        MenuNode.LogRoot("InitADMafter");
-           
 
     }
     
@@ -1036,72 +1032,40 @@ public class util {
         return new File(System.getProperty(SageADMBasePropertyLocation + "/sagetvHomeDir", ".")).toString();
     }    
    
-    public static String[] GetSubpropertiesThatAreBranchesUI(String property)
-	throws InvocationTargetException 
-	{
-            return (String[])ApiUI(sagex.api.Global.GetUIContextName(),"GetSubpropertiesThatAreBranches", new Object[]{property});
-	}
-    public static String GetPropertyUI(String property, String defval)
-	throws InvocationTargetException 
-	{
-		return StringApi("GetProperty", new Object[]{property,defval});
-	}
-    public static String StringApi(String function, Object[] args)
-	throws InvocationTargetException, ClassCastException
-	{
-		return (String)ApiUI(sagex.api.Global.GetUIContextName(),function,args);
-	}
-    public static Object ApiUI(String context, String function, Object[] args)
-    throws InvocationTargetException {
-        try { 
-            try {
-                return sage.SageTV.apiUI(context,function,args);
-            } catch ( NoSuchMethodError e ) {
-                if ( context.equals("SAGETV_PROCESS_LOCAL_UI"))
-                    // fallback to 2.2 API
-                    return sage.SageTV.api(function,args);
-                return null;
-            }
-        } catch (InvocationTargetException e) {
-            if ( args != null)
-                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs="+Integer.toString(args.length));
-            else
-                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs=0");
-        }
-    }    
+//    public static String[] GetSubpropertiesThatAreBranchesUI(String property)
+//	throws InvocationTargetException 
+//	{
+//            return (String[])ApiUI(sagex.api.Global.GetUIContextName(),"GetSubpropertiesThatAreBranches", new Object[]{property});
+//	}
+//    public static String GetPropertyUI(String property, String defval)
+//	throws InvocationTargetException 
+//	{
+//		return StringApi("GetProperty", new Object[]{property,defval});
+//	}
+//    public static String StringApi(String function, Object[] args)
+//	throws InvocationTargetException, ClassCastException
+//	{
+//		return (String)ApiUI(sagex.api.Global.GetUIContextName(),function,args);
+//	}
+//    public static Object ApiUI(String context, String function, Object[] args)
+//    throws InvocationTargetException {
+//        try { 
+//            try {
+//                return sage.SageTV.apiUI(context,function,args);
+//            } catch ( NoSuchMethodError e ) {
+//                if ( context.equals("SAGETV_PROCESS_LOCAL_UI"))
+//                    // fallback to 2.2 API
+//                    return sage.SageTV.api(function,args);
+//                return null;
+//            }
+//        } catch (InvocationTargetException e) {
+//            if ( args != null)
+//                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs="+Integer.toString(args.length));
+//            else
+//                throw new InvocationTargetException(e,"Exception while executing SageApi: \""+function+"\" numargs=0");
+//        }
+//    }    
 
-    public static Boolean Test(){
-        if (sagex.api.Global.IsRemoteUI(new UIContext(sagex.api.Global.GetUIContextName()))){
-            String rUI = sagex.api.Global.GetUIContextName();
-            System.out.println("ADM: TEST: Remote UI '" + rUI + "'");
-            String pFile = sagex.api.Utility.GetWorkingDirectory(new UIContext(sagex.api.Global.GetUIContextName())) + File.separator + "clients" + File.separator + rUI + ".properties";
-
-            Properties MenuItemProps = new Properties();
-
-            //read the properties from the properties file
-            try {
-                FileInputStream in = new FileInputStream(pFile);
-                try {
-                    MenuItemProps.load(in);
-                    in.close();
-                } catch (IOException ex) {
-                    System.out.println("ADM: TEST: IO exception inporting menus " + util.class.getName() + ex);
-                    return false;
-                }
-            } catch (FileNotFoundException ex) {
-                System.out.println("ADM: TEST: file not found inporting menus " + util.class.getName() + ex);
-                return false;
-            }
-            System.out.println("ADM: TEST: admRecordings SageGet '" + util.GetProperty(util.SagePropertyLocation + "admRecordings/ButtonText",null) + "'");
-            System.out.println("ADM: TEST: admRecordings TestGet '" + MenuItemProps.getProperty(util.SagePropertyLocation + "admRecordings/ButtonText","NOTHING") + "'");
-            
-        }else{
-            System.out.println("ADM: TEST: Not a Remote UI");
-            return Boolean.FALSE;
-        }
-        return Boolean.TRUE;
-    }
-    
 //    public static void TestConfig(){
 //        Configuration config = new PropertiesConfiguration("usergui.properties");
 //        //http://commons.apache.org/configuration/
