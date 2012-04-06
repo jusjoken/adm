@@ -6,8 +6,8 @@ package ADM;
 
 import java.util.ArrayList;
 import sagex.UIContext;
-import Diamond.Flow;
-import Diamond.Widget;
+import Gemstone.Flow;
+import Gemstone.Widget;
 
 /**
  *
