@@ -4,11 +4,11 @@ Check here for basic information about Another Dynamic Menu (ADM) and how to use
 
 Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 
-[http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu.JPG) _click to view_
+![http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCustomMenu.JPG) _click to view_
 
 
 
-[http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.JPG) _click to view_
+![http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMManagerOverview.JPG) _click to view_
 
 # Details #
 
@@ -116,7 +116,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Other user suggestions if a feature is missing
 
 ## QLM - Quick Launch Menu ##
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu.JPG) _QLM_ |[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond.JPG) _QLM Diamond_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMMenu.JPG) _QLM_ |![http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamond.JPG) _QLM Diamond_ | _click to view_ |
 |:------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------|:----------------|
 ### QLM Features ###
     * Optional feature to display a menu on top of nearly any SageTV screen making the full ADM menu available quickly throughout SageTV
@@ -128,7 +128,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Use the Options button to display QLM Menu Options - see below
     * With Diamond you can also optionally have the diamond Widgets displayed with the QLM.  See [#Diamond\_Specific\_Functions](#Diamond_Specific_Functions.md)
 
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions.JPG) _Options_ |[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions.JPG) _Menu Options_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMOptions.JPG) _Options_ |![http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondOptions.JPG) _Menu Options_ | _click to view_ |
 |:----------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
 ### QLM Options ###
     * Configure QLM Options from ADM Manager by selection QLM Options from the left side items
@@ -156,7 +156,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 
 ### Launching the ADM Manager ###
 
-[http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG) _click to view_
+![http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMManagerAccess.JPG) _click to view_
   * Press Options from the Main Menu
   * Select ADM Manager
 
@@ -166,7 +166,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
   * note:see the [#Troubleshooting](#Troubleshooting.md) section for more info on using this feature
 
 ### List by: Menu Structure or Menus Grouped ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure.JPG) _Menu Structure_ |[http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped.JPG) _Menus Grouped_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMListbyStructure.JPG) _Menu Structure_ |![http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMListbyGrouped.JPG) _Menus Grouped_ | _click to view_ |
 |:---------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * Menu Structure
     * Lists all menus in the natural order they will appear in SageTV
@@ -193,7 +193,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
   * a single new Menu Item will be added for you to start your new Menus
 
 ### Export/Import ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMExport-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMExport.JPG) _Export_ |[http://dl.dropbox.com/u/7826058/ADM/ADMImport-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMImport.JPG) _Import_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMExport-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMExport.JPG) _Export_ |![http://dl.dropbox.com/u/7826058/ADM/ADMImport-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMImport.JPG) _Import_ | _click to view_ |
 |:-------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------|:----------------|
   * Export
     * Creates a .properties style file with all the values required to store and retrieve your Menus
@@ -218,15 +218,15 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 ### ADM Options ###
 
 #### Maximum Menu Items ####
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions.JPG) _Options_ | _click to view_ | |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusMaxOptions.JPG) _Options_ | _click to view_ | |
 |:------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|:|
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1.JPG) _Level 1_         |[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2.JPG) _Level 2_ |[http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3.JPG) _Level 3_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel1.JPG) _Level 1_         |![http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel2.JPG) _Level 2_ |![http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLargeMenusLevel3.JPG) _Level 3_ | _click to view_ |
   * Select Options (Basic) or Options (Advanced) from the left side menu in ADM Manager
   * Select any of the 3 Levels to adjust the Maximum Menu Item before the menus will scroll
   * Close the dialog when done.
 
 #### Basic - Advanced Options ####
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG) _Basic_ |[http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG) _Advanced_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMEditBasic.JPG) _Basic_ |![http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMEditAdvanced.JPG) _Advanced_ | _click to view_ |
 |:------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * Can be toggled from/to Advanced/Basic modes by selecting Options on the left menu in ADM Manager and then toggling the Advanced/Basic option button.
   * Advanced Options Mode
@@ -278,7 +278,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Note: for the first Menu Item in a group if it is already the default you can not change its Default setting to No.  you must set another Menu Item to Yes instead.
 
 > #### Action Management ####
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMActionManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMActionManager.JPG) _Action Manager_ |[http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered.JPG) _Filtered_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMActionManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMActionManager.JPG) _Action Manager_ |![http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMActionManagerFiltered.JPG) _Filtered_ | _click to view_ |
 |:-----------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
 
   * Selecting an Action
@@ -305,13 +305,13 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * The entered Widget Symbol will execute when the Menu Item is selected within the SageTV menu system
 
   * Video Browser with specific Folder
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG) _Video Folders_ |[http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder.JPG) _Set Folder_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFolders.JPG) _Video Folders_ |![http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersSetFolder.JPG) _Set Folder_ | _click to view_ |
 |:--------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
 
   * Set this option and enter a valid Folder and this menu item will jump to that specific folder when selected
   * The Folder entered must be exactly as displayed in the Videos by Folder screen next to Folder:
 
-> [http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG) _click to view_
+> ![http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMVideoFoldersPath.JPG) _click to view_
     * The Folder name is case sensitive and should have the trailing "/" or "\"
     * Note: SageTV uses a different process for the Path between Separate and Combined Folder settings. If you have a working Video Folder menu item and change the Combined/Separate Video Folder setting the menu item may not go to the proper Folder and may need to be edited.
     * see [#ADM\_Copy\_Mode](#ADM_Copy_Mode.md) for information on creating this action type through a Copy function
@@ -328,7 +328,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * see [#ADM\_Copy\_Mode](#ADM_Copy_Mode.md) for information on creating this action type through a Copy function
 
   * File Browser: Local/Server/Imports/Network/Recordings
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem.JPG) _File Browser Item_ |[http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult.JPG) _File Browser_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserMenuItem.JPG) _File Browser Item_ |![http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMFileBrowserResult.JPG) _File Browser_ | _click to view_ |
 |:--------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
 
   * Set this option and enter a valid Path and this menu item will jump to that specific Path when selected
@@ -343,7 +343,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Note: many of these are "interchangeable" in that they act similarily and may launch the same Action Path as another type.  The main difference will be seen after launching the Menu Item and getting to the Path the different types may present different Options and Back button behavior.  Experiment with the Action Types to get your desired resutls.
 
   * Launch External Application
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem.JPG) _External App_ |[http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure.JPG) _Configure_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppMenuItem.JPG) _External App_ |![http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMLaunchExternalAppConfigure.JPG) _Configure_ | _click to view_ |
 |:---------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
 
   * Select this option and then on the Configure Dialog set each of the appropriate settings
@@ -379,7 +379,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 
 
 > #### Background Image ####
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG) _Select Background_ |[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG) _Custom Background_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerStandard.JPG) _Select Background_ |![http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustom.JPG) _Custom Background_ | _click to view_ |
 |:--------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
     * Valid for ALL menu levels (as of 0.36+)
     * The ADM Background Manager will be displayed for you to select a Background
@@ -416,7 +416,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
   * Note: if you don't want to delete the Children Menu Items then change their Parent first before deleting the Parent
 
 ### ADM Background Manager ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd.JPG) _Add Custom_ |[http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign.JPG) _Assign Custom_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAdd.JPG) _Add Custom_ |![http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMBackgroundManagerCustomAssign.JPG) _Assign Custom_ | _click to view_ |
 |:---------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * Launches from ADM Manager from the left side menu
   * Allows you to Add/Remove available Custom Backgrounds without having to go to a menu item directly
@@ -449,7 +449,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
       * This creates the Code but does NOT lock the system
 
 > ### User Based Menu Item Control (example) ###
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline.JPG) _User Based_ |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager.JPG) _Blocked Items_ |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow.JPG) _Unselect Kids_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnline.JPG) _User Based_ |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineADMManager.JPG) _Blocked Items_ |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedBlockOnlineDisallow.JPG) _Unselect Kids_ | _click to view_ |
 |:---------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
     * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
     * Assumes the active user profile is either Administrator or one with similar privileges
@@ -472,7 +472,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 
 
 > ### Switch User (example) ###
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod.JPG) _Options_ |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions.JPG) _Switch User_ |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles.JPG) _Select Kids_ | _click to view_ |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIMod.JPG) _Options_ |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserHasUIModOptions.JPG) _Switch User_ |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserListUserProfiles.JPG) _Select Kids_ | _click to view_ |
 |:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
     * Switch to "Kids" profile
       * Press Home to start at the ADM Main Menu (make sure ADM is enabled)
@@ -484,7 +484,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
         * If you disallowed "Manage general setup options" then SageTV will close the dialog and return to the Main Menu.
         * Otherwise just press Options and you will be returned to the Main Menu
       * You now have the "Kids" profile active and any Menu Item that is set to User Based with "Kids" as NOT Allowed will no longer be displayed for this user profile.
-> > |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids.JPG) _Switch User_ |[http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked.JPG) _Enter Code_ | _click to view_                                                                                                                                                                   |
+> > |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids.JPG) _Switch User_ |![http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMUserBasedSwitchUserNoUIMod-Kids-Locked.JPG) _Enter Code_ | _click to view_                                                                                                                                                                   |
     * Switch back to "Administrator" or similar profile
       * Press Home to start at the ADM Main Menu
       * Press Options
@@ -500,7 +500,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
 
 ## ADM Copy Mode ##
 ### Copy Sage Menu Items ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG) _Copy Mode_ |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG) _Change Settings_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeADMManager.JPG) _Copy Mode_ |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeChangeSettings.JPG) _Change Settings_ | _click to view_ |
 |:----------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * allows for the copy of Sage Menu items (Standard and from other Plugins) to ADM Menu Items
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -520,7 +520,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * now recognizes Sage TV Recordings Views (4 standard plus up to 4 custom)
 
 ### Copy Video Folder Browser Items ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG) _Folder Item_ |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG) _Change Settings_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFolders.JPG) _Folder Item_ |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFoldersCreateItem.JPG) _Change Settings_ | _click to view_ |
 |:------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * allows for the creation of ADM Menu Items directly from the Videos Folder Browser for a specific Folder
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -536,7 +536,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
 ### Copy File Browser Items ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders.JPG) _File Browser Item_ |[http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem.JPG) _Change Settings_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFolders.JPG) _File Browser Item_ |![http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMCopyModeFileFoldersCreateItem.JPG) _Change Settings_ | _click to view_ |
 |:--------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * allows for the creation of ADM Menu Items directly from the File Browser for a specific File Path
     * From ADM Manager select Copy Mode is Disabled from the left hand menu
@@ -553,7 +553,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * Return to ADM Manager if you wish to move any of the newly created Menu Items
 
 ## Menu Structure Terms ##
-> [http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG) _click to view_
+> ![http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure-small.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMMenuStructure.JPG) _click to view_
 > ### Top Level ###
     * Also known as Level 0
     * Holds no menu items but all Level 1 menus have this as their parent
@@ -634,7 +634,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
   * Compatible with Diamond version 3.30
 
 ### Diamond Specific Functions ###
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG) _Movies_ |[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG) _Videos_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondMovies.JPG) _Movies_ |![http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondVideos.JPG) _Videos_ | _click to view_ |
 |:---------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------|:----------------|
   * Default Menu
     * A Diamond Specific menu will load on initial run (newly installed) and when Load Default Menus is selected
@@ -647,7 +647,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
         * Each of the built in Diamond Default Flows will be displayed first
         * After the Default Flows all the standard video menu items will be added
     * ADM will detect which of these 2 menus you have enabled in Diamond and create a customized menu accordingly
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies.JPG) _Diamond Movies_ |[http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG) _Diamond Videos_ | _click to view_ |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenusMovies.JPG) _Diamond Movies_ |![http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMDiamondDefaultMenus.JPG) _Diamond Videos_ | _click to view_ |
   * Replace videos with Diamond Movies
     * This function of Diamond will not affect the visibility of the Video or Movies menu item. You must set this manually within ADM Manager by customizing the menu items
   * Hide Main Menu Items
@@ -663,7 +663,7 @@ Also check out the [FAQ](http://code.google.com/p/sagetv-adm/wiki/ADMFAQ)
     * These views can be launched from any ADM Menu Item (as of ADM 0.36+)
     * ADM Copy mode can be used to create these Menu Items as well
     * A Dynamic List item is also available - TV Recordings List - which will display the 4-8 Recording Views dynamically
-> |[http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondWidgets-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondWidgets.JPG) _QLM with Widgets_ | _click to view_                                                                                                                  |
+> |![http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondWidgets-ppc.JPG](http://dl.dropbox.com/u/7826058/ADM/ADMQLMDiamondWidgets.JPG) _QLM with Widgets_ | _click to view_                                                                                                                  |
   * QLM with Diamond Widgets
     * The QLM Options in ADM Manager offers an option to show the Diamond Widgets panel along with the QLM Menu when it is displayed
   * Future ToDos to support Diamond
